@@ -111,7 +111,7 @@
     // [TODO] API call should be to dataset schema - currently just querying table and using metadata (which is also wrong)
     var datasetCreds = JSON.parse(tableau.connectionData);
 
-    var filesApiCall = getApiCall(datasetCreds, table.tableInfo.id);
+    var filesApiCall = getApiCall(datasetCreds, table.tableInfo.alias);
     $.getJSON(filesApiCall, function(resp) {
       var results = resp.results.bindings,
         columnIds = resp.head.vars,
