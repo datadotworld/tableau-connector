@@ -73,7 +73,7 @@
     }
 
     function getApiCall(datasetCreds, queryTable) {
-      var apiCall = "http://localhost:8889/query.data.world/sql/" + datasetCreds.dataset + "?authentication=Bearer+" + datasetCreds.apiToken + "&query=SELECT%20*%20FROM%20%60" + queryTable + "%60";
+      var apiCall = "http://query.data.world/sql/" + datasetCreds.dataset + "?authentication=Bearer+" + datasetCreds.apiToken + "&query=SELECT%20*%20FROM%20%60" + queryTable + "%60";
       return apiCall;
     };
 
