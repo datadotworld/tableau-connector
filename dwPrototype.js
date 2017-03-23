@@ -33,8 +33,9 @@
               }); //push close
             } // for close
 
+            var datasetTableId = queryTable.replace(/[^A-Z0-9]/ig, "");
             var datasetTable = {
-              id: queryTable,
+              id: datasetTableId,
               alias: queryTable,
               columns: dataset_cols
             };
