@@ -124,7 +124,10 @@
         for(var j = 0, colLen = columnIds.length; j < colLen; j++) {
           var id = columnIds[j];
           if (results[i][id]) {
-            jsonData[id] = results[i][columnIds[j]].value;
+            if (results[i][columnIds[j]].datatype == "http://www.w3.org/2001/XMLSchema#boolean")
+              jsonData[id] = results[i][columnIds[j]].value  == "true";
+            else
+              jsonData[id] = results[i][columnIds[j]].value;
           }
         }
         tableData.push(jsonData);
