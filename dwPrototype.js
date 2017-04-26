@@ -4,74 +4,55 @@
 
     // Define the schema
     myConnector.getSchema = function(schemaCallback) {
-      // [TODO] API call should be to dataset schema - currently just querying table and using metadata (which is also wrong)
+      // Queries TableColumns for the dataset and loops through to build out tables and columns.
       var datasetCreds = JSON.parse(tableau.connectionData);
+      var queryTable = "TableColumns";
 
-      var createTable = function (tableName) {
-        return new Promise(function(resolve, reject) {
-          var queryTable = tableName;
-          var tableApiCall = getApiCall(datasetCreds, queryTable);
-          return $.getJSON(tableApiCall, function(resp) {
-            var metadata = resp.metadata,
-              columnIds = resp.head.vars,
-              dataset_cols = [];
+      $.getJSON(getApiCall(datasetCreds, queryTable), function(resp) {
+        var datasetTablesResults = resp.results.bindings,
+          datasetTables = [],
+          datasetTableNames = [];
+        var tableCount = 0
+        for (var i = 0, dtLen = datasetTablesResults.length; i < dtLen; i++) {
+          if (datasetTablesResults[i].v_2.value == 1) {
+            datasetTableNames[tableCount] = datasetTablesResults[i].v_1.value;
+            tableCount++;
+          }
+        }
 
-            var i = 0;
+        for (var i = 0, length = datasetTableNames.length; i < length; i++) {
+          var activeTable = datasetTableNames[i],
+            dataset_cols = [];
 
-            for (i = 0, len = metadata.length; i < len; i++) {
-              var name = metadata[i].name;
-              var idName = name.replace(/[^A-Z0-9]/ig, "");
-              var dataType = "http://www.w3.org/2001/XMLSchema#string"; //setting default to string
-              if(resp.results.bindings[0].hasOwnProperty(columnIds[i])) {
-                dataType = resp.results.bindings[0][columnIds[i]].datatype;
-              }
+          for (j = 0, len = datasetTablesResults.length; j < len; j++) {
+            if (datasetTablesResults[j].v_1.value == activeTable) {
+              var columnId = "v_" + (datasetTablesResults[j].v_2.value - 1);
 
               dataset_cols.push({
-                "id": columnIds[i],
-                "alias": metadata[i].name,
-                "dataType": getDatatype(dataType)
+                "id": columnId,
+                "alias": datasetTablesResults[j].v_3.value,
+                "dataType": getDatatype(datasetTablesResults[j].v_4.value)
               }); //push close
-            } // for close
+            }
+          } // get columns for close
 
-            var datasetTableId = queryTable.replace(/[^A-Z0-9]/ig, "");
-            var datasetTable = {
-              id: datasetTableId,
-              alias: queryTable,
-              columns: dataset_cols
-            };
+          var datasetTableId = activeTable.replace(/[^A-Z0-9]/ig, "");
+          var datasetTable = {
+            id: datasetTableId,
+            alias: activeTable,
+            columns: dataset_cols
+          };
 
-            resolve(datasetTable)
-          });
-        })
-      } // createTable end
+          datasetTables[i] = datasetTable;
 
-      getTables(datasetCreds).then(function(tables) {
-        Promise.all(
-          tables.map(function(tableName) {
-            return createTable(tableName)
-          })
-        ).then(function(results) {
-          schemaCallback(results);
-        }).catch(function(error) {
-          console.error('oh no', error)
-        })
-      })
+        } // end create table for
+
+        schemaCallback(datasetTables);
+
+      });
 
     }; // myConnector.getSchema end
 
-    function getTables (datasetCreds) {
-      return new Promise(function(resolve, reject) {
-        var queryTable = "Tables";
-        $.getJSON(getApiCall(datasetCreds, queryTable), function(resp) {
-          var datasetTablesResults = resp.results.bindings,
-            datasetTables = [];
-          for (var i = 0, dtLen = datasetTablesResults.length; i < dtLen; i++) {
-            datasetTables[i] = datasetTablesResults[i].v_1.value;
-          }
-          resolve(datasetTables)
-        });
-      })
-    }
 
     function getApiCall(datasetCreds, queryTable) {
       var apiCall = "https://query.data.world/sql/" + datasetCreds.dataset + "?authentication=Bearer+" + datasetCreds.apiToken + "&query=SELECT%20*%20FROM%20%60" + queryTable + "%60";
@@ -112,6 +93,7 @@
     var datasetCreds = JSON.parse(tableau.connectionData);
 
     var filesApiCall = getApiCall(datasetCreds, table.tableInfo.alias);
+
     $.getJSON(filesApiCall, function(resp) {
       var results = resp.results.bindings,
         columnIds = resp.head.vars,
@@ -148,10 +130,20 @@
                 dataset: $('#dwDataset').val().trim(),
                 apiToken: $('#apiToken').val().trim()
             };
+            $.cookie("dwAPIToken", encodeURIComponent(datasetCreds.apiToken));
 
             tableau.connectionData = JSON.stringify(datasetCreds);
-            tableau.connectionName = "data.world connector";
+            tableau.connectionName = JSON.stringify(datasetCreds.dataset);
             tableau.submit();
         });
     });
+
 })();
+
+function getAPIToken() {
+  var apiToken = null;
+  if ($.cookie("dwAPIToken")) {
+    apiToken = decodeURIComponent($.cookie("dwAPIToken"));
+  }
+  return apiToken;
+};

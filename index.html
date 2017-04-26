@@ -8,6 +8,7 @@
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
+    <script src="jquery.cookie-1.4.1.min.js" type="text/javascript"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
     <script src="https://connectors.tableau.com/libs/tableauwdc-2.1.latest.js" type="text/javascript"></script>
@@ -18,7 +19,7 @@
 <body>
     <div class="container container-table">
         <div class="row vertical-center-row">
-            <div class="text-center col-md-8 col-md-offset-2">
+            <div class="text-center col-md-4 col-md-offset-4">
                 <h2>Get data.world dataset</h2>
                 </br>
                 <form>
@@ -34,7 +35,13 @@
                 	<div class="form-group row">
                         <label for="apiToken" class="col-sm-2 col-form-label">API Token</label>
                         <div class="text-left col-sm-10">
-                		    <input type="text" class="form-control" id="apiToken" aria-describedby="apiTokenHelpBlock">
+                		    <input type="text" class="form-control" id="apiToken" value="" aria-describedby="apiTokenHelpBlock">
+
+                            <script type="text/javascript">
+                             var elem = document.getElementById("apiToken");
+                             elem.value = getAPIToken();
+                            </script>
+
                             <p id="apiTokenHelpBlock" class="form-text text-muted">
                               Find your API Token at <a href="https://data.world/settings/advanced" target="_blank">https://data.world/settings/advanced</a>.
                             </p>
