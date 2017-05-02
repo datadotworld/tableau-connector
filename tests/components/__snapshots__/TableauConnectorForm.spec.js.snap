@@ -1,0 +1,169 @@
+exports[`test renders form 1`] = `
+<div
+  className="main container">
+  <div
+    className="center-block row">
+    <div
+      className="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
+      <img
+        className="center-block"
+        src="new-sparkle-logo.png" />
+      <form
+        onSubmit={[Function]}>
+        <h2
+          className="header">
+          Add a data source from data.world
+        </h2>
+        <div
+          className="form-group">
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            Dataset
+          </label>
+          <span
+            className="input-group">
+            <input
+              autoFocus={true}
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              placeholder="http://data.world/jonloyens/an-intro-to-dataworld-dataset"
+              type="text"
+              value="" />
+          </span>
+          <span
+            className="help-block">
+            Copy and paste the dataset URL here
+          </span>
+        </div>
+        <div
+          className="form-group">
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            API Token
+          </label>
+          <span
+            className="input-group">
+            <input
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              type="text"
+              value="" />
+          </span>
+          <span
+            className="help-block">
+            Find your token at 
+            <a
+              href="https://data.world/settings/advanced"
+              target="_blank">
+              https://data.world/settings/advanced
+            </a>
+            .
+          </span>
+        </div>
+        <button
+          className="center-block btn btn-primary"
+          disabled={false}
+          type="submit">
+          Get Dataset
+        </button>
+        <div
+          className="footer">
+          <a
+            href="">
+            Learn more about the data.world connector
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test renders form with default values 1`] = `
+<div
+  className="main container">
+  <div
+    className="center-block row">
+    <div
+      className="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
+      <img
+        className="center-block"
+        src="new-sparkle-logo.png" />
+      <form
+        onSubmit={[Function]}>
+        <h2
+          className="header">
+          Add a data source from data.world
+        </h2>
+        <div
+          className="form-group has-success">
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            Dataset
+          </label>
+          <span
+            className="input-group">
+            <input
+              autoFocus={true}
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              placeholder="http://data.world/jonloyens/an-intro-to-dataworld-dataset"
+              type="text"
+              value="https://data.world/test/test" />
+          </span>
+          <span
+            className="help-block">
+            Copy and paste the dataset URL here
+          </span>
+        </div>
+        <div
+          className="form-group has-success">
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            API Token
+          </label>
+          <span
+            className="input-group">
+            <input
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              type="text"
+              value="testtest-testtest" />
+          </span>
+          <span
+            className="help-block">
+            Find your token at 
+            <a
+              href="https://data.world/settings/advanced"
+              target="_blank">
+              https://data.world/settings/advanced
+            </a>
+            .
+          </span>
+        </div>
+        <button
+          className="center-block btn btn-primary"
+          disabled={false}
+          type="submit">
+          Get Dataset
+        </button>
+        <div
+          className="footer">
+          <a
+            href="">
+            Learn more about the data.world connector
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+`;
