@@ -1,5 +1,6 @@
 jest.mock('axios')
 
+import './util'
 import TableauConnector from '../src/TableauConnector'
 import {schemaData, tableData} from './apiResponseData'
 import axios from 'axios'

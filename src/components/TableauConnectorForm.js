@@ -97,7 +97,7 @@ class TableauConnectorForm extends Component {
       <Grid className='main'>
         <Row className='center-block'>
           <Col md={6} mdOffset={3} xs={10} xsOffset={1}>
-            <img src={sparkle} className='center-block' />
+            <img src={sparkle} className='center-block' alt='data.world sparkle logo' />
             <form onSubmit={this.onSubmit}>
               <h2 className='header'>Add a data source from data.world</h2>
               {isError && <Alert bsStyle='danger'>

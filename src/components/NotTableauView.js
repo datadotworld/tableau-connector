@@ -10,7 +10,7 @@ class NotTableauView extends Component {
     return (
       <Grid className='notTableauView'>
         <Col md={6} mdOffset={3} xs={10} xsOffset={1}>
-          <img src={sparkle} />
+          <img src={sparkle} alt='data.world sparkle logo'/>
           <h2>
           Welcome to data.world's Tableau web data connector.
           </h2>
