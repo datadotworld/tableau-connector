@@ -25,6 +25,8 @@ const schemaMap = {
   'http://www.w3.org/2001/XMLSchema#dateTimeStamp': tableau.dataTypeEnum.datetime
 }
 
+const queryTable = 'TableColumns'
+
 export default class TableauConnector {
 
   constructor () {
@@ -52,23 +54,10 @@ export default class TableauConnector {
    * Used to verify that the dataset exists and the API key works
    */
   verify = () => {
-    const queryTable = 'TableColumns'
-    return new Promise((resolve, reject) => {
-      axios.get(this.getApiEndpoint(queryTable)).then((resp) => {
-        if (resp.data && resp.data.results) {
-          resolve()
-        } else {
-          reject()
-        }
-      }).catch(() => {
-        reject()
-      })
-    })
+    return axios.get(this.getApiEndpoint(queryTable))
   }
 
   getSchema = (callback) => {
-    const queryTable = 'TableColumns'
-
     axios.get(this.getApiEndpoint(queryTable)).then((resp) => {
       const datasetTablesResults = resp.data.results.bindings
       const datasetTables = []
