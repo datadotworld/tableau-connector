@@ -14,6 +14,7 @@ import {
   Row
 } from 'react-bootstrap'
 import sparkle from '../static/img/new-sparkle-logo.png'
+import analytics from '../analytics'
 
 const datasetRegex = /^https?:\/\/data\.world\/(.+\/.+)$/
 class TableauConnectorForm extends Component {
@@ -54,6 +55,7 @@ class TableauConnectorForm extends Component {
   }
 
   onSubmit = (e) => {
+    analytics.track('tableauconnector.form.submit')
     e.preventDefault()
     if (!this.isDatasetValid() || !this.isApiTokenValid()) {
       this.setState({
@@ -76,6 +78,10 @@ class TableauConnectorForm extends Component {
         })
       })
     }
+  }
+
+  supportLinkClick = () => {
+    analytics.track('tableauconnector.form.support.click')
   }
 
   render () {
@@ -132,7 +138,7 @@ class TableauConnectorForm extends Component {
                 disabled={isSubmitting}
                 bsStyle='primary'>Get Dataset</Button>
               <div className='footer'>
-                <a href='https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector'>Learn more about the data.world connector</a>
+                <a href='https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
               </div>
             </form>
           </Col>

@@ -74,7 +74,9 @@ exports[`test renders form 1`] = `
         <div
           className="footer">
           <a
-            href="https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector">
+            href="https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector"
+            onClick={[Function]}
+            target="_blank">
             Learn more about the data.world connector
           </a>
         </div>
@@ -160,7 +162,9 @@ exports[`test renders form with default values 1`] = `
         <div
           className="footer">
           <a
-            href="https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector">
+            href="https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector"
+            onClick={[Function]}
+            target="_blank">
             Learn more about the data.world connector
           </a>
         </div>

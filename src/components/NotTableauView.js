@@ -1,10 +1,15 @@
 import React, { Component } from 'react'
 import {Col, Grid} from 'react-bootstrap'
 import './NotTableauView.css'
+import analytics from '../analytics'
 
 import sparkle from '../static/img/new-sparkle-logo.png'
 
 class NotTableauView extends Component {
+
+  supportLinkClick = () => {
+    analytics.track('tableauconnector.nottableauview.support.click')
+  }
 
   render () {
     return (
@@ -15,7 +20,7 @@ class NotTableauView extends Component {
           Welcome to data.world's Tableau web data connector.
           </h2>
           <p>Open this page from Tableau Desktop to connect a dataset.</p>
-          <a href='https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector' target='_blank'>Learn more about the data.world connector</a>
+          <a href='https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
         </Col>
       </Grid>
     )
