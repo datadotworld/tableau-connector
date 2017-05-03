@@ -68,8 +68,6 @@ class TableauConnectorForm extends Component {
       this.props.connector.setConnectionData(this.state.dataset.match(datasetRegex)[1], this.state.apiToken)
       // this.props.connector.submit()
       this.props.connector.verify().then(() => {
-        console.log('resolved')
-        console.log(this.props.connector)
         this.props.connector.submit()
       }).catch(() => {
         this.setState({
