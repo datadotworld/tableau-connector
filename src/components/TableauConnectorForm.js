@@ -132,7 +132,7 @@ class TableauConnectorForm extends Component {
                 disabled={isSubmitting}
                 bsStyle='primary'>Get Dataset</Button>
               <div className='footer'>
-                <a href=''>Learn more about the data.world connector</a>
+                <a href='https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector'>Learn more about the data.world connector</a>
               </div>
             </form>
           </Col>

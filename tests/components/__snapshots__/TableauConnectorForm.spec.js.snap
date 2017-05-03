@@ -74,7 +74,7 @@ exports[`test renders form 1`] = `
         <div
           className="footer">
           <a
-            href="">
+            href="https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector">
             Learn more about the data.world connector
           </a>
         </div>
@@ -160,7 +160,7 @@ exports[`test renders form with default values 1`] = `
         <div
           className="footer">
           <a
-            href="">
+            href="https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector">
             Learn more about the data.world connector
           </a>
         </div>
