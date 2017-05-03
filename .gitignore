@@ -3,9 +3,7 @@
 
 node_modules
 
-/dist-client
-/dist-server
-dist
+build
 intl/messages
 coverage
 
