@@ -11,8 +11,7 @@
   },
   "devDependencies": {
     "react-scripts": "0.9.5",
-    "react-test-renderer": "15.4.2",
-    "sinon": "1.17.7"
+    "react-test-renderer": "15.4.2"
   },
   "scripts": {
     "start": "react-scripts start",

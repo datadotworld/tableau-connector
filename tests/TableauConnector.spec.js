@@ -4,13 +4,13 @@ import './util'
 import TableauConnector from '../src/TableauConnector'
 import {schemaData, tableData} from './apiResponseData'
 import axios from 'axios'
-import sinon from 'sinon'
 
 it('Initializes the tableau connector correctly', () => {
   const connector = new TableauConnector()
-  expect(global.tableau.makeConnector.calledOnce)
-  expect(global.tableau.registerConnector.calledOnce)
-  const internalConnector = global.tableau.makeConnector.returnValues[0]
+  expect(global.tableau.makeConnector.mock.calls.length).toBe(1)
+  expect(global.tableau.registerConnector.mock.calls.length).toBe(1)
+
+  const internalConnector = connector.connector
   expect(typeof internalConnector.getSchema).toBe('function')
   expect(typeof internalConnector.getData).toBe('function')
 })
@@ -74,11 +74,11 @@ it('formats the table correctly', (done) => {
     tableInfo: {
       alias: 'test'
     },
-    appendRows: sinon.spy()
+    appendRows: jest.fn()
   }
   connector.getData(table, () => {
-    expect(table.appendRows.calledOnce)
-    expect(table.appendRows.args[0][0]).toEqual([
+    expect(table.appendRows.mock.calls.length).toBe(1)
+    expect(table.appendRows.mock.calls[0][0]).toEqual([
       {
         v_0: '2016-12-14',
         v_1: 'Test test test'

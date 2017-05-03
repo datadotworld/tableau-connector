@@ -31,14 +31,14 @@ class TableauConnectorForm extends Component {
     isSubmitting: false
   }
 
-  datasetChanged = (e: SyntheticInputEvent) => {
+  datasetChanged = (e) => {
     const dataset = e.target.value.toLowerCase()
     this.setState({
       dataset
     })
   }
 
-  apiTokenChanged = (e: SyntheticInputEvent) => {
+  apiTokenChanged = (e) => {
     const apiToken = e.target.value
     this.setState({
       apiToken

@@ -1,8 +1,6 @@
-import sinon from 'sinon'
-
 window.tableau = {
-  makeConnector: sinon.stub().returns({}),
-  registerConnector: sinon.spy(),
+  makeConnector: jest.fn().mockReturnValue({test: true}),
+  registerConnector: jest.fn(),
   dataTypeEnum: {
     string: 'string',
     int: 'int',
