@@ -60,21 +60,28 @@ export default class TableauConnector {
   getSchema = (callback) => {
     axios.get(this.getApiEndpoint(queryTable)).then((resp) => {
       const datasetTablesResults = resp.data.results.bindings
+      const metadata = resp.data.metadata
       const datasetTables = []
 
+      const metadataMap = {}
+
+      metadata.forEach((m, index) => {
+        metadataMap[m.name] = `v_${index}`
+      })
+      const {columnIndex, tableName, columnName, columnDatatype} = metadataMap
+
       for (let i = 0; i < datasetTablesResults.length; i += 1) {
-        if (datasetTablesResults[i].v_2.value === '1') {
-          const activeTable = datasetTablesResults[i].v_1.value
+        if (datasetTablesResults[i][columnIndex].value === '1') {
+          const activeTable = datasetTablesResults[i][tableName].value
           const datasetCols = []
 
           for (let j = 0, len = datasetTablesResults.length; j < len; j += 1) {
-            if (datasetTablesResults[j].v_1.value === activeTable) {
-              const columnId = 'v_' + (datasetTablesResults[j].v_2.value - 1)
-
+            if (datasetTablesResults[j][tableName].value === activeTable) {
+              const columnId = 'v_' + (Number.parseInt(datasetTablesResults[j][columnIndex].value, 10)- 1)
               datasetCols.push({
                 id: columnId,
-                alias: datasetTablesResults[j].v_3.value,
-                dataType: this.getDatatype(datasetTablesResults[j].v_4.value)
+                alias: datasetTablesResults[j][columnName].value,
+                dataType: this.getDatatype(datasetTablesResults[j][columnDatatype].value)
               })
             }
           }
