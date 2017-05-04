@@ -13,6 +13,7 @@ dependencies:
 
   override:
     - echo "_auth=\"$NPM_CONFIG_AUTH\"" >> .npmrc
+    - yarn install --frozen-lockfile
     - yarn build
 
   cache_directories:
