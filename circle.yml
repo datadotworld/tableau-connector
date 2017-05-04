@@ -8,12 +8,15 @@ general:
 
 dependencies:
   pre:
-    - ./setup_aws_credentials.sh:
-        pwd: cicd
+    # - ./setup_aws_credentials.sh:
+    #    pwd: cicd
 
   override:
     - echo "_auth=\"$NPM_CONFIG_AUTH\"" >> .npmrc
     - yarn build
+
+  cache_directories:
+    - node_modules
 
 test:
   override:
