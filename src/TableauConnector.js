@@ -66,7 +66,7 @@ export default class TableauConnector {
       const metadataMap = {}
 
       metadata.forEach((m, index) => {
-        metadataMap[m.name] = `v_${index}`
+        metadataMap[m.name] = resp.data.head.vars[index]
       })
       const {columnIndex, tableName, columnName, columnDatatype} = metadataMap
 
