@@ -1,0 +1,26 @@
+machine:
+  node:
+    version: 6.6.0
+
+general:
+  artifacts:
+    - build
+
+dependencies:
+  pre:
+    - ./setup_aws_credentials.sh:
+        pwd: cicd
+
+  override:
+    - echo "_auth=\"$NPM_CONFIG_AUTH\"" >> .npmrc
+    - yarn build
+
+test:
+  override:
+    - if $RUN_TESTS ; then npm test ; fi:
+
+deployment:
+  prod:
+    branch: master
+    commands:
+      - aws s3 sync build s3://dataworld-tableau-us-east-1 --acl public-read
