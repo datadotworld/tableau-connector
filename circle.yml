@@ -8,8 +8,6 @@ general:
 
 dependencies:
   pre:
-    # - ./setup_aws_credentials.sh:
-    #    pwd: cicd
 
   override:
     - echo "_auth=\"$NPM_CONFIG_AUTH\"" >> .npmrc
@@ -22,9 +20,3 @@ dependencies:
 test:
   override:
     - if $RUN_TESTS ; then npm test ; fi:
-
-deployment:
-  prod:
-    branch: master
-    commands:
-      - aws s3 sync build s3://dataworld-tableau-us-east-1 --acl public-read
