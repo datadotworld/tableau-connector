@@ -40,28 +40,7 @@ it('Formats the schema correctly', (done) => {
       dataType: 'date',
       id: 'v_0'
     })
-
-    expect(schemaData[1]).toEqual({
-      alias: 'DataDotWorldBBallStats',
-      columns: [
-        {
-          alias: 'Name',
-          dataType: 'string',
-          id: 'v_0'
-        },
-        {
-          alias: 'PointsPerGame',
-          dataType: 'float',
-          id: 'v_1'
-        },
-        {
-          alias: 'AssistsPerGame',
-          dataType: 'float',
-          id: 'v_2'
-        }
-      ],
-      id: 'DataDotWorldBBallStats'
-    })
+    expect(schemaData).toMatchSnapshot()
 
     done()
   })
