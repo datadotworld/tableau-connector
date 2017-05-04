@@ -32,14 +32,6 @@ it('Formats the schema correctly', (done) => {
   const connector = new TableauConnector()
   connector.getSchema((schemaData) => {
     expect(schemaData).toHaveLength(3)
-    const changeLogSheet = schemaData[0]
-    expect(changeLogSheet.alias).toBe('AnIntrotodata.worldDatasetChangeLog-Sheet1')
-    expect(changeLogSheet.columns).toHaveLength(2)
-    expect(changeLogSheet.columns[0]).toEqual({
-      alias: 'Date',
-      dataType: 'date',
-      id: 'v_0'
-    })
     expect(schemaData).toMatchSnapshot()
 
     done()
