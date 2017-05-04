@@ -1,0 +1,17 @@
+.DS_STORE
+*.log
+
+node_modules
+
+build
+intl/messages
+coverage
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+
+.npmrc
+yarn-error.log

@@ -1,0 +1,62 @@
+exports[`test Formats the schema correctly 1`] = `
+Array [
+  Object {
+    "alias": "AnIntrotodata.worldDatasetChangeLog-Sheet1",
+    "columns": Array [
+      Object {
+        "alias": "Date",
+        "dataType": "date",
+        "id": "v_0",
+      },
+      Object {
+        "alias": "Change",
+        "dataType": "string",
+        "id": "v_1",
+      },
+    ],
+    "id": "AnIntrotodataworldDatasetChangeLogSheet1",
+  },
+  Object {
+    "alias": "DataDotWorldBBallStats",
+    "columns": Array [
+      Object {
+        "alias": "Name",
+        "dataType": "string",
+        "id": "v_0",
+      },
+      Object {
+        "alias": "PointsPerGame",
+        "dataType": "float",
+        "id": "v_1",
+      },
+      Object {
+        "alias": "AssistsPerGame",
+        "dataType": "float",
+        "id": "v_2",
+      },
+    ],
+    "id": "DataDotWorldBBallStats",
+  },
+  Object {
+    "alias": "DataDotWorldBBallTeam",
+    "columns": Array [
+      Object {
+        "alias": "Name",
+        "dataType": "string",
+        "id": "v_0",
+      },
+      Object {
+        "alias": "Height",
+        "dataType": "string",
+        "id": "v_1",
+      },
+      Object {
+        "alias": "Handedness",
+        "dataType": "string",
+        "id": "v_2",
+      },
+    ],
+    "id": "DataDotWorldBBallTeam",
+  },
+]
+`;

@@ -1,0 +1,23 @@
+exports[`test renders form 1`] = `
+<div
+  className="notTableauView container">
+  <div
+    className="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
+    <img
+      alt="data.world sparkle logo"
+      src="new-sparkle-logo.png" />
+    <h2>
+      Welcome to data.world\'s Tableau web data connector.
+    </h2>
+    <p>
+      Open this page from Tableau Desktop to connect a dataset.
+    </p>
+    <a
+      href="https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector"
+      onClick={[Function]}
+      target="_blank">
+      Learn more about the data.world connector
+    </a>
+  </div>
+</div>
+`;

@@ -1,0 +1,10 @@
+coverage/**
+node_modules/**
+dist/**
+scripts/**
+config/**
+tests/**/*.spec.js
+**/__tests__/*.spec.js
+src/index.html
+src/static/js/vendor
+src/util/brace/**

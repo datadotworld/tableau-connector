@@ -1,0 +1,12 @@
+.main {
+  margin-top: 2rem;
+  padding: 0 0.5rem;
+}
+
+.header {
+  text-align: center;
+}
+.footer {
+  margin-top: 1rem;
+  text-align: center;
+}
