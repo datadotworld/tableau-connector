@@ -77,7 +77,7 @@ export default class TableauConnector {
 
           for (let j = 0, len = datasetTablesResults.length; j < len; j += 1) {
             if (datasetTablesResults[j][tableName].value === activeTable) {
-              const columnId = 'v_' + (Number.parseInt(datasetTablesResults[j][columnIndex].value, 10)- 1)
+              const columnId = 'v_' + (parseInt(datasetTablesResults[j][columnIndex].value, 10) - 1)
               datasetCols.push({
                 id: columnId,
                 alias: datasetTablesResults[j][columnName].value,
