@@ -98,8 +98,10 @@ export default class TableauConnector {
       }
 
       callback(datasetTables)
-    }).catch(() => {
-      callback()
+    }).catch((error) => {
+      tableau.log(error)
+      tableau.log('There was an error retrieving the schema')
+      tableau.abortWithError(error)
     })
   }
 
@@ -112,6 +114,7 @@ export default class TableauConnector {
       const tableData = []
 
       let i, j
+
 
       for (i = 0; i < results.length; i += 1) {
         const jsonData = {}
@@ -131,7 +134,9 @@ export default class TableauConnector {
       table.appendRows(tableData)
       callback()
     }).catch(function (error) {
-      console.log(error)
+      tableau.log(error)
+      tableau.log('There was an error retrieving the data')
+      tableau.abortWithError(error)
     })
   }
 
