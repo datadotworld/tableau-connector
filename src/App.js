@@ -23,7 +23,7 @@ class App extends Component {
 
   render () {
     const parsed = queryString.parse(location.search)
-    const isTableau = navigator.userAgent.indexOf('Tableau Public') >= 0 || parsed.forceTableau
+    const isTableau = navigator.userAgent.toLowerCase().indexOf('tableau') >= 0 || parsed.forceTableau
     const dataset = parsed.dataset_name ? `https://data.world/${parsed.dataset_name}` : null
     const apiKey = this.getApiKey()
 
