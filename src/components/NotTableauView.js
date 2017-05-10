@@ -19,7 +19,7 @@ class NotTableauView extends Component {
           <h2>
           Welcome to data.world's Tableau web data connector.
           </h2>
-          <p>Open this page from Tableau Desktop to connect a dataset.</p>
+          <p>Open this page from Tableau version 10 or greater to connect a dataset.</p>
           <a href='https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
         </Col>
       </Grid>
