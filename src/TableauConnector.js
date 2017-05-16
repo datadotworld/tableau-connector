@@ -39,7 +39,8 @@ export default class TableauConnector {
 
   getApiEndpoint = (queryTable) => {
     const datasetCreds = JSON.parse(tableau.connectionData)
-    return `https://query.data.world/sql/${datasetCreds.dataset}?authentication=Bearer+${datasetCreds.apiToken}&query=SELECT%20*%20FROM%20%60${queryTable}%60`
+    const urlEncodedQuery = encodeURIComponent(`SELECT * FROM \`${queryTable}\``)
+    return `https://query.data.world/sql/${datasetCreds.dataset}?authentication=Bearer+${datasetCreds.apiToken}&query=${urlEncodedQuery}`
   }
 
   getDatatype = (datatype) => {
@@ -114,7 +115,6 @@ export default class TableauConnector {
       const tableData = []
 
       let i, j
-
 
       for (i = 0; i < results.length; i += 1) {
         const jsonData = {}
