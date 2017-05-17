@@ -1,7 +1,7 @@
 exports[`test Formats the schema correctly 1`] = `
 Array [
   Object {
-    "alias": "AnIntrotodata.worldDatasetChangeLog-Sheet1",
+    "alias": "AnIntrotodata.worldDatasetChangeLog-Sheet1.csv/AnIntrotodata.worldDatasetChangeLog-Sheet1",
     "columns": Array [
       Object {
         "alias": "Date",
@@ -14,10 +14,10 @@ Array [
         "id": "v_1",
       },
     ],
-    "id": "AnIntrotodataworldDatasetChangeLogSheet1",
+    "id": "AnIntrotodataworldDatasetChangeLogSheet1csvAnIntrotodataworldDatasetChangeLogSheet1",
   },
   Object {
-    "alias": "DataDotWorldBBallStats",
+    "alias": "DataDotWorldBBallStats.csv/DataDotWorldBBallStats",
     "columns": Array [
       Object {
         "alias": "Name",
@@ -35,10 +35,10 @@ Array [
         "id": "v_2",
       },
     ],
-    "id": "DataDotWorldBBallStats",
+    "id": "DataDotWorldBBallStatscsvDataDotWorldBBallStats",
   },
   Object {
-    "alias": "DataDotWorldBBallTeam",
+    "alias": "DataDotWorldBBallTeam.csv/DataDotWorldBBallTeam",
     "columns": Array [
       Object {
         "alias": "Name",
@@ -56,7 +56,7 @@ Array [
         "id": "v_2",
       },
     ],
-    "id": "DataDotWorldBBallTeam",
+    "id": "DataDotWorldBBallTeamcsvDataDotWorldBBallTeam",
   },
 ]
 `;

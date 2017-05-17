@@ -69,15 +69,15 @@ export default class TableauConnector {
       metadata.forEach((m, index) => {
         metadataMap[m.name] = resp.data.head.vars[index]
       })
-      const {columnIndex, tableName, columnName, columnDatatype} = metadataMap
+      const {columnIndex, columnDatatype, columnName, tableId} = metadataMap
 
       for (let i = 0; i < datasetTablesResults.length; i += 1) {
         if (datasetTablesResults[i][columnIndex].value === '1') {
-          const activeTable = datasetTablesResults[i][tableName].value
+          const activeTable = datasetTablesResults[i][tableId].value
           const datasetCols = []
 
           for (let j = 0, len = datasetTablesResults.length; j < len; j += 1) {
-            if (datasetTablesResults[j][tableName].value === activeTable) {
+            if (datasetTablesResults[j][tableId].value === activeTable) {
               const columnId = 'v_' + (parseInt(datasetTablesResults[j][columnIndex].value, 10) - 1)
               datasetCols.push({
                 id: columnId,
