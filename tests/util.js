@@ -8,5 +8,6 @@ window.tableau = {
     bool: 'bool',
     date: 'date',
     datetime: 'datetime'
-  }
+  },
+  log: jest.fn()
 }
