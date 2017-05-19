@@ -8,7 +8,7 @@ const Analytics = {
     }
   },
 
-  identify (token, properties, options) {
+  identify (token) {
     if (analyticsEnabled && token) {
       try {
         const decoded = JSON.parse(atob(token.split('.')[1]))
