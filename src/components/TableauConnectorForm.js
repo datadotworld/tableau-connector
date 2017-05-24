@@ -32,6 +32,12 @@ class TableauConnectorForm extends Component {
     isSubmitting: false
   }
 
+  componentDidMount = () => {
+    if (this.props.apiKey) {
+      analytics.identify(this.props.apiKey)
+    }
+  }
+
   datasetChanged = (e) => {
     const dataset = e.target.value.toLowerCase()
     this.setState({
@@ -41,6 +47,7 @@ class TableauConnectorForm extends Component {
 
   apiTokenChanged = (e) => {
     const apiToken = e.target.value
+    analytics.identify(apiToken)
     this.setState({
       apiToken
     })
