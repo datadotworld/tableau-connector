@@ -38,33 +38,6 @@ exports[`test renders form 1`] = `
             Copy and paste the dataset URL here
           </span>
         </div>
-        <div
-          className="form-group">
-          <label
-            className="control-label"
-            htmlFor={undefined}>
-            API Token
-          </label>
-          <span
-            className="input-group">
-            <input
-              className="form-control"
-              id={undefined}
-              onChange={[Function]}
-              type="text"
-              value="" />
-          </span>
-          <span
-            className="help-block">
-            Find your token at 
-            <a
-              href="https://data.world/settings/advanced"
-              target="_blank">
-              https://data.world/settings/advanced
-            </a>
-            .
-          </span>
-        </div>
         <button
           className="center-block btn btn-primary"
           disabled={false}
@@ -124,33 +97,6 @@ exports[`test renders form with default values 1`] = `
           <span
             className="help-block">
             Copy and paste the dataset URL here
-          </span>
-        </div>
-        <div
-          className="form-group has-success">
-          <label
-            className="control-label"
-            htmlFor={undefined}>
-            API Token
-          </label>
-          <span
-            className="input-group">
-            <input
-              className="form-control"
-              id={undefined}
-              onChange={[Function]}
-              type="text"
-              value="testtest-testtest" />
-          </span>
-          <span
-            className="help-block">
-            Find your token at 
-            <a
-              href="https://data.world/settings/advanced"
-              target="_blank">
-              https://data.world/settings/advanced
-            </a>
-            .
           </span>
         </div>
         <button

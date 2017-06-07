@@ -23,7 +23,7 @@ class TableauConnectorForm extends Component {
     connector: PropTypes.any,
     dataset: PropTypes.string,
     apiKey: PropTypes.string,
-    setApiKey: PropTypes.func.isRequired
+    clearApiKey: PropTypes.func
   }
 
   state = {
@@ -45,26 +45,14 @@ class TableauConnectorForm extends Component {
     })
   }
 
-  apiTokenChanged = (e) => {
-    const apiToken = e.target.value
-    analytics.identify(apiToken)
-    this.setState({
-      apiToken
-    })
-  }
-
   isDatasetValid = () => {
     return this.state.dataset && datasetRegex.test(this.state.dataset)
-  }
-
-  isApiTokenValid = () => {
-    return this.state.apiToken && this.state.apiToken.length > 2
   }
 
   onSubmit = (e) => {
     analytics.track('tableauconnector.form.submit')
     e.preventDefault()
-    if (!this.isDatasetValid() || !this.isApiTokenValid()) {
+    if (!this.isDatasetValid()) {
       this.setState({
         isError: true
       })
@@ -73,12 +61,13 @@ class TableauConnectorForm extends Component {
         isSubmitting: true,
         isError: false
       })
-      this.props.setApiKey(this.state.apiToken)
       this.props.connector.setConnectionData(this.state.dataset.match(datasetRegex)[1], this.state.apiToken)
-      // this.props.connector.submit()
       this.props.connector.verify().then(() => {
         this.props.connector.submit()
-      }).catch(() => {
+      }).catch((error) => {
+        if (error.response && error.response.status === 401) {
+          return this.props.clearApiKey()
+        }
         this.setState({
           isSubmitting: false,
           isError: true
@@ -92,16 +81,12 @@ class TableauConnectorForm extends Component {
   }
 
   render () {
-    const { dataset, apiToken, isSubmitting, isError } = this.state
+    const { dataset, isSubmitting, isError } = this.state
 
-    let datasetValidState, apiTokenValidState
+    let datasetValidState
 
     if (dataset) {
       datasetValidState = this.isDatasetValid() ? 'success' : 'warning'
-    }
-
-    if (apiToken) {
-      apiTokenValidState = this.isApiTokenValid() ? 'success' : 'warning'
     }
 
     return (
@@ -127,18 +112,7 @@ class TableauConnectorForm extends Component {
                     placeholder='http://data.world/jonloyens/an-intro-to-dataworld-dataset' />
                 </InputGroup>
                 <HelpBlock>Copy and paste the dataset URL here</HelpBlock>
-              </FormGroup>
-              <FormGroup validationState={apiTokenValidState}>
-                <ControlLabel>API Token</ControlLabel>
-                <InputGroup>
-                  <FormControl
-                    type='text'
-                    value={this.state.apiToken}
-                    onChange={this.apiTokenChanged}
-                  />
-                </InputGroup>
-                <HelpBlock>Find your token at <a href='https://data.world/settings/advanced' target='_blank'>https://data.world/settings/advanced</a>.</HelpBlock>
-              </FormGroup>
+              </FormGroup>              
               <Button
                 type='submit'
                 className='center-block'
