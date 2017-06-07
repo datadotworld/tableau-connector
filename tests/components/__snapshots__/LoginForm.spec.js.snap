@@ -17,7 +17,7 @@ exports[`test renders form 1`] = `
         className="text-center">
         <a
           className="btn btn-primary"
-          href="https://data.world/oauth/authorize?client_id=data-dot-world-tableau&redirect_uri=https://dw-tableau-oauth.herokuapp.com/callback"
+          href="https://data.world/oauth/authorize?client_id=undefined&redirect_uri=undefined"
           onClick={[Function]}>
           Authenticate
         </a>
