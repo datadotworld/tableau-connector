@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import TableauConnectorForm from './components/TableauConnectorForm'
 import NotTableauView from './components/NotTableauView'
-import LoginForm from './components/LoginForm'
 import TableauConnector from './TableauConnector'
 import queryString from 'query-string'
 
@@ -12,6 +11,9 @@ class App extends Component {
 
   constructor () {
     super()
+    this.oauthClientId = process.env.REACT_APP_OAUTH_CLIENT_ID
+    this.oauthRedirectURI = process.env.REACT_APP_OAUTH_REDIRECT_URI
+
     this.parsedQueryString = queryString.parse(location.search)
     let { dataset_name } = this.parsedQueryString
     if (dataset_name) {
@@ -21,9 +23,14 @@ class App extends Component {
     }
 
     this.isTableau = navigator.userAgent.toLowerCase().indexOf('tableau') >= 0 || this.parsedQueryString.forceTableau
+    const apiKey = this.getApiKey()
+
+    if (!apiKey) {
+      window.location = `https://data.world/oauth/authorize?client_id=${this.oauthClientId}&redirect_uri=${this.oauthRedirectURI}`
+    }
 
     this.state = {
-      apiKey: this.getApiKey(),
+      apiKey,
       datasetName: dataset_name
     }
     this.clearApiKey = this.clearApiKey.bind(this)
@@ -95,9 +102,7 @@ class App extends Component {
     }
 
     return (
-      (apiKey
-        ? <TableauConnectorForm connector={connector} dataset={dataset} apiKey={apiKey} clearApiKey={this.clearApiKey} />
-        : <LoginForm />)
+      (apiKey && <TableauConnectorForm connector={connector} dataset={dataset} apiKey={apiKey} clearApiKey={this.clearApiKey} />)
     )
   }
 }
