@@ -7,13 +7,13 @@ import TableauConnectorForm from '../../src/components/TableauConnectorForm'
 
 it('renders without crashing', () => {
   const div = document.createElement('div')
-  ReactDOM.render(<TableauConnectorForm setApiKey={jest.fn()}/>, div)
+  ReactDOM.render(<TableauConnectorForm />, div)
 })
 
 it('renders form', () => {
-  expect(renderer.create(<TableauConnectorForm setApiKey={jest.fn()}/>).toJSON()).toMatchSnapshot()
+  expect(renderer.create(<TableauConnectorForm />).toJSON()).toMatchSnapshot()
 })
 
 it('renders form with default values', () => {
-  expect(renderer.create(<TableauConnectorForm setApiKey={jest.fn()} dataset='https://data.world/test/test' apiKey='testtest-testtest'/>).toJSON()).toMatchSnapshot()
+  expect(renderer.create(<TableauConnectorForm dataset='https://data.world/test/test' apiKey='testtest-testtest'/>).toJSON()).toMatchSnapshot()
 })
