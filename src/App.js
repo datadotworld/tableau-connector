@@ -26,7 +26,7 @@ class App extends Component {
     const apiKey = this.getApiKey()
 
     if (!apiKey) {
-      window.location = `https://data.world/oauth/authorize?client_id=${this.oauthClientId}&redirect_uri=${this.oauthRedirectURI}`
+      this.redirectToAuth()
     }
 
     this.state = {
@@ -34,6 +34,10 @@ class App extends Component {
       datasetName: dataset_name
     }
     this.clearApiKey = this.clearApiKey.bind(this)
+  }
+
+  redirectToAuth () {
+    window.location = `https://data.world/oauth/authorize?client_id=${this.oauthClientId}&redirect_uri=${this.oauthRedirectURI}`
   }
 
   apiKeyHasExpired (apiKey) {
@@ -91,6 +95,7 @@ class App extends Component {
       apiKey: null
     })
     this.storeApiKey('')
+    this.redirectToAuth()
   }
 
   render () {
