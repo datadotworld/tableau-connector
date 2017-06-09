@@ -25,7 +25,7 @@ class App extends Component {
     this.isTableau = navigator.userAgent.toLowerCase().indexOf('tableau') >= 0 || this.parsedQueryString.forceTableau
     const apiKey = this.getApiKey()
 
-    if (!apiKey) {
+    if (!apiKey && this.isTableau) {
       this.redirectToAuth()
     }
 
@@ -34,6 +34,7 @@ class App extends Component {
       datasetName: dataset_name
     }
     this.clearApiKey = this.clearApiKey.bind(this)
+    this.clearDataset = this.clearDataset.bind(this)
   }
 
   redirectToAuth () {
@@ -98,6 +99,13 @@ class App extends Component {
     this.redirectToAuth()
   }
 
+  clearDataset () {
+    this.setState({
+      datasetName: ''
+    })
+    this.storeDataset('')
+  }
+
   render () {
     const { apiKey, datasetName } = this.state
     const dataset = datasetName ? `https://data.world/${datasetName}` : null
@@ -107,7 +115,8 @@ class App extends Component {
     }
 
     return (
-      (apiKey && <TableauConnectorForm connector={connector} dataset={dataset} apiKey={apiKey} clearApiKey={this.clearApiKey} />)
+      (apiKey ? <TableauConnectorForm connector={connector} dataset={dataset} apiKey={apiKey} clearDataset={this.clearDataset} clearApiKey={this.clearApiKey} />
+        : <div/>)
     )
   }
 }

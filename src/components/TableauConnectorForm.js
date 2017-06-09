@@ -23,7 +23,8 @@ class TableauConnectorForm extends Component {
     connector: PropTypes.any,
     dataset: PropTypes.string,
     apiKey: PropTypes.string,
-    clearApiKey: PropTypes.func
+    clearApiKey: PropTypes.func,
+    clearDataset: PropTypes.func
   }
 
   state = {
@@ -64,6 +65,7 @@ class TableauConnectorForm extends Component {
       this.props.connector.setConnectionData(this.state.dataset.match(datasetRegex)[1], this.state.apiToken)
       this.props.connector.verify().then(() => {
         this.props.connector.submit()
+        this.props.clearDataset();
       }).catch((error) => {
         if (error.response && error.response.status === 401) {
           return this.props.clearApiKey()
