@@ -15,11 +15,17 @@ class App extends Component {
     this.oauthRedirectURI = process.env.REACT_APP_OAUTH_REDIRECT_URI
 
     this.parsedQueryString = queryString.parse(location.search)
-    let { dataset_name } = this.parsedQueryString
+    let { dataset_name, query, queryType } = this.parsedQueryString
     if (dataset_name) {
       this.storeDataset(dataset_name)
     } else {
       dataset_name = this.getDataset()
+    }
+
+    if (query) {
+      this.storeQuery(query, queryType)
+    } else {
+      ({query, queryType} = this.getQuery())
     }
 
     this.isTableau = navigator.userAgent.toLowerCase().indexOf('tableau') >= 0 || this.parsedQueryString.forceTableau
@@ -31,10 +37,12 @@ class App extends Component {
 
     this.state = {
       apiKey,
+      query,
+      queryType,
       datasetName: dataset_name
     }
     this.clearApiKey = this.clearApiKey.bind(this)
-    this.clearDataset = this.clearDataset.bind(this)
+    this.clearStoredData = this.clearStoredData.bind(this)
   }
 
   redirectToAuth () {
@@ -73,21 +81,26 @@ class App extends Component {
   }
 
   storeApiKey (key) {
-    if (window.localStorage) {
-      window.localStorage.setItem('DW-API-KEY', key)
-    }
+    window.localStorage.setItem('DW-API-KEY', key)
   }
 
   getDataset () {
-    if (window.localStorage) {
-      return window.localStorage.getItem('DW-DATASET-NAME')
-    }
-    return
+    return window.localStorage.getItem('DW-DATASET-NAME')
   }
 
-  storeDataset (key) {
-    if (window.localStorage) {
-      window.localStorage.setItem('DW-DATASET-NAME', key)
+  storeDataset (dataset) {
+    window.localStorage.setItem('DW-DATASET-NAME', dataset)
+  }
+
+  storeQuery (query, queryType) {
+    window.localStorage.setItem('DW-QUERY', query)
+    window.localStorage.setItem('DW-QUERY-TYPE', queryType || '')
+  }
+
+  getQuery () {
+    return {
+      query: window.localStorage.getItem('DW-QUERY'),
+      queryType: window.localStorage.getItem('DW-QUERY-TYPE')
     }
   }
 
@@ -99,15 +112,17 @@ class App extends Component {
     this.redirectToAuth()
   }
 
-  clearDataset () {
+  clearStoredData () {
     this.setState({
-      datasetName: ''
+      datasetName: '',
+      query: ''
     })
     this.storeDataset('')
+    this.storeQuery('')
   }
 
   render () {
-    const { apiKey, datasetName } = this.state
+    const { apiKey, datasetName, query, queryType } = this.state
     const dataset = datasetName ? `https://data.world/${datasetName}` : null
 
     if (! this.isTableau) {
@@ -115,7 +130,14 @@ class App extends Component {
     }
 
     return (
-      (apiKey ? <TableauConnectorForm connector={connector} dataset={dataset} apiKey={apiKey} clearDataset={this.clearDataset} clearApiKey={this.clearApiKey} />
+      (apiKey ? <TableauConnectorForm
+        connector={connector}
+        dataset={dataset}
+        apiKey={apiKey}
+        clearStoredData={this.clearStoredData}
+        clearApiKey={this.clearApiKey}
+        query={query}
+        queryType={queryType} />
         : <div/>)
     )
   }

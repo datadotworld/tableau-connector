@@ -10,3 +10,11 @@
   margin-top: 1rem;
   text-align: center;
 }
+
+.buttonBar {
+  text-align: center;
+}
+
+.buttonBar .btn + .btn {
+  margin-left: 2rem;
+}

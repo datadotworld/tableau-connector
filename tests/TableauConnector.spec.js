@@ -2,7 +2,7 @@ jest.mock('axios')
 
 import './util'
 import TableauConnector from '../src/TableauConnector'
-import {schemaData, tableData} from './apiResponseData'
+import {schemaData, sparqlSchemaData, sqlSchemaData, tableData} from './apiResponseData'
 import axios from 'axios'
 
 it('Initializes the tableau connector correctly', () => {
@@ -15,11 +15,22 @@ it('Initializes the tableau connector correctly', () => {
   expect(typeof internalConnector.getData).toBe('function')
 })
 
-it('Returns the correct API endpoint', () => {
+it('Returns the correct API endpoint for non-query', () => {
   const connector = new TableauConnector()
   connector.setConnectionData('test/1234', 'apitoken-test')
-  expect(connector.getApiEndpoint('table-name-test'))
-    .toBe('https://query.data.world/sql/test/1234?authentication=Bearer+apitoken-test&query=SELECT%20*%20FROM%20%60table-name-test%60')
+  expect(connector.getApiEndpoint('table-name-test')).toBe('https://query.data.world/sql/test/1234')
+})
+
+it('Returns the correct API endpoint for SQL query', () => {
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'apitoken-test', 'SELECT * FROM TEST', 'sql')
+  expect(connector.getApiEndpoint('table-name-test')).toBe('https://query.data.world/sql/test/1234')
+})
+
+it('Returns the correct API endpoint for SPARQL query', () => {
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'apitoken-test', 'SPARQL TEST QUERY', 'sparql')
+  expect(connector.getApiEndpoint('table-name-test')).toBe('https://query.data.world/sparql/test/1234')
 })
 
 it('Returns default tableauschema type', () => {
@@ -27,12 +38,39 @@ it('Returns default tableauschema type', () => {
   expect(connector.getDatatype('randommissingdatatype')).toBe('string')
 })
 
-it('Formats the schema correctly', (done) => {
+it('Formats the schema correctly for a non-query', (done) => {
   axios.__setMockResponse(schemaData)
   const connector = new TableauConnector()
-  connector.getSchema((schemaData) => {
-    expect(schemaData).toHaveLength(3)
-    expect(schemaData).toMatchSnapshot()
+  connector.setConnectionData('test/1234', 'schema-test')
+  connector.getSchema((schema) => {
+    expect(schema).toHaveLength(3)
+    expect(schema).toMatchSnapshot()
+
+    done()
+  })
+})
+
+it('Formats the schema correctly for a SPARQL query', (done) => {
+  axios.__setMockResponse(sparqlSchemaData)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test', 'EXAMPL SPARQL QUERY', 'sparql')
+  connector.getSchema((schema) => {
+    expect(schema).toHaveLength(1)
+    expect(schema[0].columns).toHaveLength(6)
+    expect(schema).toMatchSnapshot()
+
+    done()
+  })
+})
+
+it('Formats the schema correctly for a SQL query', (done) => {
+  axios.__setMockResponse(sqlSchemaData)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test', 'SELECT * FROM TEST', 'sql')
+  connector.getSchema((schema) => {
+    expect(schema).toHaveLength(1)
+    expect(schema[0].columns).toHaveLength(3)
+    expect(schema).toMatchSnapshot()
 
     done()
   })

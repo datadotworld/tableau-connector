@@ -38,12 +38,22 @@ exports[`test renders form 1`] = `
             Copy and paste the dataset URL here
           </span>
         </div>
-        <button
-          className="center-block btn btn-primary"
-          disabled={false}
-          type="submit">
-          Get Dataset
-        </button>
+        <div
+          className="buttonBar center-block">
+          <button
+            className="btn btn-primary"
+            disabled={false}
+            type="submit">
+            Get Dataset
+          </button>
+          <button
+            className="btn btn-primary"
+            disabled={false}
+            onClick={[Function]}
+            type="button">
+            Query Dataset
+          </button>
+        </div>
         <div
           className="footer">
           <a
@@ -99,12 +109,248 @@ exports[`test renders form with default values 1`] = `
             Copy and paste the dataset URL here
           </span>
         </div>
-        <button
-          className="center-block btn btn-primary"
-          disabled={false}
-          type="submit">
-          Get Dataset
-        </button>
+        <div
+          className="buttonBar center-block">
+          <button
+            className="btn btn-primary"
+            disabled={false}
+            type="submit">
+            Get Dataset
+          </button>
+          <button
+            className="btn btn-primary"
+            disabled={false}
+            onClick={[Function]}
+            type="button">
+            Query Dataset
+          </button>
+        </div>
+        <div
+          className="footer">
+          <a
+            href="https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector"
+            onClick={[Function]}
+            target="_blank">
+            Learn more about the data.world connector
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test renders form with query input, sparql selected 1`] = `
+<div
+  className="main container">
+  <div
+    className="center-block row">
+    <div
+      className="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
+      <img
+        alt="data.world sparkle logo"
+        className="center-block"
+        src="new-sparkle-logo.png" />
+      <form
+        onSubmit={[Function]}>
+        <h2
+          className="header">
+          Add a data source from data.world
+        </h2>
+        <div
+          className="form-group has-success">
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            Dataset
+          </label>
+          <span
+            className="input-group">
+            <input
+              autoFocus={true}
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              placeholder="http://data.world/jonloyens/an-intro-to-dataworld-dataset"
+              type="text"
+              value="https://data.world/test/test" />
+          </span>
+          <span
+            className="help-block">
+            Copy and paste the dataset URL here
+          </span>
+        </div>
+        <div
+          className="buttonBar center-block">
+          <button
+            className="btn btn-primary"
+            disabled={false}
+            type="submit">
+            Get Dataset
+          </button>
+          <button
+            className="btn btn-primary"
+            disabled={false}
+            onClick={[Function]}
+            type="button">
+            Query Dataset
+          </button>
+        </div>
+        <div
+          className="form-group">
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            Query Type
+          </label>
+          <span
+            className="input-group">
+            <select
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              placeholder="Select"
+              type={undefined}
+              value="sparql">
+              <option
+                value="sql">
+                SQL
+              </option>
+              <option
+                value="sparql">
+                SPARQL
+              </option>
+            </select>
+          </span>
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            Query
+          </label>
+          <span
+            className="input-group">
+            <textarea
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              placeholder="SELECT * FROM TABLE_NAME"
+              type={undefined}
+              value="example sparql query" />
+          </span>
+        </div>
+        <div
+          className="footer">
+          <a
+            href="https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector"
+            onClick={[Function]}
+            target="_blank">
+            Learn more about the data.world connector
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test renders form with query input, sql selected 1`] = `
+<div
+  className="main container">
+  <div
+    className="center-block row">
+    <div
+      className="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
+      <img
+        alt="data.world sparkle logo"
+        className="center-block"
+        src="new-sparkle-logo.png" />
+      <form
+        onSubmit={[Function]}>
+        <h2
+          className="header">
+          Add a data source from data.world
+        </h2>
+        <div
+          className="form-group has-success">
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            Dataset
+          </label>
+          <span
+            className="input-group">
+            <input
+              autoFocus={true}
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              placeholder="http://data.world/jonloyens/an-intro-to-dataworld-dataset"
+              type="text"
+              value="https://data.world/test/test" />
+          </span>
+          <span
+            className="help-block">
+            Copy and paste the dataset URL here
+          </span>
+        </div>
+        <div
+          className="buttonBar center-block">
+          <button
+            className="btn btn-primary"
+            disabled={false}
+            type="submit">
+            Get Dataset
+          </button>
+          <button
+            className="btn btn-primary"
+            disabled={false}
+            onClick={[Function]}
+            type="button">
+            Query Dataset
+          </button>
+        </div>
+        <div
+          className="form-group">
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            Query Type
+          </label>
+          <span
+            className="input-group">
+            <select
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              placeholder="Select"
+              type={undefined}
+              value="sql">
+              <option
+                value="sql">
+                SQL
+              </option>
+              <option
+                value="sparql">
+                SPARQL
+              </option>
+            </select>
+          </span>
+          <label
+            className="control-label"
+            htmlFor={undefined}>
+            Query
+          </label>
+          <span
+            className="input-group">
+            <textarea
+              className="form-control"
+              id={undefined}
+              onChange={[Function]}
+              placeholder="SELECT * FROM TABLE_NAME"
+              type={undefined}
+              value="example sql query" />
+          </span>
+        </div>
         <div
           className="footer">
           <a

@@ -17,3 +17,11 @@ it('renders form', () => {
 it('renders form with default values', () => {
   expect(renderer.create(<TableauConnectorForm dataset='https://data.world/test/test' apiKey='testtest-testtest'/>).toJSON()).toMatchSnapshot()
 })
+
+it('renders form with query input, sql selected', () => {
+  expect(renderer.create(<TableauConnectorForm dataset='https://data.world/test/test' apiKey='testtest-testtest' query='example sql query' queryType='sql'/>).toJSON()).toMatchSnapshot()
+})
+
+it('renders form with query input, sparql selected', () => {
+  expect(renderer.create(<TableauConnectorForm dataset='https://data.world/test/test' apiKey='testtest-testtest' query='example sparql query' queryType='sparql'/>).toJSON()).toMatchSnapshot()
+})

@@ -23,14 +23,20 @@ class TableauConnectorForm extends Component {
     connector: PropTypes.any,
     dataset: PropTypes.string,
     apiKey: PropTypes.string,
+    query: PropTypes.string,
+    queryType: PropTypes.string,
     clearApiKey: PropTypes.func,
-    clearDataset: PropTypes.func
+    clearStoredData: PropTypes.func
   }
 
   state = {
     dataset: this.props.dataset || '',
     apiToken: this.props.apiKey || '',
-    isSubmitting: false
+    query: this.props.query || '',
+    queryType: this.props.queryType || 'sql',
+    writingQuery: !!this.props.query,
+    isSubmitting: false,
+    errorMessage: ''
   }
 
   componentDidMount = () => {
@@ -41,9 +47,17 @@ class TableauConnectorForm extends Component {
 
   datasetChanged = (e) => {
     const dataset = e.target.value.toLowerCase()
-    this.setState({
-      dataset
-    })
+    this.setState({ dataset })
+  }
+
+  queryChanged = (e) => {
+    const query = e.target.value
+    this.setState({ query })
+  }
+
+  queryTypeChanged = (e) => {
+    const queryType = e.target.value
+    this.setState({ queryType })
   }
 
   isDatasetValid = () => {
@@ -65,7 +79,7 @@ class TableauConnectorForm extends Component {
       this.props.connector.setConnectionData(this.state.dataset.match(datasetRegex)[1], this.state.apiToken)
       this.props.connector.verify().then(() => {
         this.props.connector.submit()
-        this.props.clearDataset();
+        this.props.clearStoredData();
       }).catch((error) => {
         if (error.response && error.response.status === 401) {
           return this.props.clearApiKey()
@@ -78,12 +92,47 @@ class TableauConnectorForm extends Component {
     }
   }
 
+  onQuery = (e) => {
+    analytics.track('tableauconnector.form.query.click')
+    if (!this.state.query && !this.state.writingQuery) {
+      return this.setState({
+        writingQuery: true
+      })
+    }
+
+    if (!this.isDatasetValid() || !this.state.query) {
+      this.setState({
+        isError: true
+      })
+    } else {
+      this.setState({
+        isSubmitting: true,
+        isError: false
+      })
+      this.props.connector.setConnectionData(this.state.dataset.match(datasetRegex)[1], this.state.apiToken, this.state.query, this.state.queryType)
+      this.props.connector.verify().then(() => {
+        this.props.connector.submit()
+        this.props.clearStoredData();
+      }).catch((error) => {
+        if (error.response && error.response.status === 401) {
+          return this.props.clearApiKey()
+        } else {
+          this.setState({
+            isSubmitting: false,
+            isError: true,
+            errorMessage: error.response && error.response.data
+          })
+        }
+      })
+    }
+  }
+
   supportLinkClick = () => {
     analytics.track('tableauconnector.form.support.click')
   }
 
   render () {
-    const { dataset, isSubmitting, isError } = this.state
+    const { dataset, isSubmitting, isError, writingQuery, errorMessage } = this.state
 
     let datasetValidState
 
@@ -100,7 +149,8 @@ class TableauConnectorForm extends Component {
               <h2 className='header'>Add a data source from data.world</h2>
               {isError && <Alert bsStyle='danger'>
                 <strong>
-                  All fields are required.
+                  {!errorMessage && <span>All fields are required.</span>}
+                  {errorMessage && <span>{errorMessage}</span>}
                 </strong>
               </Alert>}
               <FormGroup validationState={datasetValidState}>
@@ -114,12 +164,38 @@ class TableauConnectorForm extends Component {
                     placeholder='http://data.world/jonloyens/an-intro-to-dataworld-dataset' />
                 </InputGroup>
                 <HelpBlock>Copy and paste the dataset URL here</HelpBlock>
-              </FormGroup>              
-              <Button
-                type='submit'
-                className='center-block'
-                disabled={isSubmitting}
-                bsStyle='primary'>Get Dataset</Button>
+              </FormGroup>
+              <div className='buttonBar center-block'>
+                <Button
+                  type='submit'
+                  disabled={isSubmitting}
+                  bsStyle='primary'>Get Dataset</Button>
+                <Button
+                  disabled={isSubmitting}
+                  onClick={this.onQuery}
+                  bsStyle='primary'>Query Dataset</Button>
+              </div>
+              {writingQuery && <FormGroup>
+                <ControlLabel>Query Type</ControlLabel>
+                <InputGroup>
+                  <FormControl 
+                    value={this.state.queryType} 
+                    onChange={this.queryTypeChanged}
+                    componentClass='select' 
+                    placeholder='Select'>
+                    <option value='sql'>SQL</option>
+                    <option value='sparql'>SPARQL</option>
+                  </FormControl>
+                </InputGroup>
+                <ControlLabel>Query</ControlLabel>
+                <InputGroup>
+                  <FormControl
+                    onChange={this.queryChanged}
+                    value={this.state.query}
+                    componentClass='textarea'
+                    placeholder='SELECT * FROM TABLE_NAME' />
+                </InputGroup>
+              </FormGroup>}
               <div className='footer'>
                 <a href='https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
               </div>

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import queryString from 'query-string'
 
 const tableau = window.tableau
 
@@ -34,13 +35,33 @@ export default class TableauConnector {
     this.connector.getSchema = this.getSchema
     this.connector.getData = this.getData
     this.submit = tableau.submit
+    axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
     tableau.registerConnector(this.connector)
   }
 
-  getApiEndpoint = (queryTable) => {
+  getQuery = (tableName) => {
     const datasetCreds = JSON.parse(tableau.connectionData)
-    const urlEncodedQuery = encodeURIComponent(`SELECT * FROM \`${queryTable}\``)
-    return `https://query.data.world/sql/${datasetCreds.dataset}?authentication=Bearer+${datasetCreds.apiToken}&query=${urlEncodedQuery}`
+    let { query } = datasetCreds
+    if (!query) {
+      query = `SELECT * FROM \`${tableName}\``
+    }
+    return query
+  }
+
+  isCustomQuery = () => {
+    const datasetCreds = JSON.parse(tableau.connectionData)
+    return !!datasetCreds.query
+  }
+
+  isSparqlQuery = () => {
+    const datasetCreds = JSON.parse(tableau.connectionData)
+    return datasetCreds.queryType && datasetCreds.queryType.toLowerCase() === 'sparql'
+  }
+
+  getApiEndpoint = () => {
+    const datasetCreds = JSON.parse(tableau.connectionData)
+    axios.defaults.headers.common['Authorization'] = `Bearer ${datasetCreds.apiToken}`
+    return `https://query.data.world/${datasetCreds.queryType || 'sql'}/${datasetCreds.dataset}`
   }
 
   getDatatype = (datatype) => {
@@ -55,50 +76,105 @@ export default class TableauConnector {
    * Used to verify that the dataset exists and the API key works
    */
   verify = () => {
-    return axios.get(this.getApiEndpoint(queryTable))
+    let query = this.getQuery(queryTable)
+    return axios.post(this.getApiEndpoint(), queryString.stringify({query}))
+  }
+
+  getSchemaForDataset = (resp) => {
+    const datasetTablesResults = resp.data.results.bindings
+    const metadata = resp.data.metadata
+    const datasetTables = []
+
+    const metadataMap = {}
+
+    metadata.forEach((m, index) => {
+      metadataMap[m.name] = resp.data.head.vars[index]
+    })
+    const {columnIndex, columnDatatype, columnName, tableId} = metadataMap
+
+    for (let i = 0; i < datasetTablesResults.length; i += 1) {
+      if (datasetTablesResults[i][columnIndex].value === '1') {
+        const activeTable = datasetTablesResults[i][tableId].value
+        const datasetCols = []
+
+        for (let j = 0, len = datasetTablesResults.length; j < len; j += 1) {
+          if (datasetTablesResults[j][tableId].value === activeTable) {
+            const columnId = 'v_' + (parseInt(datasetTablesResults[j][columnIndex].value, 10) - 1)
+            datasetCols.push({
+              id: columnId,
+              alias: datasetTablesResults[j][columnName].value,
+              dataType: this.getDatatype(datasetTablesResults[j][columnDatatype].value)
+            })
+          }
+        }
+
+        const datasetTableId = activeTable.replace(/[^A-Z0-9]/ig, '')
+        const datasetTable = {
+          id: datasetTableId,
+          alias: activeTable,
+          columns: datasetCols
+        }
+
+        datasetTables.push(datasetTable)
+      }
+    }
+    return datasetTables
+  }
+
+  getSchemaForSqlQuery = (resp) => {
+    const metadata = resp.data.metadata
+    const datasetTables = []
+
+    const columns = []
+
+    metadata.forEach((m, index) => {
+      columns.push({
+        id: resp.data.head.vars[index],
+        alias: m.name,
+        dataType: this.getDatatype(m.type)
+      })
+    })
+
+    datasetTables.push({
+      columns,
+      id: 'QueryTable',
+      alias: 'Query Results'
+    })
+
+    return datasetTables
+  }
+
+  getSchemaForSparqlQuery = (resp) => {
+    const datasetTables = []
+    const columns = resp.data.head.vars.map((entry) => {
+      return {
+        id: entry,
+        alias: entry,
+        dataType: tableau.dataTypeEnum.string
+      }
+    })
+
+    datasetTables.push({
+      columns,
+      id: 'QueryTable',
+      alias: 'Query Results'
+    })
+
+    return datasetTables
   }
 
   getSchema = (callback) => {
-    axios.get(this.getApiEndpoint(queryTable)).then((resp) => {
-      const datasetTablesResults = resp.data.results.bindings
-      const metadata = resp.data.metadata
-      const datasetTables = []
-
-      const metadataMap = {}
-
-      metadata.forEach((m, index) => {
-        metadataMap[m.name] = resp.data.head.vars[index]
-      })
-      const {columnIndex, columnDatatype, columnName, tableId} = metadataMap
-
-      for (let i = 0; i < datasetTablesResults.length; i += 1) {
-        if (datasetTablesResults[i][columnIndex].value === '1') {
-          const activeTable = datasetTablesResults[i][tableId].value
-          const datasetCols = []
-
-          for (let j = 0, len = datasetTablesResults.length; j < len; j += 1) {
-            if (datasetTablesResults[j][tableId].value === activeTable) {
-              const columnId = 'v_' + (parseInt(datasetTablesResults[j][columnIndex].value, 10) - 1)
-              datasetCols.push({
-                id: columnId,
-                alias: datasetTablesResults[j][columnName].value,
-                dataType: this.getDatatype(datasetTablesResults[j][columnDatatype].value)
-              })
-            }
-          }
-
-          const datasetTableId = activeTable.replace(/[^A-Z0-9]/ig, '')
-          const datasetTable = {
-            id: datasetTableId,
-            alias: activeTable,
-            columns: datasetCols
-          }
-
-          datasetTables.push(datasetTable)
+    let query = this.getQuery(queryTable)
+    axios.post(this.getApiEndpoint(), queryString.stringify({query})).then((resp) => {
+      if (this.isCustomQuery()) {
+        if (this.isSparqlQuery()) {
+          callback(this.getSchemaForSparqlQuery(resp))
+        } else {
+          callback(this.getSchemaForSqlQuery(resp))
         }
+      } else {
+        callback(this.getSchemaForDataset(resp))
       }
-
-      callback(datasetTables)
     }).catch((error) => {
       tableau.log(error)
       tableau.log('There was an error retrieving the schema')
@@ -107,9 +183,10 @@ export default class TableauConnector {
   }
 
   getData = (table, callback) => {
-    const filesApiCall = this.getApiEndpoint(table.tableInfo.alias)
+    let query = this.getQuery(table.tableInfo.alias)
+    const filesApiCall = this.getApiEndpoint()
 
-    axios.get(filesApiCall).then((resp) => {
+    axios.post(filesApiCall, queryString.stringify({query})).then((resp) => {
       const results = resp.data.results.bindings
       const columnIds = resp.data.head.vars
       const tableData = []
@@ -140,8 +217,8 @@ export default class TableauConnector {
     })
   }
 
-  setConnectionData = (dataset, apiToken) => {
-    tableau.connectionData = JSON.stringify({dataset, apiToken})
+  setConnectionData = (dataset, apiToken, query, queryType) => {
+    tableau.connectionData = JSON.stringify({dataset, apiToken, query, queryType})
     tableau.connectionName = dataset
   }
 }

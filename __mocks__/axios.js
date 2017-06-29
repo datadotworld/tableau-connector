@@ -6,7 +6,7 @@ const __setMockResponse = (responseData) => {
   mockResponse.data = responseData
 }
 
-const get = () => {
+const post = () => {
   return new Promise(function (resolve) {
     resolve(mockResponse)
   })
@@ -14,5 +14,11 @@ const get = () => {
 
 export default {
   __setMockResponse,
-  get
+  post,
+  defaults: {
+    headers: {
+      common: {},
+      post: {}
+    }
+  }
 }
