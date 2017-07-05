@@ -67,40 +67,39 @@ class TableauConnectorForm extends Component {
   onSubmit = (e) => {
     analytics.track('tableauconnector.form.submit')
     e.preventDefault()
+
     if (!this.isDatasetValid()) {
-      this.setState({
+      return this.setState({
         isError: true
       })
-    } else {
-      this.setState({
-        isSubmitting: true,
-        isError: false
-      })
-      this.props.connector.setConnectionData(this.state.dataset.match(datasetRegex)[1], this.state.apiToken)
-      this.props.connector.verify().then(() => {
-        this.props.connector.submit()
-        this.props.clearStoredData();
-      }).catch((error) => {
-        if (error.response && error.response.status === 401) {
-          return this.props.clearApiKey()
-        }
-        this.setState({
-          isSubmitting: false,
-          isError: true
-        })
-      })
     }
+
+    if (this.state.query) {
+      return this.onQuery(e)
+    }
+
+    this.setState({
+      isSubmitting: true,
+      isError: false
+    })
+    this.props.connector.setConnectionData(this.state.dataset.match(datasetRegex)[1], this.state.apiToken)
+    this.props.connector.verify().then(() => {
+      this.props.connector.submit()
+      this.props.clearStoredData();
+    }).catch((error) => {
+      if (error.response && error.response.status === 401) {
+        return this.props.clearApiKey()
+      }
+      this.setState({
+        isSubmitting: false,
+        isError: true,
+        errorMessage: error.response && error.response.data
+      })
+    })
   }
 
   onQuery = (e) => {
-    analytics.track('tableauconnector.form.query.click')
-    if (!this.state.query && !this.state.writingQuery) {
-      return this.setState({
-        writingQuery: true
-      })
-    }
-
-    if (!this.isDatasetValid() || !this.state.query) {
+    if (!this.state.query) {
       this.setState({
         isError: true
       })
@@ -141,12 +140,12 @@ class TableauConnectorForm extends Component {
     }
 
     return (
-      <Grid className='main'>
+      <Grid className={writingQuery ? 'query main' : 'main'}>
         <Row className='center-block'>
           <Col md={6} mdOffset={3} xs={10} xsOffset={1}>
-            <img src={sparkle} className='center-block' alt='data.world sparkle logo' />
+            <img src={sparkle} className='header-image' alt='data.world sparkle logo' />
+            <h2 className='header'>Add a data source from data.world</h2>
             <form onSubmit={this.onSubmit}>
-              <h2 className='header'>Add a data source from data.world</h2>
               {isError && <Alert bsStyle='danger'>
                 <strong>
                   {!errorMessage && <span>All fields are required.</span>}
@@ -163,19 +162,11 @@ class TableauConnectorForm extends Component {
                     type='text'
                     placeholder='http://data.world/jonloyens/an-intro-to-dataworld-dataset' />
                 </InputGroup>
-                <HelpBlock>Copy and paste the dataset URL here</HelpBlock>
+                {datasetValidState === 'warning' && <HelpBlock>A valid dataset URL is required: https://data.world/jonloyens/an-intro-to-dataworld-dataset</HelpBlock>}
+                {datasetValidState === 'success' && <HelpBlock>Dataset URL valid</HelpBlock>}
+                {!datasetValidState && <HelpBlock>Copy and paste the dataset URL here</HelpBlock>}
               </FormGroup>
-              <div className='buttonBar center-block'>
-                <Button
-                  type='submit'
-                  disabled={isSubmitting}
-                  bsStyle='primary'>Get Dataset</Button>
-                <Button
-                  disabled={isSubmitting}
-                  onClick={this.onQuery}
-                  bsStyle='primary'>Query Dataset</Button>
-              </div>
-              {writingQuery && <FormGroup>
+              {writingQuery && <div><FormGroup>
                 <ControlLabel>Query Type</ControlLabel>
                 <InputGroup>
                   <FormControl 
@@ -187,15 +178,22 @@ class TableauConnectorForm extends Component {
                     <option value='sparql'>SPARQL</option>
                   </FormControl>
                 </InputGroup>
-                <ControlLabel>Query</ControlLabel>
-                <InputGroup>
-                  <FormControl
-                    onChange={this.queryChanged}
-                    value={this.state.query}
-                    componentClass='textarea'
-                    placeholder='SELECT * FROM TABLE_NAME' />
-                </InputGroup>
-              </FormGroup>}
+                </FormGroup>
+                <FormGroup>
+                  <ControlLabel>Query</ControlLabel>
+                  <InputGroup>
+                    <FormControl
+                      onChange={this.queryChanged}
+                      value={this.state.query}
+                      componentClass='textarea'
+                      placeholder='SELECT * FROM TABLE_NAME' />
+                  </InputGroup>
+                </FormGroup></div>}
+              <Button
+                className='center-block'
+                type='submit'
+                disabled={isSubmitting || datasetValidState !== 'success'}
+                bsStyle='primary'>Submit</Button>
               <div className='footer'>
                 <a href='https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
               </div>
