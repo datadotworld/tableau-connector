@@ -1,4 +1,71 @@
-exports[`test Formats the schema correctly 1`] = `
+exports[`test Formats the schema correctly for a SPARQL query 1`] = `
+Array [
+  Object {
+    "alias": "Query Results",
+    "columns": Array [
+      Object {
+        "alias": "name",
+        "dataType": "string",
+        "id": "name",
+      },
+      Object {
+        "alias": "height",
+        "dataType": "string",
+        "id": "height",
+      },
+      Object {
+        "alias": "heightInInches",
+        "dataType": "string",
+        "id": "heightInInches",
+      },
+      Object {
+        "alias": "hand",
+        "dataType": "string",
+        "id": "hand",
+      },
+      Object {
+        "alias": "ppg",
+        "dataType": "string",
+        "id": "ppg",
+      },
+      Object {
+        "alias": "apg",
+        "dataType": "string",
+        "id": "apg",
+      },
+    ],
+    "id": "QueryTable",
+  },
+]
+`;
+
+exports[`test Formats the schema correctly for a SQL query 1`] = `
+Array [
+  Object {
+    "alias": "Query Results",
+    "columns": Array [
+      Object {
+        "alias": "name",
+        "dataType": "string",
+        "id": "v_0",
+      },
+      Object {
+        "alias": "pointspergame",
+        "dataType": "float",
+        "id": "v_1",
+      },
+      Object {
+        "alias": "assistspergame",
+        "dataType": "float",
+        "id": "v_2",
+      },
+    ],
+    "id": "QueryTable",
+  },
+]
+`;
+
+exports[`test Formats the schema correctly for a non-query 1`] = `
 Array [
   Object {
     "alias": "AnIntrotodata.worldDatasetChangeLog-Sheet1.csv/AnIntrotodata.worldDatasetChangeLog-Sheet1",
