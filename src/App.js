@@ -23,6 +23,7 @@ class App extends Component {
     }
 
     if (query) {
+      queryType = queryType ? queryType.toLowerCase() : 'sql'
       this.storeQuery(query, queryType)
     } else {
       ({query, queryType} = this.getQuery())
