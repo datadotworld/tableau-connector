@@ -15,7 +15,13 @@ class App extends Component {
     this.oauthRedirectURI = process.env.REACT_APP_OAUTH_REDIRECT_URI
 
     this.parsedQueryString = queryString.parse(location.search)
-    let { dataset_name, query, queryType } = this.parsedQueryString
+    let { dataset_name, query, queryType, token } = this.parsedQueryString
+
+    if (!token) {
+      // Only use stored data if returning from auth
+      this.clearStoredData();
+    }
+
     if (dataset_name) {
       this.storeDataset(dataset_name)
     } else {
