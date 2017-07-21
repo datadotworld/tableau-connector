@@ -100,3 +100,9 @@ it('formats the table correctly', (done) => {
     done()
   })
 })
+
+it('formats the request for a project dataset correctly', () => {
+  const connector = new TableauConnector();
+  connector.setConnectionData('test/1234', 'sql-schema-test')
+  expect(connector.getQuery('agentid.dataset.table')).toBe('SELECT * FROM `agentid`.`dataset`.`table`')
+})

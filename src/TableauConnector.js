@@ -43,6 +43,8 @@ export default class TableauConnector {
     const datasetCreds = JSON.parse(tableau.connectionData)
     let { query } = datasetCreds
     if (!query) {
+      // Projects need to have their agentid.dataset.tablename split and backticked
+      tableName = tableName.split('.').join('`.`')
       query = `SELECT * FROM \`${tableName}\``
     }
     return query
