@@ -169,10 +169,10 @@ class TableauConnectorForm extends Component {
               {writingQuery && <div><FormGroup>
                 <ControlLabel>Query Type</ControlLabel>
                 <InputGroup>
-                  <FormControl 
-                    value={this.state.queryType} 
+                  <FormControl
+                    value={this.state.queryType}
                     onChange={this.queryTypeChanged}
-                    componentClass='select' 
+                    componentClass='select'
                     placeholder='Select'>
                     <option value='sql'>SQL</option>
                     <option value='sparql'>SPARQL</option>
@@ -195,7 +195,7 @@ class TableauConnectorForm extends Component {
                 disabled={isSubmitting || datasetValidState !== 'success'}
                 bsStyle='primary'>Submit</Button>
               <div className='footer'>
-                <a href='https://help.data.world/support/solutions/articles/14000062187-tableau-data-world-data-connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
+                <a href='https://datadotworld.zendesk.com/hc/en-us/articles/115010298907-Tableau-Web-Data-Connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
               </div>
             </form>
           </Col>
