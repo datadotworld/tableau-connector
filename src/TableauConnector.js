@@ -55,6 +55,7 @@ export default class TableauConnector {
     this.connector.getData = this.getData
     this.submit = tableau.submit
     axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+    axios.defaults.headers.post['Accept'] = 'application/json';
     tableau.registerConnector(this.connector)
   }
 
