@@ -57,7 +57,22 @@ it('Returns default tableauschema type', () => {
   expect(connector.getDatatype('randommissingdatatype')).toBe('string')
 })
 
-it('Formats the schema correctly for a non-query', (done) => {
+it('Formats the schema correctly for a non-query, no version', (done) => {
+  axios.__setMockResponse(schemaData)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'schema-test')
+  const tempConnectionData = JSON.parse(tableau.connectionData)
+  tempConnectionData.version = null
+  tableau.connectionData = JSON.stringify(tempConnectionData)
+  connector.getSchema((schema) => {
+    expect(schema).toHaveLength(3)
+    expect(schema).toMatchSnapshot()
+
+    done()
+  })
+})
+
+it('Formats the schema correctly for a non-query, with version', (done) => {
   axios.__setMockResponse(schemaData)
   const connector = new TableauConnector()
   connector.setConnectionData('test/1234', 'schema-test')
