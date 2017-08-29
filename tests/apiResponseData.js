@@ -20,285 +20,160 @@
 export const schemaData = {
   "query_text": "SELECT * FROM `TableColumns`",
   "query_lang": "SQL",
-  "metadata": [
-    {
-      "agent": "tester",
-      "name": "tableId",
-      "type": "http://www.w3.org/2001/XMLSchema#string",
-      "dataset": "intro-data-set",
-      "table": "TableColumns"
-    },
-    {
-      "agent": "tester",
-      "name": "tableName",
-      "type": "http://www.w3.org/2001/XMLSchema#string",
-      "dataset": "intro-data-set",
-      "table": "TableColumns"
-    },
-    {
-      "agent": "tester",
-      "name": "columnIndex",
-      "type": "http://www.w3.org/2001/XMLSchema#string",
-      "dataset": "intro-data-set",
-      "table": "TableColumns"
-    },
-    {
-      "agent": "tester",
-      "name": "columnName",
-      "type": "http://www.w3.org/2001/XMLSchema#string",
-      "dataset": "intro-data-set",
-      "table": "TableColumns"
-    },
-    {
-      "agent": "tester",
-      "name": "columnDatatype",
-      "type": "http://www.w3.org/2001/XMLSchema#string",
-      "dataset": "intro-data-set",
-      "table": "TableColumns"
-    },
-    {
-      "agent": "tester",
-      "name": "columnNullable",
-      "type": "http://www.w3.org/2001/XMLSchema#string",
-      "dataset": "intro-data-set",
-      "table": "TableColumns"
-    }
-  ],
+
+  "metadata": [{
+    "agent": "tester",
+    "name": "tableId",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "tableName",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnIndex",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnName",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnTitle",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnDescription",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnDatatype",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnNullable",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "owner",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "dataset",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }],
   "head": {
-    "vars": [
-      "v_0",
-      "v_1",
-      "v_2",
-      "v_3",
-      "v_4",
-      "v_5"
-    ]
+    "vars": ["v_0", "v_1", "v_2", "v_3", "v_4", "v_5", "v_6", "v_7", "v_8", "v_9"]
   },
   "results": {
     "bindings": [
       {
-        "v_0": {
-          "type": "literal",
-          "value": "AnIntrotodata.worldDatasetChangeLog-Sheet1.csv/AnIntrotodata.worldDatasetChangeLog-Sheet1"
-        },
-        "v_1": {
-          "type": "literal",
-          "value": "AnIntrotodata.worldDatasetChangeLog-Sheet1"
-        },
-        "v_2": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-          "value": "1"
-        },
-        "v_3": {
-          "type": "literal",
-          "value": "Date"
-        },
-        "v_4": {
-          "type": "literal",
-          "value": "http://www.w3.org/2001/XMLSchema#date"
-        },
-        "v_5": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
-          "value": "false"
-        }
+        "v_0": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_1": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "1" },
+        "v_3": { "type": "literal", "value": "date" },
+        "v_4": { "type": "literal", "value": "Date" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#date" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
       },
       {
-        "v_0": {
-          "type": "literal",
-          "value": "AnIntrotodata.worldDatasetChangeLog-Sheet1.csv/AnIntrotodata.worldDatasetChangeLog-Sheet1"
-        },
-        "v_1": {
-          "type": "literal",
-          "value": "AnIntrotodata.worldDatasetChangeLog-Sheet1"
-        },
-        "v_2": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-          "value": "2"
-        },
-        "v_3": {
-          "type": "literal",
-          "value": "Change"
-        },
-        "v_4": {
-          "type": "literal",
-          "value": "http://www.w3.org/2001/XMLSchema#string"
-        },
-        "v_5": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
-          "value": "false"
-        }
+        "v_0": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_1": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "2" },
+        "v_3": { "type": "literal", "value": "change" },
+        "v_4": { "type": "literal", "value": "Change" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#string" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
       },
       {
-        "v_0": {
-          "type": "literal",
-          "value": "DataDotWorldBBallStats.csv/DataDotWorldBBallStats"
-        },
-        "v_1": {
-          "type": "literal",
-          "value": "DataDotWorldBBallStats"
-        },
-        "v_2": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-          "value": "1"
-        },
-        "v_3": {
-          "type": "literal",
-          "value": "Name"
-        },
-        "v_4": {
-          "type": "literal",
-          "value": "http://www.w3.org/2001/XMLSchema#string"
-        },
-        "v_5": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
-          "value": "false"
-        }
+        "v_0": { "type": "literal", "value": "datadotworldbballstats" },
+        "v_1": { "type": "literal", "value": "datadotworldbballstats" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "1" },
+        "v_3": { "type": "literal", "value": "name" },
+        "v_4": { "type": "literal", "value": "Name" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#string" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
       },
       {
-        "v_0": {
-          "type": "literal",
-          "value": "DataDotWorldBBallStats.csv/DataDotWorldBBallStats"
-        },
-        "v_1": {
-          "type": "literal",
-          "value": "DataDotWorldBBallStats"
-        },
-        "v_2": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-          "value": "2"
-        },
-        "v_3": {
-          "type": "literal",
-          "value": "PointsPerGame"
-        },
-        "v_4": {
-          "type": "literal",
-          "value": "http://www.w3.org/2001/XMLSchema#decimal"
-        },
-        "v_5": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
-          "value": "true"
-        }
+        "v_0": { "type": "literal", "value": "datadotworldbballstats" },
+        "v_1": { "type": "literal", "value": "datadotworldbballstats" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "2" },
+        "v_3": { "type": "literal", "value": "pointspergame" },
+        "v_4": { "type": "literal", "value": "PointsPerGame" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#decimal" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
       },
       {
-        "v_0": {
-          "type": "literal",
-          "value": "DataDotWorldBBallStats.csv/DataDotWorldBBallStats"
-        },
-        "v_1": {
-          "type": "literal",
-          "value": "DataDotWorldBBallStats"
-        },
-        "v_2": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-          "value": "3"
-        },
-        "v_3": {
-          "type": "literal",
-          "value": "AssistsPerGame"
-        },
-        "v_4": {
-          "type": "literal",
-          "value": "http://www.w3.org/2001/XMLSchema#decimal"
-        },
-        "v_5": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
-          "value": "true"
-        }
+        "v_0": { "type": "literal", "value": "datadotworldbballstats" },
+        "v_1": { "type": "literal", "value": "datadotworldbballstats" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "3" },
+        "v_3": { "type": "literal", "value": "assistspergame" },
+        "v_4": { "type": "literal", "value": "AssistsPerGame" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#decimal" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
       },
       {
-        "v_0": {
-          "type": "literal",
-          "value": "DataDotWorldBBallTeam.csv/DataDotWorldBBallTeam"
-        },
-        "v_1": {
-          "type": "literal",
-          "value": "DataDotWorldBBallTeam"
-        },
-        "v_2": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-          "value": "1"
-        },
-        "v_3": {
-          "type": "literal",
-          "value": "Name"
-        },
-        "v_4": {
-          "type": "literal",
-          "value": "http://www.w3.org/2001/XMLSchema#string"
-        },
-        "v_5": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
-          "value": "false"
-        }
+        "v_0": { "type": "literal", "value": "datadotworldbballteam" },
+        "v_1": { "type": "literal", "value": "datadotworldbballteam" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "1" },
+        "v_3": { "type": "literal", "value": "name" },
+        "v_4": { "type": "literal", "value": "Name" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#string" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
       },
       {
-        "v_0": {
-          "type": "literal",
-          "value": "DataDotWorldBBallTeam.csv/DataDotWorldBBallTeam"
-        },
-        "v_1": {
-          "type": "literal",
-          "value": "DataDotWorldBBallTeam"
-        },
-        "v_2": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-          "value": "2"
-        },
-        "v_3": {
-          "type": "literal",
-          "value": "Height"
-        },
-        "v_4": {
-          "type": "literal",
-          "value": "http://www.w3.org/2001/XMLSchema#string"
-        },
-        "v_5": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
-          "value": "true"
-        }
+        "v_0": { "type": "literal", "value": "datadotworldbballteam" },
+        "v_1": { "type": "literal", "value": "datadotworldbballteam" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "2" },
+        "v_3": { "type": "literal", "value": "height" },
+        "v_4": { "type": "literal", "value": "Height" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#string" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "true" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
       },
       {
-        "v_0": {
-          "type": "literal",
-          "value": "DataDotWorldBBallTeam.csv/DataDotWorldBBallTeam"
-        },
-        "v_1": {
-          "type": "literal",
-          "value": "DataDotWorldBBallTeam"
-        },
-        "v_2": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
-          "value": "3"
-        },
-        "v_3": {
-          "type": "literal",
-          "value": "Handedness"
-        },
-        "v_4": {
-          "type": "literal",
-          "value": "http://www.w3.org/2001/XMLSchema#string"
-        },
-        "v_5": {
-          "type": "literal",
-          "datatype": "http://www.w3.org/2001/XMLSchema#boolean",
-          "value": "false"
-        }
+        "v_0": { "type": "literal", "value": "datadotworldbballteam" },
+        "v_1": { "type": "literal", "value": "datadotworldbballteam" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "3" },
+        "v_3": { "type": "literal", "value": "handedness" },
+        "v_4": { "type": "literal", "value": "Handedness" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#string" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
       }
     ]
   }

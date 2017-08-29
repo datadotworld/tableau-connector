@@ -22,6 +22,8 @@ import queryString from 'query-string'
 
 const tableau = window.tableau
 
+const DW_CONNECTOR_VERSION = '1.0.1';
+
 const schemaMap = {
   'http://www.w3.org/2001/XMLSchema#boolean': tableau.dataTypeEnum.bool,
   'http://www.w3.org/2001/XMLSchema#integer': tableau.dataTypeEnum.int,
@@ -107,12 +109,14 @@ export default class TableauConnector {
     const metadata = resp.data.metadata
     const datasetTables = []
 
+    const datasetCreds = JSON.parse(tableau.connectionData)
+
     const metadataMap = {}
 
     metadata.forEach((m, index) => {
       metadataMap[m.name] = resp.data.head.vars[index]
     })
-    const {columnIndex, columnDatatype, columnName, tableId} = metadataMap
+    const {columnIndex, columnDatatype, columnName, columnTitle, tableId} = metadataMap
 
     for (let i = 0; i < datasetTablesResults.length; i += 1) {
       if (datasetTablesResults[i][columnIndex].value === '1') {
@@ -121,10 +125,14 @@ export default class TableauConnector {
 
         for (let j = 0, len = datasetTablesResults.length; j < len; j += 1) {
           if (datasetTablesResults[j][tableId].value === activeTable) {
-            const columnId = 'v_' + (parseInt(datasetTablesResults[j][columnIndex].value, 10) - 1)
+            let columnId = 'v_' + (parseInt(datasetTablesResults[j][columnIndex].value, 10) - 1)
+            if (datasetCreds.version) {
+              columnId = datasetTablesResults[j][columnName].value
+            }
+
             datasetCols.push({
               id: columnId,
-              alias: datasetTablesResults[j][columnName].value,
+              alias: datasetTablesResults[j][columnTitle].value,
               dataType: this.getDatatype(datasetTablesResults[j][columnDatatype].value)
             })
           }
@@ -240,7 +248,8 @@ export default class TableauConnector {
   }
 
   setConnectionData = (dataset, apiToken, query, queryType) => {
-    tableau.connectionData = JSON.stringify({dataset, apiToken, query, queryType})
+    tableau.log('setting connection data');
+    tableau.connectionData = JSON.stringify({dataset, apiToken, query, queryType, version: DW_CONNECTOR_VERSION})
     tableau.connectionName = dataset
   }
 }
