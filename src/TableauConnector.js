@@ -216,9 +216,17 @@ export default class TableauConnector {
     let query = this.getQuery(table.tableInfo.alias)
     const filesApiCall = this.getApiEndpoint()
 
+    const datasetCreds = JSON.parse(tableau.connectionData)
+
     axios.post(filesApiCall, queryString.stringify({query})).then((resp) => {
       const results = resp.data.results.bindings
-      const columnIds = resp.data.head.vars
+      const columnIds = resp.data.head.vars.map((key, index) => {
+        return {
+          id: key,
+          name: datasetCreds.version ? resp.data.metadata[index].name : key
+        }
+      })
+
       const tableData = []
 
       let i, j
@@ -226,12 +234,12 @@ export default class TableauConnector {
       for (i = 0; i < results.length; i += 1) {
         const jsonData = {}
         for (j = 0; j < columnIds.length; j += 1) {
-          const id = columnIds[j]
+          const {id, name} = columnIds[j]
           if (results[i][id]) {
-            if (results[i][columnIds[j]].datatype === 'http://www.w3.org/2001/XMLSchema#boolean') {
-              jsonData[id] = results[i][columnIds[j]].value === 'true'
+            if (results[i][id].datatype === 'http://www.w3.org/2001/XMLSchema#boolean') {
+              jsonData[name] = results[i][id].value === 'true'
             } else {
-              jsonData[id] = results[i][columnIds[j]].value
+              jsonData[name] = results[i][id].value
             }
           }
         }
