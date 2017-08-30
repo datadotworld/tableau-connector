@@ -110,9 +110,10 @@ it('Formats the schema correctly for a SQL query', (done) => {
   })
 })
 
-it('formats the table correctly', (done) => {
+it('formats the table correctly, no version', (done) => {
   axios.__setMockResponse(tableData)
   const connector = new TableauConnector()
+  tableau.connectionData = JSON.stringify({})
   const table = {
     tableInfo: {
       alias: 'test'
@@ -129,6 +130,32 @@ it('formats the table correctly', (done) => {
       {
         v_0: '2016-12-14',
         v_1: 'Test test'
+      }
+    ])
+    done()
+  })
+})
+
+it('formats the table correctly, with version', (done) => {
+  axios.__setMockResponse(tableData)
+  const connector = new TableauConnector()
+  tableau.connectionData = JSON.stringify({version: '1.1.1'})
+  const table = {
+    tableInfo: {
+      alias: 'test'
+    },
+    appendRows: jest.fn()
+  }
+  connector.getData(table, () => {
+    expect(table.appendRows.mock.calls.length).toBe(1)
+    expect(table.appendRows.mock.calls[0][0]).toEqual([
+      {
+        Date: '2016-12-14',
+        Change: 'Test test test'
+      },
+      {
+        Date: '2016-12-14',
+        Change: 'Test test'
       }
     ])
     done()
