@@ -163,7 +163,31 @@ it('formats the table correctly, with version', (done) => {
 })
 
 it('formats the request for a project dataset correctly', () => {
-  const connector = new TableauConnector();
+  const connector = new TableauConnector()
   connector.setConnectionData('test/1234', 'sql-schema-test')
   expect(connector.getQuery('agentid.dataset.table')).toBe('SELECT * FROM `agentid`.`dataset`.`table`')
+})
+
+it('formats the table correctly for a SPARQL query', (done) => {
+  axios.__setMockResponse(sparqlSchemaData)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test', 'test', 'SPARQL')
+  const table = {
+    tableInfo: {
+      alias: 'test'
+    },
+    appendRows: jest.fn()
+  }
+  connector.getData(table, () => {
+    expect(table.appendRows.mock.calls.length).toBe(1)
+    expect(table.appendRows.mock.calls[0][0][0]).toEqual({
+      name: 'Jon',
+      height: '6\'5"',
+      heightInInches: '77',
+      hand: 'Right',
+      ppg: '20.4',
+      apg: '1.3'
+    })
+    done();
+  })
 })
