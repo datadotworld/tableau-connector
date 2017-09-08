@@ -366,3 +366,184 @@ export const sqlSchemaData = {
     ]
   }
 }
+
+export const schemaWithInvalidColumnNameData = {
+  "query_text": "SELECT * FROM `TableColumns`",
+  "query_lang": "SQL",
+
+  "metadata": [{
+    "agent": "tester",
+    "name": "tableId",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "tableName",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnIndex",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnName",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnTitle",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnDescription",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnDatatype",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnNullable",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "owner",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "dataset",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }],
+  "head": {
+    "vars": ["v_0", "v_1", "v_2", "v_3", "v_4", "v_5", "v_6", "v_7", "v_8", "v_9"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "v_0": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_1": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "1" },
+        "v_3": { "type": "literal", "value": "invalid.column.name" },
+        "v_4": { "type": "literal", "value": "Date" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#date" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
+      }
+    ]
+  }
+}
+
+export const schemaDataProject = {
+  "query_text": "SELECT * FROM `TableColumns`",
+  "query_lang": "SQL",
+
+  "metadata": [{
+    "agent": "tester",
+    "name": "tableId",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "tableName",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnIndex",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnName",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnTitle",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnDescription",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnDatatype",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "columnNullable",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "owner",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }, {
+    "agent": "tester",
+    "name": "dataset",
+    "type": "http://www.w3.org/2001/XMLSchema#string",
+    "dataset": "intro-data-set",
+    "table": "TableColumns"
+  }],
+  "head": {
+    "vars": ["v_0", "v_1", "v_2", "v_3", "v_4", "v_5", "v_6", "v_7", "v_8", "v_9"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "v_0": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_1": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "1" },
+        "v_3": { "type": "literal", "value": "date" },
+        "v_4": { "type": "literal", "value": "Date" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#date" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester" },
+        "v_9": { "type": "literal", "value": "intro-data-set" }
+      },
+      {
+        "v_0": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_1": { "type": "literal", "value": "anintrotodata_worlddatasetchangelog_sheet1" },
+        "v_2": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#integer", "value": "1" },
+        "v_3": { "type": "literal", "value": "change" },
+        "v_4": { "type": "literal", "value": "Change" },
+        "v_6": { "type": "uri", "value": "http://www.w3.org/2001/XMLSchema#string" },
+        "v_7": { "type": "literal", "datatype": "http://www.w3.org/2001/XMLSchema#boolean", "value": "false" },
+        "v_8": { "type": "literal", "value": "tester2" },
+        "v_9": { "type": "literal", "value": "other-data-set" }
+      }
+    ]
+  }
+}

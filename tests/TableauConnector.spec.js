@@ -21,7 +21,14 @@ jest.mock('axios')
 
 import './util'
 import TableauConnector from '../src/TableauConnector'
-import {schemaData, sparqlSchemaData, sqlSchemaData, tableData} from './apiResponseData'
+import {
+  schemaData,
+  schemaDataProject,
+  schemaWithInvalidColumnNameData,
+  sparqlSchemaData,
+  sqlSchemaData,
+  tableData
+} from './apiResponseData'
 import axios from 'axios'
 
 it('Initializes the tableau connector correctly', () => {
@@ -78,6 +85,19 @@ it('Formats the schema correctly for a non-query, with version', (done) => {
   connector.setConnectionData('test/1234', 'schema-test')
   connector.getSchema((schema) => {
     expect(schema).toHaveLength(3)
+    expect(schema).toMatchSnapshot()
+
+    done()
+  })
+})
+
+
+it('Formats the schema correctly for a project', (done) => {
+  axios.__setMockResponse(schemaDataProject)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test')
+  connector.getSchema((schema) => {
+    expect(schema).toHaveLength(2)
     expect(schema).toMatchSnapshot()
 
     done()
@@ -189,5 +209,15 @@ it('formats the table correctly for a SPARQL query', (done) => {
       apg: '1.3'
     })
     done();
+  })
+})
+
+it('rejects invalid column names', (done) => {
+  axios.__setMockResponse(schemaWithInvalidColumnNameData)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test')
+  connector.verify().catch((error) => {
+    expect(error.message).toMatchSnapshot()
+    done()
   })
 })

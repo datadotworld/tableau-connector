@@ -61,6 +61,28 @@ export default class TableauConnector {
     tableau.registerConnector(this.connector)
   }
 
+  /**
+   * Valid names for Tableau can only include alphanumeric characters 
+   * plus underscore
+   */
+  isNameValid = (name) => {
+    return /^\w+$/.test(name)
+  }
+
+  escapeDashes = (name) => {
+    return name.replace(/-/g, '_')
+  }
+
+  isProject = (bindings, ownerKey, datasetKey) => {
+    const datasets = {}
+
+    bindings.forEach((binding) => {
+      const dataset = `${binding[ownerKey].value}/${binding[datasetKey].value}`
+      datasets[dataset] = true
+    })
+    return Object.keys(datasets).length > 1
+  }
+
   getQuery = (tableName) => {
     const datasetCreds = JSON.parse(tableau.connectionData)
     let { query } = datasetCreds
@@ -100,8 +122,20 @@ export default class TableauConnector {
    * Used to verify that the dataset exists and the API key works
    */
   verify = () => {
-    let query = this.getQuery(queryTable)
-    return axios.post(this.getApiEndpoint(), queryString.stringify({query}))
+    return new Promise((resolve, reject) => {
+      this.getSchema((schema) => {
+        if (schema && schema.length) {
+          // Validate column names
+          schema[0].columns.forEach((column) => {
+            if (!this.isNameValid(column.id)) {
+              reject({message: `"${column.id}" is not a valid column name. To work in Tableau, columns must contain only letters, numbers, or underscores. To fix this issue, make sure to modify your query and use alias to ensure all column names are valid.`})
+            }
+          })
+          resolve()
+        }
+        reject()
+      })
+    })
   }
 
   getSchemaForDataset = (resp) => {
@@ -116,7 +150,18 @@ export default class TableauConnector {
     metadata.forEach((m, index) => {
       metadataMap[m.name] = resp.data.head.vars[index]
     })
-    const {columnIndex, columnDatatype, columnName, columnTitle, tableId} = metadataMap
+    const {
+      columnIndex,
+      columnDatatype,
+      columnName,
+      columnTitle,
+      dataset,
+      owner,
+      tableId,
+      tableName
+    } = metadataMap
+
+    const isProject = this.isProject(datasetTablesResults, owner, dataset)
 
     for (let i = 0; i < datasetTablesResults.length; i += 1) {
       if (datasetTablesResults[i][columnIndex].value === '1') {
@@ -138,7 +183,13 @@ export default class TableauConnector {
           }
         }
 
-        const datasetTableId = activeTable.replace(/[^A-Z0-9]/ig, '')
+        let datasetTableId = datasetTablesResults[i][tableName].value
+        if (isProject) {
+          const tableOwner = this.escapeDashes(datasetTablesResults[i][owner].value)
+          const tableDataset = this.escapeDashes(datasetTablesResults[i][dataset].value)
+          const tableTableName = datasetTablesResults[i][tableName].value
+          datasetTableId = `${tableOwner}__${tableDataset}__${tableTableName}`
+        }
         const datasetTable = {
           id: datasetTableId,
           alias: activeTable,
