@@ -47,17 +47,17 @@ Array [
       Object {
         "alias": "name",
         "dataType": "string",
-        "id": "v_0",
+        "id": "name",
       },
       Object {
         "alias": "pointspergame",
         "dataType": "float",
-        "id": "v_1",
+        "id": "pointspergame",
       },
       Object {
         "alias": "assistspergame",
         "dataType": "float",
-        "id": "v_2",
+        "id": "assistspergame",
       },
     ],
     "id": "QueryTable",

@@ -153,13 +153,14 @@ export default class TableauConnector {
 
   getSchemaForSqlQuery = (resp) => {
     const metadata = resp.data.metadata
+    const datasetCreds = JSON.parse(tableau.connectionData)
     const datasetTables = []
 
     const columns = []
 
     metadata.forEach((m, index) => {
       columns.push({
-        id: resp.data.head.vars[index],
+        id: datasetCreds.version ? m.name : resp.data.head.vars[index],
         alias: m.name,
         dataType: this.getDatatype(m.type)
       })
@@ -223,7 +224,8 @@ export default class TableauConnector {
       const columnIds = resp.data.head.vars.map((key, index) => {
         return {
           id: key,
-          name: datasetCreds.version ? resp.data.metadata[index].name : key
+          // SPARQL queries do not return a metadata object here
+          name: (datasetCreds.version && resp.data.metadata) ? resp.data.metadata[index].name : key
         }
       })
 
