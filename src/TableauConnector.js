@@ -183,7 +183,7 @@ export default class TableauConnector {
           }
         }
 
-        let datasetTableId = activeTable
+        let datasetTableId = datasetTablesResults[i][tableName].value
         if (isProject) {
           const tableOwner = this.escapeDashes(datasetTablesResults[i][owner].value)
           const tableDataset = this.escapeDashes(datasetTablesResults[i][dataset].value)
