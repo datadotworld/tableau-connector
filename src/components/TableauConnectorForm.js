@@ -138,7 +138,7 @@ class TableauConnectorForm extends Component {
           this.setState({
             isSubmitting: false,
             isError: true,
-            errorMessage: error.response && error.response.data
+            errorMessage: error.message ? error.message : error.response && error.response.data
           })
         }
       })

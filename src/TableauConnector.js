@@ -61,6 +61,14 @@ export default class TableauConnector {
     tableau.registerConnector(this.connector)
   }
 
+  /**
+   * Valid names for Tableau can only include alphanumeric characters 
+   * plus underscore
+   */
+  isNameValid = (name) => {
+    return /^\w+$/.test(name)
+  }
+
   getQuery = (tableName) => {
     const datasetCreds = JSON.parse(tableau.connectionData)
     let { query } = datasetCreds
@@ -100,8 +108,20 @@ export default class TableauConnector {
    * Used to verify that the dataset exists and the API key works
    */
   verify = () => {
-    let query = this.getQuery(queryTable)
-    return axios.post(this.getApiEndpoint(), queryString.stringify({query}))
+    return new Promise((resolve, reject) => {
+      this.getSchema((schema) => {
+        if (schema && schema.length) {
+          // Validate column names
+          schema[0].columns.forEach((column) => {
+            if (!this.isNameValid(column.id)) {
+              reject({message: `"${column.id}" is not a valid column name. To work in Tableau, columns must contain only letters, numbers, or underscores. To fix this issue, make sure to modify your query and use alias to ensure all column names are valid.`})
+            }
+          })
+          resolve()
+        }
+        reject()
+      })
+    })
   }
 
   getSchemaForDataset = (resp) => {
@@ -138,9 +158,8 @@ export default class TableauConnector {
           }
         }
 
-        const datasetTableId = activeTable.replace(/[^A-Z0-9]/ig, '')
         const datasetTable = {
-          id: datasetTableId,
+          id: activeTable,
           alias: activeTable,
           columns: datasetCols
         }
