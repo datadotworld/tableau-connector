@@ -23,6 +23,7 @@ import './util'
 import TableauConnector from '../src/TableauConnector'
 import {
   schemaData,
+  schemaDataProject,
   schemaWithInvalidColumnNameData,
   sparqlSchemaData,
   sqlSchemaData,
@@ -84,6 +85,19 @@ it('Formats the schema correctly for a non-query, with version', (done) => {
   connector.setConnectionData('test/1234', 'schema-test')
   connector.getSchema((schema) => {
     expect(schema).toHaveLength(3)
+    expect(schema).toMatchSnapshot()
+
+    done()
+  })
+})
+
+
+it('Formats the schema correctly for a project', (done) => {
+  axios.__setMockResponse(schemaDataProject)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test')
+  connector.getSchema((schema) => {
+    expect(schema).toHaveLength(2)
     expect(schema).toMatchSnapshot()
 
     done()

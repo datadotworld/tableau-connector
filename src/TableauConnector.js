@@ -69,6 +69,20 @@ export default class TableauConnector {
     return /^\w+$/.test(name)
   }
 
+  escapeDashes = (name) => {
+    return name.replace(/-/g, '_')
+  }
+
+  isProject = (bindings, ownerKey, datasetKey) => {
+    const datasets = {}
+
+    bindings.forEach((binding) => {
+      const dataset = `${binding[ownerKey].value}/${binding[datasetKey].value}`
+      datasets[dataset] = true
+    })
+    return Object.keys(datasets).length > 1
+  }
+
   getQuery = (tableName) => {
     const datasetCreds = JSON.parse(tableau.connectionData)
     let { query } = datasetCreds
@@ -136,7 +150,18 @@ export default class TableauConnector {
     metadata.forEach((m, index) => {
       metadataMap[m.name] = resp.data.head.vars[index]
     })
-    const {columnIndex, columnDatatype, columnName, columnTitle, tableId} = metadataMap
+    const {
+      columnIndex,
+      columnDatatype,
+      columnName,
+      columnTitle,
+      dataset,
+      owner,
+      tableId,
+      tableName
+    } = metadataMap
+
+    const isProject = this.isProject(datasetTablesResults, owner, dataset)
 
     for (let i = 0; i < datasetTablesResults.length; i += 1) {
       if (datasetTablesResults[i][columnIndex].value === '1') {
@@ -158,8 +183,15 @@ export default class TableauConnector {
           }
         }
 
+        let datasetTableId = activeTable
+        if (isProject) {
+          const tableOwner = this.escapeDashes(datasetTablesResults[i][owner].value)
+          const tableDataset = this.escapeDashes(datasetTablesResults[i][dataset].value)
+          const tableTableName = datasetTablesResults[i][tableName].value
+          datasetTableId = `${tableOwner}__${tableDataset}__${tableTableName}`
+        }
         const datasetTable = {
-          id: activeTable,
+          id: datasetTableId,
           alias: activeTable,
           columns: datasetCols
         }
