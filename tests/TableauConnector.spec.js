@@ -221,3 +221,10 @@ it('rejects invalid column names', (done) => {
     done()
   })
 })
+
+it ('fails verification if getSchema call fails', (done) => {
+  axios.__rejectNext()
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test')
+  connector.verify().catch(done)
+})
