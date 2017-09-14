@@ -134,7 +134,7 @@ export default class TableauConnector {
           resolve()
         }
         reject()
-      })
+      }, reject)
     })
   }
 
@@ -245,7 +245,7 @@ export default class TableauConnector {
     return datasetTables
   }
 
-  getSchema = (callback) => {
+  getSchema = (callback, failureCallback) => {
     let query = this.getQuery(queryTable)
     axios.post(this.getApiEndpoint(), queryString.stringify({query})).then((resp) => {
       if (this.isCustomQuery()) {
@@ -258,9 +258,13 @@ export default class TableauConnector {
         callback(this.getSchemaForDataset(resp))
       }
     }).catch((error) => {
-      tableau.log(error)
-      tableau.log('There was an error retrieving the schema')
-      tableau.abortWithError(error)
+      if (failureCallback) {
+        failureCallback && failureCallback(error)
+      } else {
+        tableau.log(error)
+        tableau.log('There was an error retrieving the schema')
+        tableau.abortWithError(error)
+      }
     })
   }
 
