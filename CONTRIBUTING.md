@@ -3,13 +3,13 @@
 ## General
 
 * Contributions of all kinds (issues, ideas, proposals), not just code, are highly appreciated.
-* Pull requests are welcome with the understanding that major changes will be carefully evaluated 
+* Pull requests are welcome with the understanding that major changes will be carefully evaluated
 and discussed, and may not always be accepted. Starting with a discussion is always best!
 * All contributions including documentation, filenames and discussions should be written in English language.
 
 ## Issues
 
-Our [issue tracker](https://github.com/datadotworld/tableau-connector/issues) can be used to report 
+Our [issue tracker](https://github.com/datadotworld/tableau-connector/issues) can be used to report
 issues and propose changes to the current or next version of the data.world Web Data Connector.
 
 ## Contribute Code
@@ -17,7 +17,7 @@ issues and propose changes to the current or next version of the data.world Web 
 ### Review Relevant Docs
 
 * [Web Data Connector SDK](http://tableau.github.io/webdataconnector/)
-* [data.world API](https://docs.data.world/documentation/api)
+* [data.world API](https://apidocs.data.world/)
 
 ### Set up machine
 
@@ -58,7 +58,7 @@ git checkout -b my-feature-branch
 
 ### Write Tests
 
-Try to write a test that reproduces the problem you're trying to fix or describes a feature that 
+Try to write a test that reproduces the problem you're trying to fix or describes a feature that
 you want to build. Add tests to [tests](tests).
 
 We definitely appreciate pull requests that highlight or reproduce a problem, even without a fix.
@@ -97,8 +97,8 @@ git push origin my-feature-branch
 
 ### Make a Pull Request
 
-Go to <https://github.com/[YOUR_GITHUB_NAME]/tableau-connector> and select your feature branch. 
-Click the 'Pull Request' button and fill out the form. Pull requests are usually reviewed within 
+Go to <https://github.com/[YOUR_GITHUB_NAME]/tableau-connector> and select your feature branch.
+Click the 'Pull Request' button and fill out the form. Pull requests are usually reviewed within
 a few days.
 
 ## Thank you!
