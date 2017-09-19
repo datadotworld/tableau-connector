@@ -47,17 +47,17 @@ Array [
       Object {
         "alias": "name",
         "dataType": "string",
-        "id": "v_0",
+        "id": "name",
       },
       Object {
         "alias": "pointspergame",
         "dataType": "float",
-        "id": "v_1",
+        "id": "pointspergame",
       },
       Object {
         "alias": "assistspergame",
         "dataType": "float",
-        "id": "v_2",
+        "id": "assistspergame",
       },
     ],
     "id": "QueryTable",
@@ -65,10 +65,10 @@ Array [
 ]
 `;
 
-exports[`test Formats the schema correctly for a non-query 1`] = `
+exports[`test Formats the schema correctly for a non-query, no version 1`] = `
 Array [
   Object {
-    "alias": "AnIntrotodata.worldDatasetChangeLog-Sheet1.csv/AnIntrotodata.worldDatasetChangeLog-Sheet1",
+    "alias": "anintrotodata_worlddatasetchangelog_sheet1",
     "columns": Array [
       Object {
         "alias": "Date",
@@ -81,10 +81,10 @@ Array [
         "id": "v_1",
       },
     ],
-    "id": "AnIntrotodataworldDatasetChangeLogSheet1csvAnIntrotodataworldDatasetChangeLogSheet1",
+    "id": "anintrotodata_worlddatasetchangelog_sheet1",
   },
   Object {
-    "alias": "DataDotWorldBBallStats.csv/DataDotWorldBBallStats",
+    "alias": "datadotworldbballstats",
     "columns": Array [
       Object {
         "alias": "Name",
@@ -102,10 +102,10 @@ Array [
         "id": "v_2",
       },
     ],
-    "id": "DataDotWorldBBallStatscsvDataDotWorldBBallStats",
+    "id": "datadotworldbballstats",
   },
   Object {
-    "alias": "DataDotWorldBBallTeam.csv/DataDotWorldBBallTeam",
+    "alias": "datadotworldbballteam",
     "columns": Array [
       Object {
         "alias": "Name",
@@ -123,7 +123,109 @@ Array [
         "id": "v_2",
       },
     ],
-    "id": "DataDotWorldBBallTeamcsvDataDotWorldBBallTeam",
+    "id": "datadotworldbballteam",
   },
 ]
 `;
+
+exports[`test Formats the schema correctly for a non-query, with version 1`] = `
+Array [
+  Object {
+    "alias": "anintrotodata_worlddatasetchangelog_sheet1",
+    "columns": Array [
+      Object {
+        "alias": "Date",
+        "dataType": "date",
+        "id": "date",
+      },
+      Object {
+        "alias": "Change",
+        "dataType": "string",
+        "id": "change",
+      },
+    ],
+    "id": "anintrotodata_worlddatasetchangelog_sheet1",
+  },
+  Object {
+    "alias": "datadotworldbballstats",
+    "columns": Array [
+      Object {
+        "alias": "Name",
+        "dataType": "string",
+        "id": "name",
+      },
+      Object {
+        "alias": "PointsPerGame",
+        "dataType": "float",
+        "id": "pointspergame",
+      },
+      Object {
+        "alias": "AssistsPerGame",
+        "dataType": "float",
+        "id": "assistspergame",
+      },
+    ],
+    "id": "datadotworldbballstats",
+  },
+  Object {
+    "alias": "datadotworldbballteam",
+    "columns": Array [
+      Object {
+        "alias": "Name",
+        "dataType": "string",
+        "id": "name",
+      },
+      Object {
+        "alias": "Height",
+        "dataType": "string",
+        "id": "height",
+      },
+      Object {
+        "alias": "Handedness",
+        "dataType": "string",
+        "id": "handedness",
+      },
+    ],
+    "id": "datadotworldbballteam",
+  },
+]
+`;
+
+exports[`test Formats the schema correctly for a project 1`] = `
+Array [
+  Object {
+    "alias": "anintrotodata_worlddatasetchangelog_sheet1",
+    "columns": Array [
+      Object {
+        "alias": "Date",
+        "dataType": "date",
+        "id": "date",
+      },
+      Object {
+        "alias": "Change",
+        "dataType": "string",
+        "id": "change",
+      },
+    ],
+    "id": "tester__intro_data_set__anintrotodata_worlddatasetchangelog_sheet1",
+  },
+  Object {
+    "alias": "anintrotodata_worlddatasetchangelog_sheet1",
+    "columns": Array [
+      Object {
+        "alias": "Date",
+        "dataType": "date",
+        "id": "date",
+      },
+      Object {
+        "alias": "Change",
+        "dataType": "string",
+        "id": "change",
+      },
+    ],
+    "id": "tester2__other_data_set__anintrotodata_worlddatasetchangelog_sheet1",
+  },
+]
+`;
+
+exports[`test rejects invalid column names 1`] = `"\"invalid.column.name\" is not a valid column name. To work in Tableau, columns must contain only letters, numbers, or underscores. To fix this issue, make sure to modify your query and use alias to ensure all column names are valid."`;

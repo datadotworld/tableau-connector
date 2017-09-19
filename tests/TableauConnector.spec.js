@@ -21,7 +21,14 @@ jest.mock('axios')
 
 import './util'
 import TableauConnector from '../src/TableauConnector'
-import {schemaData, sparqlSchemaData, sqlSchemaData, tableData} from './apiResponseData'
+import {
+  schemaData,
+  schemaDataProject,
+  schemaWithInvalidColumnNameData,
+  sparqlSchemaData,
+  sqlSchemaData,
+  tableData
+} from './apiResponseData'
 import axios from 'axios'
 
 it('Initializes the tableau connector correctly', () => {
@@ -57,12 +64,40 @@ it('Returns default tableauschema type', () => {
   expect(connector.getDatatype('randommissingdatatype')).toBe('string')
 })
 
-it('Formats the schema correctly for a non-query', (done) => {
+it('Formats the schema correctly for a non-query, no version', (done) => {
+  axios.__setMockResponse(schemaData)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'schema-test')
+  const tempConnectionData = JSON.parse(tableau.connectionData)
+  tempConnectionData.version = null
+  tableau.connectionData = JSON.stringify(tempConnectionData)
+  connector.getSchema((schema) => {
+    expect(schema).toHaveLength(3)
+    expect(schema).toMatchSnapshot()
+
+    done()
+  })
+})
+
+it('Formats the schema correctly for a non-query, with version', (done) => {
   axios.__setMockResponse(schemaData)
   const connector = new TableauConnector()
   connector.setConnectionData('test/1234', 'schema-test')
   connector.getSchema((schema) => {
     expect(schema).toHaveLength(3)
+    expect(schema).toMatchSnapshot()
+
+    done()
+  })
+})
+
+
+it('Formats the schema correctly for a project', (done) => {
+  axios.__setMockResponse(schemaDataProject)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test')
+  connector.getSchema((schema) => {
+    expect(schema).toHaveLength(2)
     expect(schema).toMatchSnapshot()
 
     done()
@@ -95,9 +130,10 @@ it('Formats the schema correctly for a SQL query', (done) => {
   })
 })
 
-it('formats the table correctly', (done) => {
+it('formats the table correctly, no version', (done) => {
   axios.__setMockResponse(tableData)
   const connector = new TableauConnector()
+  tableau.connectionData = JSON.stringify({})
   const table = {
     tableInfo: {
       alias: 'test'
@@ -120,8 +156,75 @@ it('formats the table correctly', (done) => {
   })
 })
 
+it('formats the table correctly, with version', (done) => {
+  axios.__setMockResponse(tableData)
+  const connector = new TableauConnector()
+  tableau.connectionData = JSON.stringify({version: '1.1.1'})
+  const table = {
+    tableInfo: {
+      alias: 'test'
+    },
+    appendRows: jest.fn()
+  }
+  connector.getData(table, () => {
+    expect(table.appendRows.mock.calls.length).toBe(1)
+    expect(table.appendRows.mock.calls[0][0]).toEqual([
+      {
+        Date: '2016-12-14',
+        Change: 'Test test test'
+      },
+      {
+        Date: '2016-12-14',
+        Change: 'Test test'
+      }
+    ])
+    done()
+  })
+})
+
 it('formats the request for a project dataset correctly', () => {
-  const connector = new TableauConnector();
+  const connector = new TableauConnector()
   connector.setConnectionData('test/1234', 'sql-schema-test')
   expect(connector.getQuery('agentid.dataset.table')).toBe('SELECT * FROM `agentid`.`dataset`.`table`')
+})
+
+it('formats the table correctly for a SPARQL query', (done) => {
+  axios.__setMockResponse(sparqlSchemaData)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test', 'test', 'SPARQL')
+  const table = {
+    tableInfo: {
+      alias: 'test'
+    },
+    appendRows: jest.fn()
+  }
+  connector.getData(table, () => {
+    expect(table.appendRows.mock.calls.length).toBe(1)
+    expect(table.appendRows.mock.calls[0][0][0]).toEqual({
+      name: 'Jon',
+      height: '6\'5"',
+      heightInInches: '77',
+      hand: 'Right',
+      ppg: '20.4',
+      apg: '1.3'
+    })
+    done();
+  })
+})
+
+it('rejects invalid column names', (done) => {
+  axios.__setMockResponse(schemaWithInvalidColumnNameData)
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test')
+  connector.verify().catch((error) => {
+    expect(error.message).toMatchSnapshot()
+    done()
+  })
+})
+
+it ('fails verification if getSchema call fails', (done) => {
+  axios.__rejectNext()
+  const connector = new TableauConnector()
+  connector.setConnectionData('test/1234', 'sql-schema-test')
+  connector.verify().catch(done)
 })
