@@ -13,7 +13,7 @@ exports[`test renders form 1`] = `
       Open this page from Tableau version 10 or greater to connect a dataset.
     </p>
     <a
-      href="https://datadotworld.zendesk.com/hc/en-us/articles/115010298907-Tableau-Web-Data-Connector"
+      href="https://help.data.world/hc/en-us/articles/115010298907-Tableau-Web-Data-Connector"
       onClick={[Function]}
       target="_blank">
       Learn more about the data.world connector

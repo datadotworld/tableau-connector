@@ -214,7 +214,7 @@ class TableauConnectorForm extends Component {
                 disabled={isSubmitting || datasetValidState !== 'success'}
                 bsStyle='primary'>Submit</Button>
               <div className='footer'>
-                <a href='https://datadotworld.zendesk.com/hc/en-us/articles/115010298907-Tableau-Web-Data-Connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
+                <a href='https://help.data.world/hc/en-us/articles/115010298907-Tableau-Web-Data-Connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
               </div>
             </form>
           </Col>
