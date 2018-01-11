@@ -54,7 +54,9 @@ class App extends Component {
       ({query, queryType} = this.getQuery())
     }
 
-    this.isTableau = navigator.userAgent.toLowerCase().indexOf('tableau') >= 0 || this.parsedQueryString.forceTableau
+    // window.tableauVersionBootstrap is always defined in Tableau environments (desktop/server)
+    // parsedQueryString.forceTableau enables debugging on a browser
+    this.isTableau = window.tableauVersionBootstrap || this.parsedQueryString.forceTableau
     const apiKey = this.getApiKey()
 
     if (!apiKey && this.isTableau) {
