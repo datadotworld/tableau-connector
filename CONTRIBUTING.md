@@ -41,6 +41,18 @@ git remote add upstream https://github.com/datadotworld/tableau-connector.git
 
 Ensure that you can build the project and run tests.
 
+Install dependencies:
+
+```bash
+yarn
+```
+
+Run the app:
+
+```bash
+REACT_APP_OAUTH_REDIRECT_URI=https://dw-tableau-oauth.herokuapp.com/callback REACT_APP_OAUTH_CLIENT_ID=data-dot-world-tableau yarn start
+```
+
 Run tests:
 ```bash
 yarn test
