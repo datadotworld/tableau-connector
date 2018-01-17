@@ -92,10 +92,27 @@ http://localhost:8888/Simulator/?src=http://localhost:3000/?forceTableau=true
 
  * Click the `Start Interactive Phase` button.
 
-### Run tests
+### App Flow
+
+#### Verification
+
 ```bash
-yarn test
+// window.tableauVersionBootstrap is always defined in Tableau environments (desktop/server)
+// parsedQueryString.forceTableau enables debugging on a browser
+this.isTableau = window.tableauVersionBootstrap || this.parsedQueryString.forceTableau
 ```
+The connector is only meant to be run in Tableau environments i.e. Tableau Desktop or Tabelau Server. To run the app on a browser add a `forceTableau=true` to the app URLs
+
+#### Authentication
+
+The connector uses `data.world`'s [OAuth 2.0 flow](https://apidocs.data.world/v0/data-world-for-developers/oauth#web-applications)
+
+After determining the app is running in a Tableau environment the app redirects to `https://data.world/oauth/authorize` supplying the client id and redirect url provided when starting the app.
+
+
+The app is then redirected to `https://tableau.data.world/` with an access token provided as a query parameter.
+
+The token is stored in local storage for use in future API requests.
 
 ### Create a Feature Branch
 
@@ -113,6 +130,11 @@ Try to write a test that reproduces the problem you're trying to fix or describe
 you want to build. Add tests to [tests](tests).
 
 We definitely appreciate pull requests that highlight or reproduce a problem, even without a fix.
+
+### Run tests
+```bash
+yarn test
+```
 
 ### Write Code
 
