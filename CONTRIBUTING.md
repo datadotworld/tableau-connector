@@ -53,6 +53,14 @@ Run the app:
 REACT_APP_OAUTH_REDIRECT_URI=https://dw-tableau-oauth.herokuapp.com/callback REACT_APP_OAUTH_CLIENT_ID=data-dot-world-tableau yarn start
 ```
 
+Run in Tableau:
+
+ * Launch [Tableau](https://www.tableau.com/) or [Tableau Public](https://public.tableau.com/en-us/s/)
+
+ * Select `Web Data Connector` under `Connect -> To a Server`
+
+ * Enter `http://localhost:3000/` in the `web data connector URL` field and press enter
+
 Run tests:
 ```bash
 yarn test
