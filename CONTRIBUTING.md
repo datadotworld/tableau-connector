@@ -114,6 +114,12 @@ The app is then redirected to `https://tableau.data.world/` with an access token
 
 The token is stored in local storage for use in future API requests.
 
+#### Interactive Phase
+
+The user is presented with a text field where they are supposed to put in a valid dataset URL.
+
+On submission the dataset and api token are saved in the `tableau` object before calling the tableau submit function.
+
 ### Create a Feature Branch
 
 Make sure your fork is up-to-date and create a feature branch for your feature or bug fix.
