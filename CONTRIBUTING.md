@@ -90,6 +90,8 @@ npm start
 http://localhost:8888/Simulator/?src=http://localhost:3000/?forceTableau=true
 ```
 
+ * Click the `Start Interactive Phase` button.
+
 ### Run tests
 ```bash
 yarn test
