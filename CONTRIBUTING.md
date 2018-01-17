@@ -37,23 +37,21 @@ cd tableau-connector
 git remote add upstream https://github.com/datadotworld/tableau-connector.git
 ```
 
-### Install and Test
+### Run the connector
 
-Ensure that you can build the project and run tests.
-
-Install dependencies:
+#### Install dependencies:
 
 ```bash
 yarn
 ```
 
-Start the app:
+#### Start the app:
 
 ```bash
 REACT_APP_OAUTH_REDIRECT_URI=https://dw-tableau-oauth.herokuapp.com/callback REACT_APP_OAUTH_CLIENT_ID=data-dot-world-tableau yarn start
 ```
 
-Run in Tableau:
+#### Run in Tableau:
 
  * Launch [Tableau](https://www.tableau.com/) or [Tableau Public](https://public.tableau.com/en-us/s/).
 
@@ -61,15 +59,14 @@ Run in Tableau:
 
  * Enter `http://localhost:3000/` in the `web data connector URL` field and press enter.
 
-
-Run in a browser:
+#### Run in a browser:
 
  * Open a browser and navigate to the following URL:
 ```
 http://localhost:3000/?forceTableau=true
 ```
 
-Run in Tableau Simulator
+#### Run in Tableau Simulator
  * Clone the Web Data Connector git repository:
 ```bash
 git clone https://github.com/tableau/webdataconnector.git
@@ -93,7 +90,7 @@ npm start
 http://localhost:8888/Simulator/?src=http://localhost:3000/?forceTableau=true
 ```
 
-Run tests:
+### Run tests
 ```bash
 yarn test
 ```
