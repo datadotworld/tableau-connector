@@ -47,7 +47,7 @@ Install dependencies:
 yarn
 ```
 
-Run the app:
+Start the app:
 
 ```bash
 REACT_APP_OAUTH_REDIRECT_URI=https://dw-tableau-oauth.herokuapp.com/callback REACT_APP_OAUTH_CLIENT_ID=data-dot-world-tableau yarn start
@@ -55,16 +55,43 @@ REACT_APP_OAUTH_REDIRECT_URI=https://dw-tableau-oauth.herokuapp.com/callback REA
 
 Run in Tableau:
 
- * Launch [Tableau](https://www.tableau.com/) or [Tableau Public](https://public.tableau.com/en-us/s/)
+ * Launch [Tableau](https://www.tableau.com/) or [Tableau Public](https://public.tableau.com/en-us/s/).
 
- * Select `Web Data Connector` under `Connect -> To a Server`
+ * Select `Web Data Connector` under `Connect -> To a Server`.
 
- * Enter `http://localhost:3000/` in the `web data connector URL` field and press enter
+ * Enter `http://localhost:3000/` in the `web data connector URL` field and press enter.
 
 
-Run in a browser
+Run in a browser:
 
- * Navigte to http://localhost:3000/?forceTableau=true on a browser.
+ * Open a browser and navigate to the following URL:
+```
+http://localhost:3000/?forceTableau=true
+```
+
+Run in Tableau Simulator
+ * Clone the Web Data Connector git repository:
+```bash
+git clone https://github.com/tableau/webdataconnector.git
+```
+ * Change to the directory:
+```bash
+cd webdataconnector
+```
+ * Install dependencies with npm:
+```bash
+npm install --production
+```
+
+ * Start the test web server:
+```bash
+npm start
+```
+
+ * Open a browser and navigate to the following URL:
+```bash
+http://localhost:8888/Simulator/?src=http://localhost:3000/?forceTableau=true
+```
 
 Run tests:
 ```bash
