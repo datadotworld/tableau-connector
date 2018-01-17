@@ -61,6 +61,11 @@ Run in Tableau:
 
  * Enter `http://localhost:3000/` in the `web data connector URL` field and press enter
 
+
+Run in a browser
+
+ * Navigte to http://localhost:3000/?forceTableau=true on a browser.
+
 Run tests:
 ```bash
 yarn test
