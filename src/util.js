@@ -12,9 +12,8 @@ export function getCodeVerifier() {
   const stringLength = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength
 
   let string = ''
-
   for (var i = 0; i < stringLength; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
+    const randomIndex = Math.floor(Math.random() * characters.length)
     string += characters.charAt(randomIndex)
   }
 

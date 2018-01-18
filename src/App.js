@@ -26,7 +26,7 @@ import {
   getToken,
   getAuthUrl,
   getCodeVerifier
-} from './util';
+} from './util'
 
 const tableau = window.tableau
 const connector = new TableauConnector()
@@ -73,10 +73,10 @@ class App extends Component {
       if (code) {
         getToken(code)
         .then(response => {
-          const token = response.data.access_token;
+          const token = response.data.access_token
           if (token) {
             window.localStorage.removeItem('DW-CODE-VERIFIER')
-            window.location = `http://localhost:3000?token=${token}`
+            window.location = `${process.env.REACT_APP_OAUTH_ROOT_URL}?token=${token}`
           }
         })
       } else {
