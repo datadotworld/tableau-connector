@@ -22,6 +22,7 @@ import TableauConnectorForm from './components/TableauConnectorForm'
 import NotTableauView from './components/NotTableauView'
 import TableauConnector from './TableauConnector'
 import queryString from 'query-string'
+import axios from 'axios';
 
 const tableau = window.tableau
 const connector = new TableauConnector()
@@ -34,7 +35,8 @@ class App extends Component {
     this.oauthRedirectURI = process.env.REACT_APP_OAUTH_REDIRECT_URI
 
     this.parsedQueryString = queryString.parse(location.search)
-    let { dataset_name, query, queryType, token } = this.parsedQueryString
+    let { dataset_name, query, queryType, token, code } = this.parsedQueryString
+    console.log('This is the query string', this.parsedQueryString);
 
     if (!token) {
       // Only use stored data if returning from auth
@@ -56,11 +58,38 @@ class App extends Component {
 
     // window.tableauVersionBootstrap is always defined in Tableau environments (desktop/server)
     // parsedQueryString.forceTableau enables debugging on a browser
-    this.isTableau = window.tableauVersionBootstrap || this.parsedQueryString.forceTableau
+    this.isTableau = window.tableauVersionBootstrap || this.parsedQueryString.forceTableau || true
     const apiKey = this.getApiKey()
 
-    if (!apiKey && this.isTableau) {
+    if (!apiKey && this.isTableau && !code) {
       this.redirectToAuth()
+    }
+
+    if (code) {
+      console.log('This is the code', code)
+      var base = 'https://data.world/oauth/access_token'
+      var cod = `code=${code}&`
+      var id = 'client_id=xx&'
+      var secret = 'client_secret=x&'
+      var type = 'grant_type=authorization_code&'
+      var verifier = 'code_verifier=7226B60BF83752C66A6C19529096151164E4C492DBD8371AFD93E5AE69364E76'
+      console.log('This is the other one', base+cod+id+secret+type+verifier)
+
+      axios.post(base, {
+        code: code,
+        client_id: 'xx',
+        client_secret: 'x',
+        grant_type: 'authorization_code',
+        code_verifier: '7226B60BF83752C66A6C19529096151164E4C492DBD8371AFD93E5AE69364E76'
+        // redirect_uri: 'http://localhost:3000/fin'
+      })
+      .then(function (response) {
+        console.log('This is the response', response);
+        window.location = `http:localhost:3000/?token=${response.data.access_token}`
+      })
+      .catch(function (error) {
+        console.log('This is the error', error);
+      });
     }
 
     this.state = {
@@ -74,7 +103,14 @@ class App extends Component {
   }
 
   redirectToAuth () {
-    window.location = `https://data.world/oauth/authorize?client_id=${this.oauthClientId}&redirect_uri=${this.oauthRedirectURI}`
+    var base = 'https://data.world/oauth/authorize?'
+    var id = 'client_id=tableau-native-dev&'
+    var redirect = 'redirect_uri=http://localhost:3000/callback&'
+    var type = 'response_type=code&'
+    var method = 'code_challenge_method=plain&'
+    var challenge = 'code_challenge=7226B60BF83752C66A6C19529096151164E4C492DBD8371AFD93E5AE69364E76'
+    console.log('This is the one', base + id + redirect + type + method + challenge)
+    window.location = base + id + redirect + type + method + challenge;
   }
 
   apiKeyHasExpired (apiKey) {

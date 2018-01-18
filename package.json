@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "0.15.3",
+    "axios": "^0.17.1",
     "query-string": "4.3.4",
     "react": "^15.5.4",
     "react-bootstrap": "0.30.7",
