@@ -35,10 +35,16 @@ class App extends Component {
 
   constructor () {
     super()
-    this.codeVerifier = getCodeVerifier();
 
     this.parsedQueryString = queryString.parse(location.search)
     let { dataset_name, query, queryType, token, code } = this.parsedQueryString
+    const codeVerifier = window.localStorage.getItem('DW-CODE-VERIFIER')
+
+    // Prevents generation on a new code_verifier upon a redirect
+    if (!codeVerifier) {
+      // To enable its use for both code_challenge and code_verifier
+      window.localStorage.setItem('DW-CODE-VERIFIER', getCodeVerifier())
+    }
 
     if (!token) {
       // Only use stored data if returning from auth
@@ -65,11 +71,13 @@ class App extends Component {
 
     if (!apiKey && this.isTableau) {
       if (code) {
-        getToken(code, this.codeVerifier)
+        getToken(code)
         .then(response => {
-          console.log('This is the token', response)
           const token = response.data.access_token;
-          window.location = `http://localhost:3000?token=${token}`
+          if (token) {
+            window.localStorage.removeItem('DW-CODE-VERIFIER')
+            window.location = `http://localhost:3000?token=${token}`
+          }
         })
       } else {
         this.redirectToAuth()
