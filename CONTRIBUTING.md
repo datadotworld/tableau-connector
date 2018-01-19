@@ -39,6 +39,16 @@ git remote add upstream https://github.com/datadotworld/tableau-connector.git
 
 ### Run the connector
 
+#### Define environment variable
+Create a `.env` file with the following values:
+
+```
+REACT_APP_OAUTH_REDIRECT_URI=http://localhost:3000/callback
+REACT_APP_OAUTH_ROOT_URL=http://localhost:3000
+REACT_APP_OAUTH_CLIENT_ID=XXX # Replace with your client ID
+REACT_APP_OAUTH_CLIENT_SECRET=XXX # Replace with your client secret
+```
+
 #### Install dependencies:
 
 ```bash
@@ -48,7 +58,7 @@ yarn
 #### Start the app:
 
 ```bash
-REACT_APP_OAUTH_REDIRECT_URI=https://dw-tableau-oauth.herokuapp.com/callback REACT_APP_OAUTH_CLIENT_ID=data-dot-world-tableau yarn start
+yarn start
 ```
 
 #### Run in Tableau:
