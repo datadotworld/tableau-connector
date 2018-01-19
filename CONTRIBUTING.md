@@ -130,9 +130,9 @@ The app then makes a `POST` request to `https://data.world/oauth/access_token` p
 
 #### Interactive Phase
 
-The user is presented with a text field where they are supposed to put in a valid dataset URL.
+Users are presented with a text field where they are supposed to put in a valid dataset URL.
 
-On submission the dataset and api token are saved in the `tableau` object before calling the tableau submit function.
+On submission the `tableau.submit()` function is called.
 
 ### Create a Feature Branch
 
