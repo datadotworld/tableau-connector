@@ -106,14 +106,27 @@ http://localhost:8888/Simulator/?src=http://localhost:3000/?forceTableau=true
 
 #### Authentication
 
-The connector uses `data.world`'s [OAuth 2.0 flow](https://apidocs.data.world/v0/data-world-for-developers/oauth#web-applications)
+The connector uses `data.world`'s [OAuth 2.0 flow for native applications](https://apidocs.data.world/v0/data-world-for-developers/oauth#native-applications-desktop-mobile-static-sites-other)
 
-After determining the app is running in a Tableau environment the app redirects to `https://data.world/oauth/authorize` supplying the client id and redirect url provided when starting the app.
+After determining it is running in a Tableau environment the app redirects to `https://data.world/oauth/authorize` supplying the following as query params:
+ * client_id
+ * redirect_uri
+ * response_type
+ * code_challenge_method
+ * code_challenge
 
+The user is asked to log in to `data.word` and authorize the application. If successful the app redirects to the provided `redirect_uri` with a `code` query param.
 
-The app is then redirected to `https://tableau.data.world/` with an access token provided as a query parameter.
+The app then makes a `POST` request to `https://data.world/oauth/access_token` providing the following in the body of the request:
+ *  The `code` returned
+ +  client_id,
+ +  client_secret,
+ +  grant_type,
+ +  code_verifier
 
-The token is stored in local storage for use in future API requests.
+ If the `code_challenge` corresponds to the `code_verifier` and all other values are valid `data.world` responds with a token. 
+
+ The app redirects the user to its homepage and saves the token for use in subsequesnt API requests.
 
 #### Interactive Phase
 
