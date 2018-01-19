@@ -185,7 +185,7 @@ class TableauConnectorForm extends Component {
                 {datasetValidState === 'success' && <HelpBlock>Dataset URL valid</HelpBlock>}
                 {!datasetValidState && <HelpBlock>Copy and paste the dataset URL here</HelpBlock>}
               </FormGroup>
-              {<div><FormGroup>
+              {writingQuery && <div><FormGroup>
                 <ControlLabel>Query Type</ControlLabel>
                 <InputGroup>
                   <FormControl
