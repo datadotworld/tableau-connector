@@ -128,11 +128,31 @@ The app then makes a `POST` request to `https://data.world/oauth/access_token` p
 
  The app redirects the user to its homepage and saves the token for use in subsequesnt API requests.
 
-#### Interactive Phase
+#### Interactive phase
 
 Users are presented with a text field where they are supposed to put in a valid dataset URL.
 
 On submission the `tableau.submit()` function is called.
+
+#### Gather data phase
+
+This phase is initiated after `tableau.submit()` is called. Stages:
+
+1. `getSchema` is called:
+  * The SQL query `SELECT * FROM TableColumns` is run on the provided dataset using the `https://query.data.world/sql/{user}/{datset}` endpoint.
+  * The response is parsed to return an array of objects each representing a table in the dataset. Each object contains:
+    * `id`: The table name
+    * `alias`: A friendly table name that can appear in Tableau
+    * `columns`: Array of objects representing the columns in the table. Each object contains:
+      * `id`: The column name
+      * `alias`: A friendly column name
+      * `dataType`: The column's data type
+  * The returned array is passed to `getSchema`'s callback
+
+2. `getData` is called by Tableau once for each table that has been selected by the end user. Stages:
+  * The SQL query `SELECT * FROM {current table}` is run on the provided dataset using the `https://query.data.world/sql/{user}/{datset}` endpoint.
+  * The response is parsed to return an array of objects each representing a row in the table. Each object contains the value of each of the table's columns in the row.
+  * The returned array is passed as an argument to `getData`'s `table.appendRows` function.
 
 ### Create a Feature Branch
 
