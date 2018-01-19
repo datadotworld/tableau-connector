@@ -72,8 +72,11 @@ yarn start
 #### Run in a browser:
 
  * Open a browser and navigate to the following URL:
-```
+
+```bash
 http://localhost:3000/?forceTableau=true
+
+# NOTE: Add `forceTableau=true` to all app URL querystrings when in the browser
 ```
 
 #### Run in Tableau Simulator
