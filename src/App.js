@@ -25,7 +25,7 @@ import queryString from 'query-string'
 import {
   getToken,
   getAuthUrl,
-  getCodeVerifier
+  generateCodeVerifier
 } from './util'
 
 const tableau = window.tableau
@@ -38,13 +38,6 @@ class App extends Component {
 
     this.parsedQueryString = queryString.parse(location.search)
     let { dataset_name, query, queryType, token, code } = this.parsedQueryString
-    const codeVerifier = window.localStorage.getItem('DW-CODE-VERIFIER')
-
-    // Prevents generation on a new code_verifier upon a redirect
-    if (!codeVerifier) {
-      // To enable its use for both code_challenge and code_verifier
-      window.localStorage.setItem('DW-CODE-VERIFIER', getCodeVerifier())
-    }
 
     if (!token) {
       // Only use stored data if returning from auth
@@ -95,7 +88,8 @@ class App extends Component {
   }
 
   redirectToAuth () {
-    window.location = getAuthUrl(this.codeVerifier)
+    window.localStorage.setItem('DW-CODE-VERIFIER', generateCodeVerifier())
+    window.location = getAuthUrl()
   }
 
   apiKeyHasExpired (apiKey) {
