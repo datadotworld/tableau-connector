@@ -25,14 +25,7 @@ export function generateCodeVerifier() {
 }
 
 export function getAuthUrl() {
-    const base = 'https://data.world/oauth/authorize?'
-    const clientId= `client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}&`
-    const redirectUri = `redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}&`
-    const responseType = 'response_type=code&'
-    const codeChallengeMethod = 'code_challenge_method=plain&'
-    const codeChallenge = `code_challenge=${getCodeVerifier()}`
-
-    return `${base}${clientId}${redirectUri}${responseType}${codeChallengeMethod}${codeChallenge}`
+  return `https://data.world/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}&response_type=code&code_challenge_method=plain&code_challenge=${getCodeVerifier()}`
 }
 
 export function getToken(code) {
