@@ -104,15 +104,6 @@ http://localhost:8888/Simulator/?src=http://localhost:3000/?forceTableau=true
 
 ### App Flow
 
-#### Verification
-
-```bash
-// window.tableauVersionBootstrap is always defined in Tableau environments (desktop/server)
-// parsedQueryString.forceTableau enables debugging on a browser
-this.isTableau = window.tableauVersionBootstrap || this.parsedQueryString.forceTableau
-```
-The connector is only meant to be run in Tableau environments i.e. Tableau Desktop or Tabelau Server. To run the app on a browser add a `forceTableau=true` to the app URLs
-
 #### Authentication
 
 The connector uses `data.world`'s [OAuth 2.0 flow](https://apidocs.data.world/v0/data-world-for-developers/oauth#web-applications)
