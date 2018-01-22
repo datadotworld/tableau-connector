@@ -25,7 +25,8 @@ import queryString from 'query-string'
 import {
   getToken,
   getAuthUrl,
-  generateCodeVerifier
+  storeCodeVerifier,
+  removeCodeVerifier
 } from './util'
 
 const tableau = window.tableau
@@ -68,8 +69,8 @@ class App extends Component {
         .then(response => {
           const token = response.data.access_token
           if (token) {
+            removeCodeVerifier()
             window.location = `${process.env.REACT_APP_OAUTH_ROOT_URL}?token=${token}`
-            window.localStorage.removeItem('DW-CODE-VERIFIER')
           }
         })
       } else {
@@ -88,7 +89,7 @@ class App extends Component {
   }
 
   redirectToAuth () {
-    window.localStorage.setItem('DW-CODE-VERIFIER', generateCodeVerifier())
+    storeCodeVerifier()
     window.location = getAuthUrl()
   }
 

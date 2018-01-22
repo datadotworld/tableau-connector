@@ -1,8 +1,10 @@
 import axios from 'axios'
 import crypto from 'crypto'
 
+const codeVerifierKey = 'DW-CODE-VERIFIER'
+
 function getCodeVerifier() {
-  return window.localStorage.getItem('DW-CODE-VERIFIER')
+  return window.localStorage.getItem(codeVerifierKey)
 }
 
 function generateCodeChallenge(codeVerifier) {
@@ -10,6 +12,14 @@ function generateCodeChallenge(codeVerifier) {
     .update(codeVerifier)
     .digest('base64')
   return encodeURIComponent(base64hash)
+}
+
+export function storeCodeVerifier() {
+  window.localStorage.setItem(codeVerifierKey, generateCodeVerifier())
+}
+
+export function removeCodeVerifier() {
+  window.localStorage.removeItem(codeVerifierKey)
 }
 
 export function generateCodeVerifier() {
