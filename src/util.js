@@ -1,7 +1,15 @@
 import axios from 'axios'
+import crypto from 'crypto'
 
-export function getCodeVerifier() {
+function getCodeVerifier() {
   return window.localStorage.getItem('DW-CODE-VERIFIER')
+}
+
+function generateCodeChallenge(codeVerifier) {
+  const base64hash = crypto.createHash('sha256')
+    .update(codeVerifier)
+    .digest('base64')
+  return encodeURIComponent(base64hash)
 }
 
 export function generateCodeVerifier() {
@@ -15,17 +23,20 @@ export function generateCodeVerifier() {
   const maxLength = 128
   const stringLength = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength
 
-  let string = ''
+  let codeVerifier = ''
   for (var i = 0; i < stringLength; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length)
-    string += characters.charAt(randomIndex)
+    codeVerifier += characters.charAt(randomIndex)
   }
 
-  return string;
+  return codeVerifier;
 }
 
 export function getAuthUrl() {
-  return `https://data.world/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}&response_type=code&code_challenge_method=plain&code_challenge=${getCodeVerifier()}`
+  const codeVerifier = getCodeVerifier()
+  const codeChallenge = generateCodeChallenge(codeVerifier)
+
+  return `https://data.world/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}&response_type=code&code_challenge_method=S256&code_challenge=${codeChallenge}`
 }
 
 export function getToken(code) {
