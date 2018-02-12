@@ -22,6 +22,12 @@ import TableauConnectorForm from './components/TableauConnectorForm'
 import NotTableauView from './components/NotTableauView'
 import TableauConnector from './TableauConnector'
 import queryString from 'query-string'
+import {
+  getToken,
+  getAuthUrl,
+  storeCodeVerifier,
+  removeCodeVerifier
+} from './util'
 
 const tableau = window.tableau
 const connector = new TableauConnector()
@@ -30,11 +36,9 @@ class App extends Component {
 
   constructor () {
     super()
-    this.oauthClientId = process.env.REACT_APP_OAUTH_CLIENT_ID
-    this.oauthRedirectURI = process.env.REACT_APP_OAUTH_REDIRECT_URI
 
     this.parsedQueryString = queryString.parse(location.search)
-    let { dataset_name, query, queryType, token } = this.parsedQueryString
+    let { dataset_name, query, queryType, token, code } = this.parsedQueryString
 
     if (!token) {
       // Only use stored data if returning from auth
@@ -60,7 +64,18 @@ class App extends Component {
     const apiKey = this.getApiKey()
 
     if (!apiKey && this.isTableau) {
-      this.redirectToAuth()
+      if (code) {
+        getToken(code)
+        .then(response => {
+          const token = response.data.access_token
+          if (token) {
+            removeCodeVerifier()
+            window.location = `${process.env.REACT_APP_OAUTH_ROOT_URL}?token=${token}`
+          }
+        })
+      } else {
+        this.redirectToAuth()
+      }
     }
 
     this.state = {
@@ -74,7 +89,8 @@ class App extends Component {
   }
 
   redirectToAuth () {
-    window.location = `https://data.world/oauth/authorize?client_id=${this.oauthClientId}&redirect_uri=${this.oauthRedirectURI}`
+    storeCodeVerifier()
+    window.location = getAuthUrl()
   }
 
   apiKeyHasExpired (apiKey) {
