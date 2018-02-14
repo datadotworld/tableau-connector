@@ -97,7 +97,7 @@ git remote add upstream https://github.com/datadotworld/tableau-connector.git
 Create a `.env` file with the following values:
 
 ```
-REACT_APP_OAUTH_REDIRECT_URI=http://localhost:3000/callback
+REACT_APP_OAUTH_REDIRECT_URI=http://localhost:3000/
 REACT_APP_OAUTH_ROOT_URL=http://localhost:3000
 REACT_APP_OAUTH_CLIENT_ID=tableau-native-dev
 REACT_APP_OAUTH_CLIENT_SECRET=TMFBZbyBW6NrqGGcPyCDxUuGtNhQuWJf
