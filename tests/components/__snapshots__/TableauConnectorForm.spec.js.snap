@@ -20,29 +20,51 @@ exports[`test renders form 1`] = `
           <label
             className="control-label"
             htmlFor={undefined}>
-            Dataset
+            Dataset URL
           </label>
           <span
             className="input-group">
             <input
               autoFocus={true}
               className="form-control"
+              disabled={false}
               id={undefined}
               onChange={[Function]}
               placeholder="http://data.world/jonloyens/an-intro-to-dataworld-dataset"
               type="text"
               value="" />
+            <span
+              className="input-group-btn">
+              <button
+                className="button-addon-with-icon btn btn-default"
+                disabled={false}
+                onClick={[Function]}
+                type="button">
+                <span
+                  className="svg-icon "
+                  onClick={undefined}>
+                  <svg
+                    className="browse-icon"
+                    viewBox="0 0 16 16"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M4.273 4.25H.95a.75.75 0 0 0 0 1.5h2.461a5.894 5.894 0 0 1 .862-1.5zM12.95 1.75h-12a.75.75 0 0 1 0-1.5h12a.75.75 0 0 1 0 1.5zM4.928 12.25H.95a.75.75 0 0 0 0 1.5h7.221a5.873 5.873 0 0 1-3.243-1.5zM15.781 13.47l-2.862-2.868a4.61 4.61 0 0 0 .88-2.702c0-2.564-2.085-4.65-4.65-4.65S4.5 5.336 4.5 7.9s2.086 4.65 4.65 4.65a4.61 4.61 0 0 0 2.71-.887l2.859 2.866a.746.746 0 0 0 1.06.002.75.75 0 0 0 .002-1.06zM6 7.9c0-1.737 1.413-3.15 3.15-3.15S12.3 6.163 12.3 7.9s-1.413 3.15-3.15 3.15S6 9.637 6 7.9zM3.018 8.25H.95a.75.75 0 0 0 0 1.5h2.351a5.86 5.86 0 0 1-.283-1.5z" />
+                  </svg>
+                </span>
+                Browse
+              </button>
+            </span>
           </span>
           <span
             className="help-block">
-            Copy and paste the dataset URL here
+            Copy and paste the dataset URL or click \"Browse\"
           </span>
         </div>
         <button
           className="center-block btn btn-primary"
           disabled={true}
           type="submit">
-          Submit
+          Connect
         </button>
         <div
           className="footer">
@@ -56,6 +78,7 @@ exports[`test renders form 1`] = `
       </form>
     </div>
   </div>
+  <div />
 </div>
 `;
 
@@ -81,18 +104,40 @@ exports[`test renders form with default values 1`] = `
           <label
             className="control-label"
             htmlFor={undefined}>
-            Dataset
+            Dataset URL
           </label>
           <span
             className="input-group">
             <input
               autoFocus={true}
               className="form-control"
+              disabled={false}
               id={undefined}
               onChange={[Function]}
               placeholder="http://data.world/jonloyens/an-intro-to-dataworld-dataset"
               type="text"
               value="https://data.world/test/test" />
+            <span
+              className="input-group-btn">
+              <button
+                className="button-addon-with-icon btn btn-default"
+                disabled={false}
+                onClick={[Function]}
+                type="button">
+                <span
+                  className="svg-icon "
+                  onClick={undefined}>
+                  <svg
+                    className="browse-icon"
+                    viewBox="0 0 16 16"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M4.273 4.25H.95a.75.75 0 0 0 0 1.5h2.461a5.894 5.894 0 0 1 .862-1.5zM12.95 1.75h-12a.75.75 0 0 1 0-1.5h12a.75.75 0 0 1 0 1.5zM4.928 12.25H.95a.75.75 0 0 0 0 1.5h7.221a5.873 5.873 0 0 1-3.243-1.5zM15.781 13.47l-2.862-2.868a4.61 4.61 0 0 0 .88-2.702c0-2.564-2.085-4.65-4.65-4.65S4.5 5.336 4.5 7.9s2.086 4.65 4.65 4.65a4.61 4.61 0 0 0 2.71-.887l2.859 2.866a.746.746 0 0 0 1.06.002.75.75 0 0 0 .002-1.06zM6 7.9c0-1.737 1.413-3.15 3.15-3.15S12.3 6.163 12.3 7.9s-1.413 3.15-3.15 3.15S6 9.637 6 7.9zM3.018 8.25H.95a.75.75 0 0 0 0 1.5h2.351a5.86 5.86 0 0 1-.283-1.5z" />
+                  </svg>
+                </span>
+                Browse
+              </button>
+            </span>
           </span>
           <span
             className="help-block">
@@ -103,7 +148,7 @@ exports[`test renders form with default values 1`] = `
           className="center-block btn btn-primary"
           disabled={false}
           type="submit">
-          Submit
+          Connect
         </button>
         <div
           className="footer">
@@ -117,6 +162,7 @@ exports[`test renders form with default values 1`] = `
       </form>
     </div>
   </div>
+  <div />
 </div>
 `;
 
@@ -142,13 +188,14 @@ exports[`test renders form with query input, sparql selected 1`] = `
           <label
             className="control-label"
             htmlFor={undefined}>
-            Dataset
+            Dataset URL
           </label>
           <span
             className="input-group">
             <input
               autoFocus={true}
               className="form-control"
+              disabled={true}
               id={undefined}
               onChange={[Function]}
               placeholder="http://data.world/jonloyens/an-intro-to-dataworld-dataset"
@@ -211,7 +258,7 @@ exports[`test renders form with query input, sparql selected 1`] = `
           className="center-block btn btn-primary"
           disabled={false}
           type="submit">
-          Submit
+          Connect
         </button>
         <div
           className="footer">
@@ -225,6 +272,7 @@ exports[`test renders form with query input, sparql selected 1`] = `
       </form>
     </div>
   </div>
+  <div />
 </div>
 `;
 
@@ -250,13 +298,14 @@ exports[`test renders form with query input, sql selected 1`] = `
           <label
             className="control-label"
             htmlFor={undefined}>
-            Dataset
+            Dataset URL
           </label>
           <span
             className="input-group">
             <input
               autoFocus={true}
               className="form-control"
+              disabled={true}
               id={undefined}
               onChange={[Function]}
               placeholder="http://data.world/jonloyens/an-intro-to-dataworld-dataset"
@@ -319,7 +368,7 @@ exports[`test renders form with query input, sql selected 1`] = `
           className="center-block btn btn-primary"
           disabled={false}
           type="submit">
-          Submit
+          Connect
         </button>
         <div
           className="footer">
@@ -333,5 +382,6 @@ exports[`test renders form with query input, sql selected 1`] = `
       </form>
     </div>
   </div>
+  <div />
 </div>
 `;

@@ -24,6 +24,14 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import TableauConnectorForm from '../../src/components/TableauConnectorForm'
 
+window.dataworldWidgets = {
+  DatasetSelector: class {
+    constructor () {}
+    success () {}
+    cancel () {}
+  }
+}
+
 it('renders without crashing', () => {
   const div = document.createElement('div')
   ReactDOM.render(<TableauConnectorForm />, div)
