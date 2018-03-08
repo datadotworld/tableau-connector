@@ -61,3 +61,18 @@
 .buttonBar .btn + .btn {
   margin-left: 2rem;
 }
+
+button.button-addon-with-icon {
+  padding-right: 2.5rem;
+}
+
+.browse-icon {
+  width: 20px;
+  fill: #6290c3;
+  margin-bottom: -9px;
+  margin-right: 5px;
+}
+
+.btn-default:hover .browse-icon {
+  fill: #4376af;
+}

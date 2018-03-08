@@ -34,6 +34,8 @@ import {
 } from 'react-bootstrap'
 import sparkle from '../static/img/new-sparkle-logo.png'
 import analytics from '../analytics'
+import DatasetSelector from './DatasetSelector'
+import Icon from './Icon'
 
 const datasetRegex = /^https?:\/\/data\.world\/(.+\/.+)$/
 class TableauConnectorForm extends Component {
@@ -55,7 +57,8 @@ class TableauConnectorForm extends Component {
     queryType: this.props.queryType || 'sql',
     writingQuery: !!this.props.query,
     isSubmitting: false,
-    errorMessage: ''
+    errorMessage: '',
+    showDatasetSelector: false
   }
 
   componentDidMount = () => {
@@ -81,6 +84,18 @@ class TableauConnectorForm extends Component {
 
   isDatasetValid = () => {
     return this.state.dataset && datasetRegex.test(this.state.dataset)
+  }
+
+  showDatasetSelector = () => {
+    analytics.track('tableauconnector.dataset_selector.click')
+    this.setState({ showDatasetSelector: true })
+  }
+
+  selectDataset = (dataset) => {
+    this.setState({
+      dataset: `https://data.world/${dataset.owner}/${dataset.id}`,
+      showDatasetSelector: false
+    })
   }
 
   onSubmit = (e) => {
@@ -150,7 +165,14 @@ class TableauConnectorForm extends Component {
   }
 
   render () {
-    const { dataset, isSubmitting, isError, writingQuery, errorMessage } = this.state
+    const {
+      dataset,
+      isSubmitting,
+      isError,
+      writingQuery,
+      errorMessage,
+      showDatasetSelector
+    } = this.state
 
     let datasetValidState
 
@@ -167,23 +189,30 @@ class TableauConnectorForm extends Component {
             <form onSubmit={this.onSubmit}>
               {isError && <Alert bsStyle='danger'>
                 <strong>
-                  {!errorMessage && <span>All fields are required.</span>}
+                  {!errorMessage && <span>All fields are required. {errorMessage}</span>}
                   {errorMessage && <span>{errorMessage}</span>}
                 </strong>
               </Alert>}
               <FormGroup validationState={datasetValidState}>
-                <ControlLabel>Dataset</ControlLabel>
+                <ControlLabel>Dataset URL</ControlLabel>
                 <InputGroup>
                   <FormControl
                     onChange={this.datasetChanged}
                     value={this.state.dataset}
                     autoFocus
+                    disabled={writingQuery}
                     type='text'
                     placeholder='http://data.world/jonloyens/an-intro-to-dataworld-dataset' />
+                  {!writingQuery && <InputGroup.Button>
+                    <Button onClick={this.showDatasetSelector} className='button-addon-with-icon'>
+                      <Icon icon='browse' />
+                      Browse
+                    </Button>
+                  </InputGroup.Button>}
                 </InputGroup>
                 {datasetValidState === 'warning' && <HelpBlock>A valid dataset URL is required: https://data.world/jonloyens/an-intro-to-dataworld-dataset</HelpBlock>}
                 {datasetValidState === 'success' && <HelpBlock>Dataset URL valid</HelpBlock>}
-                {!datasetValidState && <HelpBlock>Copy and paste the dataset URL here</HelpBlock>}
+                {!datasetValidState && <HelpBlock>Copy and paste the dataset URL or click "Browse"</HelpBlock>}
               </FormGroup>
               {writingQuery && <div><FormGroup>
                 <ControlLabel>Query Type</ControlLabel>
@@ -208,17 +237,22 @@ class TableauConnectorForm extends Component {
                       placeholder='SELECT * FROM TABLE_NAME' />
                   </InputGroup>
                 </FormGroup></div>}
-              <Button
-                className='center-block'
-                type='submit'
-                disabled={isSubmitting || datasetValidState !== 'success'}
-                bsStyle='primary'>Submit</Button>
+                <Button
+                  className='center-block'
+                  type='submit'
+                  disabled={isSubmitting || datasetValidState !== 'success'}
+                  bsStyle='primary'>Connect</Button>
               <div className='footer'>
                 <a href='https://help.data.world/hc/en-us/articles/115010298907-Tableau-Web-Data-Connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
               </div>
             </form>
           </Col>
         </Row>
+        <DatasetSelector
+          show={showDatasetSelector}
+          close={() => this.setState({ showDatasetSelector: false })}
+          selectDataset={this.selectDataset}
+        />
       </Grid>
     )
   }

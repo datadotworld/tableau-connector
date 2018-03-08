@@ -125,27 +125,38 @@ class App extends Component {
   }
 
   storeApiKey (key) {
-    window.localStorage.setItem('DW-API-KEY', key)
+    if (window.localStorage) {
+      window.localStorage.setItem('DW-API-KEY', key)
+    }
   }
 
   getDataset () {
-    return window.localStorage.getItem('DW-DATASET-NAME')
+    if (window.localStorage) {
+      return window.localStorage.getItem('DW-DATASET-NAME')
+    }
   }
 
   storeDataset (dataset) {
-    window.localStorage.setItem('DW-DATASET-NAME', dataset)
+    if (window.localStorage) {
+      window.localStorage.setItem('DW-DATASET-NAME', dataset)
+    }
   }
 
   storeQuery (query, queryType) {
-    window.localStorage.setItem('DW-QUERY', query)
-    window.localStorage.setItem('DW-QUERY-TYPE', queryType || '')
+    if (window.localStorage) {
+      window.localStorage.setItem('DW-QUERY', query)
+      window.localStorage.setItem('DW-QUERY-TYPE', queryType || '')
+    }
   }
 
   getQuery () {
-    return {
-      query: window.localStorage.getItem('DW-QUERY'),
-      queryType: window.localStorage.getItem('DW-QUERY-TYPE')
+    if (window.localStorage) {
+      return {
+        query: window.localStorage.getItem('DW-QUERY'),
+        queryType: window.localStorage.getItem('DW-QUERY-TYPE')
+      }
     }
+    return {}
   }
 
   clearApiKey () {

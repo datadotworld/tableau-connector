@@ -26,3 +26,10 @@ body {
 .input-group {
   width: 100%;
 }
+
+#dataworld-dataset-selector-modal {
+  /* Vendor prefixes required for display in Tableau's web view (QtWebKit 5.4) */
+  display: -webkit-flex;
+  -webkit-align-items: center;
+  -webkit-justify-content: center;
+}
