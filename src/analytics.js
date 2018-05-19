@@ -18,7 +18,6 @@
  */
 
 const analyticsEnabled = process.env.REACT_APP_ENABLE_ANALYTICS
-const tableau = window.tableau
 
 const Analytics = {
   track (event, properties, options) {
@@ -27,16 +26,9 @@ const Analytics = {
     }
   },
 
-  identify (token) {
-    if (analyticsEnabled && token) {
-      try {
-        const decoded = JSON.parse(atob(token.split('.')[1]))
-        const agent = decoded.sub.split(':')[1] // should be of the form 'prod-user-client:agentid'
-        window.analytics.identify(agent)
-      } catch (error) {
-        tableau.log('There was an error decoding a JWT token')
-        tableau.log(error)
-      }
+  identify (agent) {
+    if (analyticsEnabled && agent) {
+      window.analytics.identify(agent)
     }
   }
 }

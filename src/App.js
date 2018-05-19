@@ -22,178 +22,60 @@ import TableauConnectorForm from './components/TableauConnectorForm'
 import NotTableauView from './components/NotTableauView'
 import TableauConnector from './TableauConnector'
 import queryString from 'query-string'
-import {
-  getToken,
-  getAuthUrl,
-  storeCodeVerifier,
-  removeCodeVerifier
-} from './util'
-
-const tableau = window.tableau
-const connector = new TableauConnector()
 
 class App extends Component {
-
   constructor () {
     super()
 
-    this.parsedQueryString = queryString.parse(location.search)
-    let { dataset_name, query, queryType, token, code } = this.parsedQueryString
+    const parsedQueryString = queryString.parse(location.search)
 
-    if (!token && !code) {
-      // Only use stored data if returning from auth
-      this.clearStoredData();
-    }
-
-    if (dataset_name) {
-      this.storeDataset(dataset_name)
-    } else {
-      dataset_name = this.getDataset()
-    }
-
+    let {dataset_name, query, queryType, forceTableau} = parsedQueryString
     if (query) {
       queryType = queryType ? queryType.toLowerCase() : 'sql'
-      this.storeQuery(query, queryType)
-    } else {
-      ({query, queryType} = this.getQuery())
     }
+
+    if (parsedQueryString.state) {
+      ({dataset_name, query, queryType, forceTableau} = JSON.parse(parsedQueryString.state))
+    }
+
+    this.connector = new TableauConnector(
+      this.onConnectorReady.bind(this),
+      {dataset_name, query, queryType, forceTableau},
+      parsedQueryString.code)
 
     // window.tableauVersionBootstrap is always defined in Tableau environments (desktop/server)
     // parsedQueryString.forceTableau enables debugging on a browser
-    this.isTableau = window.tableauVersionBootstrap || this.parsedQueryString.forceTableau
-    const apiKey = this.getApiKey()
-
-    if (!apiKey && this.isTableau) {
-      if (code) {
-        getToken(code)
-        .then(response => {
-          const token = response.data.access_token
-          if (token) {
-            removeCodeVerifier()
-            window.location = `${process.env.REACT_APP_OAUTH_ROOT_URL}?token=${token}`
-          }
-        })
-      } else {
-        this.redirectToAuth()
-      }
-    }
+    this.isTableau = window.tableauVersionBootstrap || forceTableau
 
     this.state = {
-      apiKey,
+      hasAuth: false,
+      datasetName: dataset_name,
       query,
-      queryType,
-      datasetName: dataset_name
-    }
-    this.clearApiKey = this.clearApiKey.bind(this)
-    this.clearStoredData = this.clearStoredData.bind(this)
-  }
-
-  redirectToAuth () {
-    storeCodeVerifier()
-    window.location = getAuthUrl()
-  }
-
-  apiKeyHasExpired (apiKey) {
-    try {
-      const decoded = JSON.parse(atob(apiKey.split('.')[1]))
-      const expirationTimeInMilliseconds = decoded.exp * 1000
-      if (expirationTimeInMilliseconds < new Date().getTime()) {
-        return true
-      }
-      return false
-    } catch (error) {
-      tableau.log('There was an error decoding a JWT token')
-      tableau.log(error)
-      return true
+      queryType
     }
   }
 
-  getApiKey () {
-    // the OAuth flow will return the token in the query string
-    if (this.parsedQueryString.token) {
-      this.storeApiKey(this.parsedQueryString.token)
-      return this.parsedQueryString.token
-    }
-    if (window.localStorage) {
-      let apiKey = window.localStorage.getItem('DW-API-KEY')
-      if (apiKey && this.apiKeyHasExpired(apiKey)) {
-        apiKey = null
-      }
-      return apiKey
-    }
-    return
-  }
-
-  storeApiKey (key) {
-    if (window.localStorage) {
-      window.localStorage.setItem('DW-API-KEY', key)
-    }
-  }
-
-  getDataset () {
-    if (window.localStorage) {
-      return window.localStorage.getItem('DW-DATASET-NAME')
-    }
-  }
-
-  storeDataset (dataset) {
-    if (window.localStorage) {
-      window.localStorage.setItem('DW-DATASET-NAME', dataset)
-    }
-  }
-
-  storeQuery (query, queryType) {
-    if (window.localStorage) {
-      window.localStorage.setItem('DW-QUERY', query)
-      window.localStorage.setItem('DW-QUERY-TYPE', queryType || '')
-    }
-  }
-
-  getQuery () {
-    if (window.localStorage) {
-      return {
-        query: window.localStorage.getItem('DW-QUERY'),
-        queryType: window.localStorage.getItem('DW-QUERY-TYPE')
-      }
-    }
-    return {}
-  }
-
-  clearApiKey () {
+  onConnectorReady (hasAuth) {
+    console.log('Connector ready. Show screen? ' + hasAuth)
     this.setState({
-      apiKey: null
+      hasAuth
     })
-    this.storeApiKey('')
-    this.redirectToAuth()
-  }
-
-  clearStoredData () {
-    this.setState({
-      datasetName: '',
-      query: ''
-    })
-    this.storeDataset('')
-    this.storeQuery('')
   }
 
   render () {
-    const { apiKey, datasetName, query, queryType } = this.state
+    const {hasAuth, datasetName, query, queryType} = this.state
     const dataset = datasetName ? `https://data.world/${datasetName}` : null
 
-    if (! this.isTableau) {
+    if (!this.isTableau) {
       return (<NotTableauView />)
     }
 
     return (
-      (apiKey ? <TableauConnectorForm
-        connector={connector}
+      hasAuth ? <TableauConnectorForm
+        connector={this.connector}
         dataset={dataset}
-        apiKey={apiKey}
-        clearStoredData={this.clearStoredData}
-        clearApiKey={this.clearApiKey}
         query={query}
-        queryType={queryType} />
-        : <div/>)
+        queryType={queryType} /> : <div />
     )
   }
 }

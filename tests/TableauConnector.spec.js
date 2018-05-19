@@ -37,37 +37,19 @@ it('Initializes the tableau connector correctly', () => {
   expect(global.tableau.registerConnector.mock.calls.length).toBe(1)
 
   const internalConnector = connector.connector
+  expect(typeof internalConnector.init).toBe('function')
   expect(typeof internalConnector.getSchema).toBe('function')
   expect(typeof internalConnector.getData).toBe('function')
 })
 
-it('Returns the correct API endpoint for non-query', () => {
-  const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'apitoken-test')
-  expect(connector.getApiEndpoint('table-name-test')).toBe('https://query.data.world/sql/test/1234')
-})
-
-it('Returns the correct API endpoint for SQL query', () => {
-  const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'apitoken-test', 'SELECT * FROM TEST', 'sql')
-  expect(connector.getApiEndpoint('table-name-test')).toBe('https://query.data.world/sql/test/1234')
-})
-
-it('Returns the correct API endpoint for SPARQL query', () => {
-  const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'apitoken-test', 'SPARQL TEST QUERY', 'sparql')
-  expect(connector.getApiEndpoint('table-name-test')).toBe('https://query.data.world/sparql/test/1234')
-})
-
 it('Returns default tableauschema type', () => {
-  const connector = new TableauConnector()
-  expect(connector.getDatatype('randommissingdatatype')).toBe('string')
+  expect(TableauConnector.getDatatype('randommissingdatatype')).toBe('string')
 })
 
 it('Formats the schema correctly for a non-query, no version', (done) => {
   axios.__setMockResponse(schemaData)
   const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'schema-test')
+  connector.setConnectionData('test/1234')
   const tempConnectionData = JSON.parse(tableau.connectionData)
   tempConnectionData.version = null
   tableau.connectionData = JSON.stringify(tempConnectionData)
@@ -82,7 +64,7 @@ it('Formats the schema correctly for a non-query, no version', (done) => {
 it('Formats the schema correctly for a non-query, with version', (done) => {
   axios.__setMockResponse(schemaData)
   const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'schema-test')
+  connector.setConnectionData('test/1234')
   connector.getSchema((schema) => {
     expect(schema).toHaveLength(3)
     expect(schema).toMatchSnapshot()
@@ -95,7 +77,7 @@ it('Formats the schema correctly for a non-query, with version', (done) => {
 it('Formats the schema correctly for a project', (done) => {
   axios.__setMockResponse(schemaDataProject)
   const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'sql-schema-test')
+  connector.setConnectionData('test/1234')
   connector.getSchema((schema) => {
     expect(schema).toHaveLength(2)
     expect(schema).toMatchSnapshot()
@@ -107,7 +89,7 @@ it('Formats the schema correctly for a project', (done) => {
 it('Formats the schema correctly for a SPARQL query', (done) => {
   axios.__setMockResponse(sparqlSchemaData)
   const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'sql-schema-test', 'EXAMPL SPARQL QUERY', 'sparql')
+  connector.setConnectionData('test/1234', 'EXAMPL SPARQL QUERY', 'sparql')
   connector.getSchema((schema) => {
     expect(schema).toHaveLength(1)
     expect(schema[0].columns).toHaveLength(6)
@@ -120,7 +102,7 @@ it('Formats the schema correctly for a SPARQL query', (done) => {
 it('Formats the schema correctly for a SQL query', (done) => {
   axios.__setMockResponse(sqlSchemaData)
   const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'sql-schema-test', 'SELECT * FROM TEST', 'sql')
+  connector.setConnectionData('test/1234', 'SELECT * FROM TEST', 'sql')
   connector.getSchema((schema) => {
     expect(schema).toHaveLength(1)
     expect(schema[0].columns).toHaveLength(3)
@@ -184,14 +166,14 @@ it('formats the table correctly, with version', (done) => {
 
 it('formats the request for a project dataset correctly', () => {
   const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'sql-schema-test')
-  expect(connector.getQuery('agentid.dataset.table')).toBe('SELECT * FROM `agentid`.`dataset`.`table`')
+  connector.setConnectionData('test/1234')
+  expect(TableauConnector.getSelectAllQuery('agentid.dataset.table')).toBe('SELECT * FROM `agentid`.`dataset`.`table`')
 })
 
 it('formats the table correctly for a SPARQL query', (done) => {
   axios.__setMockResponse(sparqlSchemaData)
   const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'sql-schema-test', 'test', 'SPARQL')
+  connector.setConnectionData('test/1234', 'test', 'SPARQL')
   const table = {
     tableInfo: {
       alias: 'test'
@@ -215,8 +197,8 @@ it('formats the table correctly for a SPARQL query', (done) => {
 it('rejects invalid column names', (done) => {
   axios.__setMockResponse(schemaWithInvalidColumnNameData)
   const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'sql-schema-test')
-  connector.verify().catch((error) => {
+  connector.setConnectionData('test/1234')
+  connector.validateParams().catch((error) => {
     expect(error.message).toMatchSnapshot()
     done()
   })
@@ -225,6 +207,6 @@ it('rejects invalid column names', (done) => {
 it ('fails verification if getSchema call fails', (done) => {
   axios.__rejectNext()
   const connector = new TableauConnector()
-  connector.setConnectionData('test/1234', 'sql-schema-test')
-  connector.verify().catch(done)
+  connector.setConnectionData('test/1234')
+  connector.validateParams().catch(done)
 })

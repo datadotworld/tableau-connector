@@ -228,4 +228,4 @@ Array [
 ]
 `;
 
-exports[`test rejects invalid column names 1`] = `"\"invalid.column.name\" is not a valid column name. To work in Tableau, columns must contain only letters, numbers, or underscores. To fix this issue, make sure to modify your query and use alias to ensure all column names are valid."`;
+exports[`test rejects invalid column names 1`] = `""invalid.column.name" is not a valid column name. To work in Tableau, columns must contain only letters, numbers, or underscores. To fix this issue, make sure to modify your query and use alias to ensure all column names are valid."`;

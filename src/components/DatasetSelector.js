@@ -20,20 +20,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-export default class DatasetSelector extends Component {
-
-  static propTypes = {
-    close: PropTypes.func,
-    selectDataset: PropTypes.func,
-    show: PropTypes.bool
-  }
+class DatasetSelector extends Component {
 
   componentDidMount () {
     const datasetSelector = new window.dataworldWidgets.DatasetSelector({
       client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
       hideViewButton: true
     })
-    
+
     datasetSelector.success((datasets) => {
       this.props.selectDataset(datasets && datasets.length && datasets[0])
     })
@@ -62,6 +56,14 @@ export default class DatasetSelector extends Component {
   }
 
   render () {
-    return (<div />);
+    return (<div/>)
   }
 }
+
+DatasetSelector.propTypes = {
+  close: PropTypes.func,
+  selectDataset: PropTypes.func,
+  show: PropTypes.bool
+}
+
+export default DatasetSelector
