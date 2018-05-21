@@ -1,60 +1,22 @@
-import axios from 'axios'
-import crypto from 'crypto'
+/*
+ * Copyright 2018 data.world, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * This product includes software developed at
+ * data.world, Inc. (http://data.world/).
+ */
 
-const codeVerifierKey = 'DW-CODE-VERIFIER'
+const log = window.tableau ? window.tableau.log : console.log
 
-function getCodeVerifier() {
-  return window.localStorage.getItem(codeVerifierKey)
-}
-
-function generateCodeChallenge(codeVerifier) {
-  const base64hash = crypto.createHash('sha256')
-    .update(codeVerifier)
-    .digest('base64')
-  return encodeURIComponent(base64hash)
-}
-
-export function storeCodeVerifier() {
-  window.localStorage.setItem(codeVerifierKey, generateCodeVerifier())
-}
-
-export function removeCodeVerifier() {
-  window.localStorage.removeItem(codeVerifierKey)
-}
-
-export function generateCodeVerifier() {
-  const lowerCase = 'abcdefghijklmnopqrstuvwxyz'
-  const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-  const numbers = '1234567890'
-  const specialCharacters = "-._~"
-  const characters = lowerCase + upperCase + numbers + specialCharacters
-
-  const minLength = 43
-  const maxLength = 128
-  const stringLength = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength
-
-  let codeVerifier = ''
-  for (var i = 0; i < stringLength; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length)
-    codeVerifier += characters.charAt(randomIndex)
-  }
-
-  return codeVerifier;
-}
-
-export function getAuthUrl() {
-  const codeVerifier = getCodeVerifier()
-  const codeChallenge = generateCodeChallenge(codeVerifier)
-
-  return `https://data.world/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}&response_type=code&code_challenge_method=S256&code_challenge=${codeChallenge}`
-}
-
-export function getToken(code) {
-  return axios.post('https://data.world/oauth/access_token', {
-    code,
-    client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
-    client_secret: process.env.REACT_APP_OAUTH_CLIENT_SECRET,
-    grant_type: 'authorization_code',
-    code_verifier: getCodeVerifier()
-  });
-}
+export {log}

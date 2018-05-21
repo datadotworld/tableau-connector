@@ -17,12 +17,14 @@
  * data.world, Inc. (http://data.world/).
  */
 
-import axios from 'axios'
-import queryString from 'query-string'
+import * as auth from './auth'
+import * as api from './api'
+import analytics from './analytics'
+import * as utils from './util.js'
 
 const tableau = window.tableau
 
-const DW_CONNECTOR_VERSION = '1.0.1';
+const DW_CONNECTOR_VERSION = '1.1.0'
 
 const schemaMap = {
   'http://www.w3.org/2001/XMLSchema#boolean': tableau.dataTypeEnum.bool,
@@ -47,103 +49,100 @@ const schemaMap = {
   'http://www.w3.org/2001/XMLSchema#dateTimeStamp': tableau.dataTypeEnum.datetime
 }
 
-const queryTable = 'TableColumns'
+const metadataTable = 'TableColumns'
 
-export default class TableauConnector {
+class TableauConnector {
+  constructor (uiCallback, params, code) {
+    this.params = params
+    this.code = code
 
-  constructor () {
-    this.connector = tableau.makeConnector()
-    this.connector.getSchema = this.getSchema
-    this.connector.getData = this.getData
+    this.uiCallback = uiCallback
+
     this.submit = tableau.submit
-    axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-    axios.defaults.headers.post['Accept'] = 'application/json';
+
+    this.connector = tableau.makeConnector()
+    this.connector.init = this.init.bind(this)
+    this.connector.getSchema = this.getSchema.bind(this)
+    this.connector.getData = this.getData.bind(this)
+
     tableau.registerConnector(this.connector)
   }
 
-  /**
-   * Valid names for Tableau can only include alphanumeric characters 
-   * plus underscore
-   */
-  isNameValid = (name) => {
-    return /^\w+$/.test(name)
-  }
-
-  escapeDashes = (name) => {
-    return name.replace(/-/g, '_')
-  }
-
-  isProject = (bindings, ownerKey, datasetKey) => {
-    const datasets = {}
-
-    bindings.forEach((binding) => {
-      const dataset = `${binding[ownerKey].value}/${binding[datasetKey].value}`
-      datasets[dataset] = true
-    })
-    return Object.keys(datasets).length > 1
-  }
-
-  getQuery = (tableName) => {
-    const datasetCreds = JSON.parse(tableau.connectionData)
-    let { query } = datasetCreds
-    if (!query) {
-      // Projects need to have their agentid.dataset.tablename split and backticked
-      tableName = tableName.split('.').join('`.`')
-      query = `SELECT * FROM \`${tableName}\``
-    }
-    return query
-  }
-
-  isCustomQuery = () => {
-    const datasetCreds = JSON.parse(tableau.connectionData)
-    return !!datasetCreds.query
-  }
-
-  isSparqlQuery = () => {
-    const datasetCreds = JSON.parse(tableau.connectionData)
-    return datasetCreds.queryType && datasetCreds.queryType.toLowerCase() === 'sparql'
-  }
-
-  getApiEndpoint = () => {
-    const datasetCreds = JSON.parse(tableau.connectionData)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${datasetCreds.apiToken}`
-    return `https://query.data.world/${datasetCreds.queryType || 'sql'}/${datasetCreds.dataset}`
-  }
-
-  getDatatype = (datatype) => {
-    if (schemaMap[datatype]) {
-      return schemaMap[datatype]
+  authenticate () {
+    utils.log('START: Authenticate')
+    const apiKey = auth.getApiKey()
+    if (apiKey || !this.code) {
+      utils.log('SUCCESS: Authenticate (cached)')
+      return Promise.resolve(apiKey)
     } else {
-      return tableau.dataTypeEnum.string
+      utils.log('SUCCESS: Authenticate (oauth)')
+      return auth.getToken(this.code)
     }
   }
 
-  /**
-   * Used to verify that the dataset exists and the API key works
-   */
-  verify = () => {
-    return new Promise((resolve, reject) => {
-      this.getSchema((schema) => {
-        if (schema && schema.length) {
-          // Validate column names
-          schema[0].columns.forEach((column) => {
-            if (!this.isNameValid(column.id)) {
-              reject({message: `"${column.id}" is not a valid column name. To work in Tableau, columns must contain only letters, numbers, or underscores. To fix this issue, make sure to modify your query and use alias to ensure all column names are valid.`})
-            }
-          })
-          resolve()
-        }
-        reject()
-      }, reject)
-    })
+  validateAccessIfNeeded (accessToken) {
+    utils.log('START: Validate access')
+    if (tableau.phase === tableau.phaseEnum.gatherDataPhase) {
+      return api.getUser()
+        .then((user) => {
+          utils.log('SUCCESS: Validate access')
+          analytics.identify(user.id)
+          return accessToken
+        })
+        .catch(() => {
+          utils.log('FAILURE: Validate access')
+          tableau.abortForAuth()
+        })
+    } else {
+      utils.log('SUCCESS: Validate access (not needed)')
+      return Promise.resolve(accessToken)
+    }
   }
 
-  getSchemaForDataset = (resp) => {
+  init (initCallback) {
+    utils.log(`START: Init (${tableau.phase})`)
+    tableau.authType = tableau.authTypeEnum.custom
+
+    this.authenticate()
+      .then(accessToken => this.validateAccessIfNeeded(accessToken))
+      .then(accessToken => {
+        const hasAuth = !!accessToken
+        utils.log(`HAS AUTH: ${hasAuth}`)
+
+        if (!hasAuth) {
+          auth.redirectToAuth(this.params)
+        }
+
+        utils.log('START: Phase ' + tableau.phase)
+        this.updateUIWithAuthState(hasAuth)
+        initCallback()
+        // If we are not in the data gathering phase, we want to store the token
+        // This allows us to access the token in the data gathering phase
+        if (tableau.phase === tableau.phaseEnum.interactivePhase ||
+          tableau.phase === tableau.phaseEnum.authPhase) {
+          if (hasAuth) {
+            auth.storeApiKey(accessToken)
+            if (tableau.phase === tableau.phaseEnum.authPhase) {
+              // Auto-submit here if we are in the auth phase
+              tableau.submit()
+            }
+          }
+        }
+        utils.log(`SUCCESS: Init (${tableau.phase})`)
+      })
+  }
+
+  updateUIWithAuthState (hasAuth) {
+    this.uiCallback(hasAuth)
+  }
+
+  getSchemaForDataset (resp) {
+    utils.log('START: Schema for dataset')
     const datasetTablesResults = resp.data.results.bindings
     const metadata = resp.data.metadata
     const datasetTables = []
 
-    const datasetCreds = JSON.parse(tableau.connectionData)
+    const connData = JSON.parse(tableau.connectionData || '{}')
 
     const metadataMap = {}
 
@@ -161,7 +160,7 @@ export default class TableauConnector {
       tableName
     } = metadataMap
 
-    const isProject = this.isProject(datasetTablesResults, owner, dataset)
+    const isProject = TableauConnector.isProject(datasetTablesResults, owner, dataset)
 
     for (let i = 0; i < datasetTablesResults.length; i += 1) {
       if (datasetTablesResults[i][columnIndex].value === '1') {
@@ -171,22 +170,22 @@ export default class TableauConnector {
         for (let j = 0, len = datasetTablesResults.length; j < len; j += 1) {
           if (datasetTablesResults[j][tableId].value === activeTable) {
             let columnId = 'v_' + (parseInt(datasetTablesResults[j][columnIndex].value, 10) - 1)
-            if (datasetCreds.version) {
+            if (connData.version) {
               columnId = datasetTablesResults[j][columnName].value
             }
 
             datasetCols.push({
               id: columnId,
               alias: datasetTablesResults[j][columnTitle].value,
-              dataType: this.getDatatype(datasetTablesResults[j][columnDatatype].value)
+              dataType: TableauConnector.getDatatype(datasetTablesResults[j][columnDatatype].value)
             })
           }
         }
 
         let datasetTableId = datasetTablesResults[i][tableName].value
         if (isProject) {
-          const tableOwner = this.escapeDashes(datasetTablesResults[i][owner].value)
-          const tableDataset = this.escapeDashes(datasetTablesResults[i][dataset].value)
+          const tableOwner = TableauConnector.escapeDashes(datasetTablesResults[i][owner].value)
+          const tableDataset = TableauConnector.escapeDashes(datasetTablesResults[i][dataset].value)
           const tableTableName = datasetTablesResults[i][tableName].value
           datasetTableId = `${tableOwner}__${tableDataset}__${tableTableName}`
         }
@@ -199,21 +198,23 @@ export default class TableauConnector {
         datasetTables.push(datasetTable)
       }
     }
+    utils.log('SUCCESS: Schema for dataset')
     return datasetTables
   }
 
-  getSchemaForSqlQuery = (resp) => {
+  getSchemaForSqlQuery (resp) {
+    utils.log('START: Schema for SQL query')
     const metadata = resp.data.metadata
-    const datasetCreds = JSON.parse(tableau.connectionData)
+    const connData = JSON.parse(tableau.connectionData || '{}')
     const datasetTables = []
 
     const columns = []
 
     metadata.forEach((m, index) => {
       columns.push({
-        id: datasetCreds.version ? m.name : resp.data.head.vars[index],
+        id: connData.version ? m.name : resp.data.head.vars[index],
         alias: m.name,
-        dataType: this.getDatatype(m.type)
+        dataType: TableauConnector.getDatatype(m.type)
       })
     })
 
@@ -222,11 +223,12 @@ export default class TableauConnector {
       id: 'QueryTable',
       alias: 'Query Results'
     })
-
+    utils.log('SUCCESS: Schema for SQL query')
     return datasetTables
   }
 
-  getSchemaForSparqlQuery = (resp) => {
+  getSchemaForSparqlQuery (resp) {
+    utils.log('START: Schema for SPARQL query')
     const datasetTables = []
     const columns = resp.data.head.vars.map((entry) => {
       return {
@@ -241,46 +243,48 @@ export default class TableauConnector {
       id: 'QueryTable',
       alias: 'Query Results'
     })
-
+    utils.log('SUCCESS: Schema for SPARQL query')
     return datasetTables
   }
 
-  getSchema = (callback, failureCallback) => {
-    let query = this.getQuery(queryTable)
-    axios.post(this.getApiEndpoint(), queryString.stringify({query})).then((resp) => {
-      if (this.isCustomQuery()) {
-        if (this.isSparqlQuery()) {
-          callback(this.getSchemaForSparqlQuery(resp))
+  getSchema (schemaCallback, failureCallback = tableau.abortWithError) {
+    utils.log('START: Schema')
+    const connData = JSON.parse(tableau.connectionData || '{}')
+    const {dataset, queryType} = connData
+    const query = connData.query || TableauConnector.getSelectAllQuery(metadataTable)
+
+    this.redirect401(api.runQuery(dataset, query, queryType))
+      .then((resp) => {
+        if (connData.query) {
+          if (queryType === 'sparql') {
+            schemaCallback(this.getSchemaForSparqlQuery(resp))
+          } else {
+            schemaCallback(this.getSchemaForSqlQuery(resp))
+          }
         } else {
-          callback(this.getSchemaForSqlQuery(resp))
+          schemaCallback(this.getSchemaForDataset(resp))
         }
-      } else {
-        callback(this.getSchemaForDataset(resp))
-      }
-    }).catch((error) => {
-      if (failureCallback) {
-        failureCallback && failureCallback(error)
-      } else {
-        tableau.log(error)
-        tableau.log('There was an error retrieving the schema')
-        tableau.abortWithError(error)
-      }
-    })
+        utils.log('SUCCESS: Schema')
+      }).catch(error => {
+        utils.log(`FAILURE: Schema (${error})`)
+        failureCallback(error)
+      })
   }
 
-  getData = (table, callback) => {
-    let query = this.getQuery(table.tableInfo.alias)
-    const filesApiCall = this.getApiEndpoint()
+  getData (table, dataCallback) {
+    utils.log('START: Data')
+    const connData = JSON.parse(tableau.connectionData || '{}')
+    const {dataset, queryType} = connData
 
-    const datasetCreds = JSON.parse(tableau.connectionData)
+    const query = connData.query || TableauConnector.getSelectAllQuery(table.tableInfo.alias)
 
-    axios.post(filesApiCall, queryString.stringify({query})).then((resp) => {
+    this.redirect401(api.runQuery(dataset, query, queryType)).then((resp) => {
       const results = resp.data.results.bindings
       const columnIds = resp.data.head.vars.map((key, index) => {
         return {
           id: key,
           // SPARQL queries do not return a metadata object here
-          name: (datasetCreds.version && resp.data.metadata) ? resp.data.metadata[index].name : key
+          name: (connData.version && resp.data.metadata) ? resp.data.metadata[index].name : key
         }
       })
 
@@ -304,17 +308,91 @@ export default class TableauConnector {
       }
 
       table.appendRows(tableData)
-      callback()
-    }).catch(function (error) {
-      tableau.log(error)
-      tableau.log('There was an error retrieving the data')
+      dataCallback()
+      utils.log('SUCCESS: Data')
+    }).catch(error => {
       tableau.abortWithError(error)
+      utils.log(`FAILURE: Data (${error})`)
     })
   }
 
-  setConnectionData = (dataset, apiToken, query, queryType) => {
-    tableau.log('setting connection data');
-    tableau.connectionData = JSON.stringify({dataset, apiToken, query, queryType, version: DW_CONNECTOR_VERSION})
+  redirect401 (req) {
+    return req.catch(error => {
+      if (error.response && error.response.status === 401) {
+        auth.storeApiKey('')
+        auth.redirectToAuth(this.params)
+      }
+      throw (error)
+    })
+  }
+
+  setConnectionData (dataset, query, queryType) {
+    utils.log('START: Setting connection data')
+    tableau.connectionData = JSON.stringify({
+      dataset,
+      query,
+      queryType,
+      version: DW_CONNECTOR_VERSION
+    })
     tableau.connectionName = dataset
+    utils.log('SUCCESS: Setting connection data')
+  }
+
+  /**
+   * Used to verify that the dataset exists and the API key works
+   */
+  validateParams () {
+    return new Promise((resolve, reject) => {
+      this.getSchema((schema) => {
+        if (schema && schema.length) {
+          // Validate column names
+          schema[0].columns.forEach((column) => {
+            if (!TableauConnector.isNameValid(column.id)) {
+              reject(new Error(`"${column.id}" is not a valid column name. To work in Tableau, columns must contain only letters, numbers, or underscores. To fix this issue, make sure to modify your query and use alias to ensure all column names are valid.`))
+            }
+          })
+          resolve()
+        }
+        reject(new Error('Dataset contains zero tables. To work in Tableu, datasets must contain at least one table.'))
+      }, reject)
+    })
+  }
+
+  static escapeDashes (name) {
+    return name.replace(/-/g, '_')
+  }
+
+  static getDatatype (datatype) {
+    if (schemaMap[datatype]) {
+      return schemaMap[datatype]
+    } else {
+      return tableau.dataTypeEnum.string
+    }
+  }
+
+  static getSelectAllQuery (tableName) {
+    // Projects need to have their agentid.dataset.tablename split and backticked
+    tableName = '`' + tableName.split('.').join('`.`') + '`'
+    return `SELECT * FROM ${tableName}`
+  }
+
+  /**
+   * Valid names for Tableau can only include alphanumeric characters
+   * plus underscore
+   */
+  static isNameValid (name) {
+    return /^\w+$/.test(name)
+  }
+
+  static isProject (bindings, ownerKey, datasetKey) {
+    const datasets = {}
+
+    bindings.forEach((binding) => {
+      const dataset = `${binding[ownerKey].value}/${binding[datasetKey].value}`
+      datasets[dataset] = true
+    })
+    return Object.keys(datasets).length > 1
   }
 }
+
+export default TableauConnector

@@ -58,6 +58,7 @@ module.exports = {
     'prefer-const': [2, { 'destructuring': 'all', 'ignoreReadBeforeAssign': true }],
     'semi' : [2, 'never'],
     'generator-star-spacing': [2, 'both'],
+    'no-use-before-define': ['error', { 'functions': false, 'classes': false }],
 
     'flowtype/define-flow-type': 1,
     'flowtype/object-type-delimiter': [2, 'comma'],

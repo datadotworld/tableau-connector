@@ -18,6 +18,7 @@
  */
 
 import React, { Component } from 'react'
+import DatasetSelector from './DatasetSelector'
 import PropTypes from 'prop-types'
 import './TableauConnectorForm.css'
 import {
@@ -34,71 +35,58 @@ import {
 } from 'react-bootstrap'
 import sparkle from '../static/img/new-sparkle-logo.png'
 import analytics from '../analytics'
-import DatasetSelector from './DatasetSelector'
 import Icon from './Icon'
+import * as utils from '../util'
 
 const datasetRegex = /^https?:\/\/data\.world\/(.+\/.+)$/
+
 class TableauConnectorForm extends Component {
-
-  static propTypes = {
-    connector: PropTypes.any,
-    dataset: PropTypes.string,
-    apiKey: PropTypes.string,
-    query: PropTypes.string,
-    queryType: PropTypes.string,
-    clearApiKey: PropTypes.func,
-    clearStoredData: PropTypes.func
-  }
-
-  state = {
-    dataset: this.props.dataset || '',
-    apiToken: this.props.apiKey || '',
-    query: this.props.query || '',
-    queryType: this.props.queryType || 'sql',
-    writingQuery: !!this.props.query,
-    isSubmitting: false,
-    errorMessage: '',
-    showDatasetSelector: false
-  }
-
-  componentDidMount = () => {
-    if (this.props.apiKey) {
-      analytics.identify(this.props.apiKey)
+  constructor (props) {
+    super(props)
+    this.state = {
+      dataset: this.props.dataset || '',
+      errorMessage: '',
+      isSubmitting: false,
+      query: this.props.query || '',
+      queryType: this.props.queryType || 'sql',
+      showDatasetSelector: false,
+      writingQuery: !!this.props.query
     }
   }
 
-  datasetChanged = (e) => {
+  datasetChanged (e) {
     const dataset = e.target.value.toLowerCase()
-    this.setState({ dataset })
+    this.setState({dataset})
   }
 
-  queryChanged = (e) => {
+  queryChanged (e) {
     const query = e.target.value
-    this.setState({ query })
+    this.setState({query})
   }
 
-  queryTypeChanged = (e) => {
+  queryTypeChanged (e) {
     const queryType = e.target.value
-    this.setState({ queryType })
+    this.setState({queryType})
   }
 
-  isDatasetValid = () => {
+  isDatasetValid () {
     return this.state.dataset && datasetRegex.test(this.state.dataset)
   }
 
-  showDatasetSelector = () => {
+  showDatasetSelector () {
     analytics.track('tableauconnector.dataset_selector.click')
-    this.setState({ showDatasetSelector: true })
+    this.setState({showDatasetSelector: true})
   }
 
-  selectDataset = (dataset) => {
+  selectDataset (dataset) {
     this.setState({
       dataset: `https://data.world/${dataset.owner}/${dataset.id}`,
       showDatasetSelector: false
     })
   }
 
-  onSubmit = (e) => {
+  onSubmit (e) {
+    utils.log('START: Submit')
     analytics.track('tableauconnector.form.submit')
     e.preventDefault()
 
@@ -108,65 +96,43 @@ class TableauConnectorForm extends Component {
       })
     }
 
-    if (this.state.query) {
-      return this.onQuery(e)
-    }
-
     this.setState({
       isSubmitting: true,
       isError: false
     })
-    this.props.connector.setConnectionData(this.state.dataset.match(datasetRegex)[1], this.state.apiToken)
-    this.props.connector.verify().then(() => {
+
+    this.props.connector.setConnectionData(
+      this.state.dataset.match(datasetRegex)[1],
+      this.state.query,
+      this.state.queryType)
+
+    this.props.connector.validateParams().then(() => {
       this.props.connector.submit()
-      this.props.clearStoredData();
+      this.setState({
+        dataset: '',
+        query: '',
+        queryType: ''
+      })
+      utils.log('SUCCESS: Submit')
     }).catch((error) => {
-      if (error.response && error.response.status === 401) {
-        return this.props.clearApiKey()
-      }
       this.setState({
         isSubmitting: false,
         isError: true,
-        errorMessage: error.response && error.response.data
+        errorMessage: error.message || (error.response && error.response.data)
       })
+      utils.log('FAILURE: Submit')
     })
   }
 
-  onQuery = (e) => {
-    if (!this.state.query) {
-      this.setState({
-        isError: true
-      })
-    } else {
-      this.setState({
-        isSubmitting: true,
-        isError: false
-      })
-      this.props.connector.setConnectionData(this.state.dataset.match(datasetRegex)[1], this.state.apiToken, this.state.query, this.state.queryType)
-      this.props.connector.verify().then(() => {
-        this.props.connector.submit()
-        this.props.clearStoredData();
-      }).catch((error) => {
-        if (error.response && error.response.status === 401) {
-          return this.props.clearApiKey()
-        } else {
-          this.setState({
-            isSubmitting: false,
-            isError: true,
-            errorMessage: error.message ? error.message : error.response && error.response.data
-          })
-        }
-      })
-    }
-  }
-
-  supportLinkClick = () => {
+  supportLinkClick () {
     analytics.track('tableauconnector.form.support.click')
   }
 
   render () {
     const {
       dataset,
+      query,
+      queryType,
       isSubmitting,
       isError,
       writingQuery,
@@ -186,7 +152,7 @@ class TableauConnectorForm extends Component {
           <Col md={6} mdOffset={3} xs={10} xsOffset={1}>
             <img src={sparkle} className='header-image' alt='data.world sparkle logo' />
             <h2 className='header'>Add a data source from data.world</h2>
-            <form onSubmit={this.onSubmit}>
+            <form onSubmit={e => this.onSubmit(e)}>
               {isError && <Alert bsStyle='danger'>
                 <strong>
                   {!errorMessage && <span>All fields are required. {errorMessage}</span>}
@@ -197,65 +163,77 @@ class TableauConnectorForm extends Component {
                 <ControlLabel>Dataset URL</ControlLabel>
                 <InputGroup>
                   <FormControl
-                    onChange={this.datasetChanged}
-                    value={this.state.dataset}
+                    onChange={e => this.datasetChanged(e)}
+                    value={dataset}
                     autoFocus
                     disabled={writingQuery}
                     type='text'
                     placeholder='http://data.world/jonloyens/an-intro-to-dataworld-dataset' />
-                  {!writingQuery && <InputGroup.Button>
-                    <Button onClick={this.showDatasetSelector} className='button-addon-with-icon'>
+                  {!writingQuery &&
+                  <InputGroup.Button>
+                    <Button onClick={() => this.showDatasetSelector()} className='button-addon-with-icon'>
                       <Icon icon='browse' />
                       Browse
                     </Button>
                   </InputGroup.Button>}
                 </InputGroup>
-                {datasetValidState === 'warning' && <HelpBlock>A valid dataset URL is required: https://data.world/jonloyens/an-intro-to-dataworld-dataset</HelpBlock>}
+                {datasetValidState === 'warning' && <HelpBlock>A valid dataset URL is required:
+                  https://data.world/jonloyens/an-intro-to-dataworld-dataset</HelpBlock>}
                 {datasetValidState === 'success' && <HelpBlock>Dataset URL valid</HelpBlock>}
                 {!datasetValidState && <HelpBlock>Copy and paste the dataset URL or click "Browse"</HelpBlock>}
               </FormGroup>
-              {writingQuery && <div><FormGroup>
-                <ControlLabel>Query Type</ControlLabel>
-                <InputGroup>
-                  <FormControl
-                    value={this.state.queryType}
-                    onChange={this.queryTypeChanged}
-                    componentClass='select'
-                    placeholder='Select'>
-                    <option value='sql'>SQL</option>
-                    <option value='sparql'>SPARQL</option>
-                  </FormControl>
-                </InputGroup>
+              {writingQuery &&
+              <div>
+                <FormGroup>
+                  <ControlLabel>Query Type</ControlLabel>
+                  <InputGroup>
+                    <FormControl
+                      value={queryType}
+                      onChange={e => this.queryTypeChanged(e)}
+                      componentClass='select'
+                      placeholder='Select'>
+                      <option value='sql'>SQL</option>
+                      <option value='sparql'>SPARQL</option>
+                    </FormControl>
+                  </InputGroup>
                 </FormGroup>
                 <FormGroup>
                   <ControlLabel>Query</ControlLabel>
                   <InputGroup>
                     <FormControl
-                      onChange={this.queryChanged}
-                      value={this.state.query}
+                      onChange={e => this.queryChanged(e)}
+                      value={query}
                       componentClass='textarea'
                       placeholder='SELECT * FROM TABLE_NAME' />
                   </InputGroup>
-                </FormGroup></div>}
-                <Button
-                  className='center-block'
-                  type='submit'
-                  disabled={isSubmitting || datasetValidState !== 'success'}
-                  bsStyle='primary'>Connect</Button>
+                </FormGroup>
+              </div>}
+              <Button
+                className='center-block'
+                type='submit'
+                disabled={isSubmitting || datasetValidState !== 'success'}
+                bsStyle='primary'>Connect</Button>
               <div className='footer'>
-                <a href='https://help.data.world/hc/en-us/articles/115010298907-Tableau-Web-Data-Connector' target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
+                <a href='https://help.data.world/hc/en-us/articles/115010298907-Tableau-Web-Data-Connector'
+                  target='_blank' onClick={this.supportLinkClick}>Learn more about the data.world connector</a>
               </div>
             </form>
           </Col>
         </Row>
         <DatasetSelector
           show={showDatasetSelector}
-          close={() => this.setState({ showDatasetSelector: false })}
-          selectDataset={this.selectDataset}
-        />
+          close={() => this.setState({showDatasetSelector: false})}
+          selectDataset={dataset => this.selectDataset(dataset)} />
       </Grid>
     )
   }
+}
+
+TableauConnectorForm.propTypes = {
+  connector: PropTypes.any,
+  dataset: PropTypes.string,
+  query: PropTypes.string,
+  queryType: PropTypes.string
 }
 
 export default TableauConnectorForm
