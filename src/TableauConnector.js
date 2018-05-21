@@ -106,7 +106,7 @@ class TableauConnector {
     this.authenticate()
       .then(accessToken => this.validateAccessIfNeeded(accessToken))
       .then(accessToken => {
-        const hasAuth = !!accessToken && accessToken.length > 0
+        const hasAuth = !!accessToken
         utils.log(`HAS AUTH: ${hasAuth}`)
 
         if (!hasAuth) {

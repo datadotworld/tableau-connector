@@ -26,36 +26,16 @@ const basePathQuery = 'https://query.data.world'
 
 axios.defaults.headers['Accept'] = 'application/json'
 
-const runSql = (dataset, query) => {
+const runQuery = (dataset, query, queryType = 'sql') => {
   return axios.post(
-    `${basePathQuery}/sql/${dataset}`,
+    `${basePathQuery}/${queryType}/${dataset}`,
     queryString.stringify({query}),
     {
       headers: {
-        'authorization': 'Bearer ' + getApiKey(true),
+        'authorization': `Bearer ${getApiKey(true)}`,
         'content-type': 'application/x-www-form-urlencoded'
       }
     })
-}
-
-const runSparql = (dataset, query) => {
-  return axios.post(
-    `${basePathQuery}/sparql/${dataset}`,
-    queryString.stringify({query}),
-    {
-      headers: {
-        'authorization': 'Bearer ' + getApiKey(true),
-        'content-type': 'application/x-www-form-urlencoded'
-      }
-    })
-}
-
-const runQuery = (dataset, query, queryType) => {
-  let apiFn = runSql
-  if (queryType && queryType === 'sparql') {
-    apiFn = runSparql
-  }
-  return apiFn(dataset, query)
 }
 
 const getUser = () => {
@@ -63,14 +43,12 @@ const getUser = () => {
     `${basePath}/user`,
     {
       headers: {
-        'authorization': 'Bearer ' + getApiKey(true)
+        'authorization': `Bearer ${getApiKey(true)}`
       }
     })
 }
 
 export {
   runQuery,
-  runSql,
-  runSparql,
   getUser
 }

@@ -56,7 +56,6 @@ class App extends Component {
   }
 
   onConnectorReady (hasAuth) {
-    console.log('Connector ready. Show screen? ' + hasAuth)
     this.setState({
       hasAuth
     })
