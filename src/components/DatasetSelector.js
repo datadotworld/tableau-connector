@@ -48,15 +48,15 @@ class DatasetSelector extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.show) {
+    if (nextProps.show && !this.props.show) {
       this.datasetSelector.show()
-    } else {
+    } else if (!nextProps.show) {
       this.datasetSelector.close()
     }
   }
 
   render () {
-    return (<div/>)
+    return (<div />)
   }
 }
 
