@@ -48,21 +48,21 @@ class App extends Component {
     this.isTableau = window.tableauVersionBootstrap || forceTableau
 
     this.state = {
-      hasAuth: false,
+      interactivePhase: false,
       datasetName: dataset_name,
       query,
       queryType
     }
   }
 
-  onConnectorReady (hasAuth) {
+  onConnectorReady (interactivePhase) {
     this.setState({
-      hasAuth
+      interactivePhase
     })
   }
 
   render () {
-    const {hasAuth, datasetName, query, queryType} = this.state
+    const {interactivePhase, datasetName, query, queryType} = this.state
     const dataset = datasetName ? `https://data.world/${datasetName}` : null
 
     if (!this.isTableau) {
@@ -70,7 +70,7 @@ class App extends Component {
     }
 
     return (
-      hasAuth ? <TableauConnectorForm
+      interactivePhase ? <TableauConnectorForm
         connector={this.connector}
         dataset={dataset}
         query={query}

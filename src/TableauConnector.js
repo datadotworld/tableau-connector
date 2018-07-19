@@ -70,13 +70,15 @@ class TableauConnector {
 
   authenticate () {
     utils.log('START: Authenticate')
-    const apiKey = auth.getApiKey()
-    if (apiKey || !this.code) {
-      utils.log('SUCCESS: Authenticate (cached)')
-      return Promise.resolve(apiKey)
-    } else {
+    if (this.code) {
       utils.log('SUCCESS: Authenticate (oauth)')
-      return auth.getToken(this.code)
+      const code = this.code
+      this.code = null // Code can only be used once
+      return auth.getToken(code)
+    } else {
+      const apiKey = auth.getApiKey(true)
+      utils.log(`SUCCESS: Authenticate (cached: ${apiKey ? 'hit' : 'miss'})`)
+      return Promise.resolve(apiKey)
     }
   }
 
@@ -91,6 +93,8 @@ class TableauConnector {
         })
         .catch(() => {
           utils.log('FAILURE: Validate access')
+          // TODO forget on any 401 response
+          auth.storeApiKey('')
           tableau.abortForAuth()
         })
     } else {
@@ -114,7 +118,7 @@ class TableauConnector {
         }
 
         utils.log('START: Phase ' + tableau.phase)
-        this.updateUIWithAuthState(hasAuth)
+        this.updateUIState(tableau.phase === tableau.phaseEnum.interactivePhase)
         initCallback()
         // If we are not in the data gathering phase, we want to store the token
         // This allows us to access the token in the data gathering phase
@@ -132,8 +136,8 @@ class TableauConnector {
       })
   }
 
-  updateUIWithAuthState (hasAuth) {
-    this.uiCallback(hasAuth)
+  updateUIState (interactivePhase) {
+    this.uiCallback(interactivePhase)
   }
 
   getSchemaForDataset (resp) {
@@ -253,7 +257,7 @@ class TableauConnector {
     const {dataset, queryType} = connData
     const query = connData.query || TableauConnector.getSelectAllQuery(metadataTable)
 
-    this.redirect401(api.runQuery(dataset, query, queryType))
+    api.runQuery(dataset, query, queryType)
       .then((resp) => {
         if (connData.query) {
           if (queryType === 'sparql') {
@@ -278,7 +282,7 @@ class TableauConnector {
 
     const query = connData.query || TableauConnector.getSelectAllQuery(table.tableInfo.alias)
 
-    this.redirect401(api.runQuery(dataset, query, queryType)).then((resp) => {
+    api.runQuery(dataset, query, queryType).then((resp) => {
       const results = resp.data.results.bindings
       const columnIds = resp.data.head.vars.map((key, index) => {
         return {
@@ -316,16 +320,6 @@ class TableauConnector {
     })
   }
 
-  redirect401 (req) {
-    return req.catch(error => {
-      if (error.response && error.response.status === 401) {
-        auth.storeApiKey('')
-        auth.redirectToAuth(this.params)
-      }
-      throw (error)
-    })
-  }
-
   setConnectionData (dataset, query, queryType) {
     utils.log('START: Setting connection data')
     tableau.connectionData = JSON.stringify({
@@ -354,7 +348,13 @@ class TableauConnector {
           resolve()
         }
         reject(new Error('Dataset contains zero tables. To work in Tableu, datasets must contain at least one table.'))
-      }, reject)
+      }, error => {
+        if (error.response && error.response.status === 401) {
+          auth.redirectToAuth(this.params)
+        } else {
+          reject(error)
+        }
+      })
     })
   }
 
