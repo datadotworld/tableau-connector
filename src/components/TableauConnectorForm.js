@@ -106,7 +106,7 @@ class TableauConnectorForm extends Component {
       this.state.query,
       this.state.queryType)
 
-    // TODO Update window.location (push state)
+    history.pushState({}, '', '/')
 
     this.props.connector.validateParams().then(() => {
       this.props.connector.submit()

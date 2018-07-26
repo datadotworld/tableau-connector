@@ -46,6 +46,16 @@ const runQuery = (dataset, query, queryType = 'sql') => {
     })
 }
 
+const getToken = (code, code_verifier) => {
+  return axios.post('https://data.world/oauth/access_token', {
+    code,
+    client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
+    client_secret: process.env.REACT_APP_OAUTH_CLIENT_SECRET,
+    grant_type: 'authorization_code',
+    code_verifier
+  })
+}
+
 const getUser = () => {
   return axios.get(
     `${basePath}/user`,
@@ -58,5 +68,6 @@ const getUser = () => {
 
 export {
   runQuery,
+  getToken,
   getUser
 }

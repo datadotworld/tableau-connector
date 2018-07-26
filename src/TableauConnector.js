@@ -70,7 +70,7 @@ class TableauConnector {
 
   authenticate () {
     utils.log('START: Authenticate')
-    if (this.code) {
+    if (this.code && tableau.phase !== tableau.phaseEnum.gatherDataPhase) {
       utils.log('SUCCESS: Authenticate (oauth)')
       const code = this.code
       this.code = null // Code can only be used once
@@ -93,9 +93,7 @@ class TableauConnector {
         })
         .catch(() => {
           utils.log('FAILURE: Validate access')
-          // TODO forget on any 401 response
-          auth.storeApiKey('')
-          tableau.abortForAuth()
+          tableau.abortForAuth('The data.world auth token expired or was revoked')
         })
     } else {
       utils.log('SUCCESS: Validate access (not needed)')
