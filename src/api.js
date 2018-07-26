@@ -25,14 +25,16 @@ const basePath = 'https://api.data.world/v0'
 const basePathQuery = 'https://query.data.world'
 
 axios.defaults.headers['Accept'] = 'application/json'
-axios.interceptors.response.use(function (response) {
-  return response
-}, function (error) {
-  if (error.response && error.response.status === 401) {
-    storeApiKey('')
-  }
-  return Promise.reject(error)
-})
+axios.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      storeApiKey('')
+    }
+    return Promise.reject(error)
+  })
 
 const runQuery = (dataset, query, queryType = 'sql') => {
   return axios.post(
