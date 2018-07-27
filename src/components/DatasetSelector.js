@@ -25,7 +25,8 @@ class DatasetSelector extends Component {
   componentDidMount () {
     const datasetSelector = new window.dataworldWidgets.DatasetSelector({
       client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
-      hideViewButton: true
+      hideViewButton: true,
+      linkText: 'Select'
     })
 
     datasetSelector.success((datasets) => {

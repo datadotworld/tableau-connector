@@ -17,7 +17,7 @@
  * data.world, Inc. (http://data.world/).
  */
 
-import axios from 'axios'
+import * as api from './api'
 import crypto from 'crypto'
 
 const apiTokenKey = 'DW-API-KEY'
@@ -104,14 +104,8 @@ const redirectToAuth = (state) => {
 }
 
 const getToken = (code) => {
-  return axios.post('https://data.world/oauth/access_token', {
-    code,
-    client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
-    client_secret: process.env.REACT_APP_OAUTH_CLIENT_SECRET,
-    grant_type: 'authorization_code',
-    code_verifier: useCodeVerifier()
-  }).then(response => {
-    let token
+  return api.getToken(code, useCodeVerifier()).then(response => {
+    let token = ''
     if (response.data.access_token) {
       token = response.data.access_token
     }
