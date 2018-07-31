@@ -48,10 +48,7 @@ class App extends Component {
     this.isTableau = window.tableauVersionBootstrap || forceTableau
 
     this.state = {
-      interactivePhase: false,
-      datasetName: dataset_name,
-      query,
-      queryType
+      interactivePhase: false
     }
   }
 
@@ -62,8 +59,9 @@ class App extends Component {
   }
 
   render () {
-    const {interactivePhase, datasetName, query, queryType} = this.state
-    const dataset = datasetName ? `https://data.world/${datasetName}` : null
+    const {interactivePhase} = this.state
+    const {dataset_name, query, queryType} = this.connector.params
+    const dataset = dataset_name ? `https://data.world/${dataset_name}` : null
 
     if (!this.isTableau) {
       return (<NotTableauView />)
