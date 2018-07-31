@@ -80,16 +80,13 @@ class TableauConnector {
       utils.log('SUCCESS: Authenticate (oauth)')
       const code = this.code
       return auth.getToken(code).then(accessToken => {
-        const {dataset_name, query, queryType, forceTableau} = this.params
         // Restore canonical WDC URL, which Tableau saves with data source
-        let canonicalUrl = `/?dataset_name=${encodeURIComponent(dataset_name)}`
-        if (query) {
-          canonicalUrl += `&query=${encodeURIComponent(query)}&queryType=${queryType || 'sql'}`
-        }
-        if (forceTableau) {
-          canonicalUrl += `&forceTableau=${forceTableau}`
-        }
-        window.location = canonicalUrl
+        const canonicalQueryString = Object.keys(this.params)
+          .filter(key => !!this.params[key])
+          .reduce((prev, key) => {
+            return `${prev ? prev + '&' : '?'}${encodeURIComponent(key)}=${encodeURIComponent(this.params[key])}`
+          }, '')
+        window.location = `/${canonicalQueryString}`
 
         // For correctness only. Should never be reached.
         return accessToken
