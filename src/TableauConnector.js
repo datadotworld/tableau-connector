@@ -53,7 +53,13 @@ const metadataTable = 'TableColumns'
 
 class TableauConnector {
   constructor (uiCallback, params, code) {
-    this.params = params
+    const connData = JSON.parse(tableau.connectionData || '""')
+    this.params = connData ? {
+      dataset_name: connData.dataset,
+      query: connData.query,
+      queryType: connData.queryType,
+      forceTableau: connData.forceTableau
+    } : params
     this.code = code
 
     this.uiCallback = uiCallback
@@ -73,8 +79,21 @@ class TableauConnector {
     if (this.code && tableau.phase !== tableau.phaseEnum.gatherDataPhase) {
       utils.log('SUCCESS: Authenticate (oauth)')
       const code = this.code
-      this.code = null // Code can only be used once
-      return auth.getToken(code)
+      return auth.getToken(code).then(accessToken => {
+        const {dataset_name, query, queryType, forceTableau} = this.params
+        // Restore canonical WDC URL, which Tableau saves with data source
+        let canonicalUrl = `/?dataset_name=${encodeURIComponent(dataset_name)}`
+        if (query) {
+          canonicalUrl += `&query=${encodeURIComponent(query)}&queryType=${queryType || 'sql'}`
+        }
+        if (forceTableau) {
+          canonicalUrl += `&forceTableau=${forceTableau}`
+        }
+        window.location = canonicalUrl
+
+        // For correctness only. Should never be reached.
+        return accessToken
+      })
     } else {
       const apiKey = auth.getApiKey(true)
       utils.log(`SUCCESS: Authenticate (cached: ${apiKey ? 'hit' : 'miss'})`)
