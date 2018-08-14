@@ -95,7 +95,7 @@ const getAuthUrl = (codeVerifier, state) => {
   return `https://data.world/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}` +
     `&redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}` +
     `&response_type=code&code_challenge_method=S256&code_challenge=${codeChallenge}` +
-    `&state=${JSON.stringify(state)}`
+    `&state=${encodeURIComponent(JSON.stringify(state))}`
 }
 
 const redirectToAuth = (state) => {
