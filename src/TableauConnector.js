@@ -93,10 +93,10 @@ class TableauConnector {
         return Promise.resolve({accessToken, refreshToken})
       })
     } else {
-      const apiKey = await auth.getAccessToken(true)
+      const accessToken = await auth.getAccessToken(true)
       const refreshToken = auth.getRefreshToken(true)
-      utils.log(`SUCCESS: Authenticate (cached: ${apiKey ? 'hit' : 'miss'})`)
-      return Promise.resolve({accessToken: apiKey, refreshToken})
+      utils.log(`SUCCESS: Authenticate (cached: ${refreshToken ? 'hit' : 'miss'})`)
+      return Promise.resolve({accessToken, refreshToken})
     }
   }
 

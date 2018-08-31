@@ -62,14 +62,18 @@ const getAccessToken = async (useTableauPassword = false) => {
     if (window.tableau && useTableauPassword) {
       refreshToken = window.tableau.password || refreshToken
     }
-    // exchange refresh token for access token
-    const response = await api.getRefreshedTokens(refreshToken)
-    // store new refresh token
-    storeRefreshToken(response.data.refresh_token)
-    return response.data.access_token
-  } else {
-    return null
+    if (refreshToken) { // exchange refresh token for access token
+      try {
+        const response = await api.getRefreshedTokens(refreshToken)
+        // store new refresh token
+        storeRefreshToken(response.data.refresh_token)
+        return response.data.access_token
+      } catch (error) {
+        return null
+      }
+    }
   }
+  return null
 }
 
 const getRefreshToken = (useTableauPassword = false) => {
