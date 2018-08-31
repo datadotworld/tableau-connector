@@ -19,7 +19,7 @@
 
 import axios from 'axios'
 import * as queryString from 'query-string'
-import { getApiKey, storeApiKey } from './auth'
+import { getAccessToken, storeRefreshToken } from './auth'
 
 const basePath = 'https://api.data.world/v0'
 const basePathQuery = 'https://query.data.world'
@@ -31,24 +31,25 @@ axios.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      storeApiKey('')
+      storeRefreshToken('')
     }
     return Promise.reject(error)
   })
 
-const runQuery = (dataset, query, queryType = 'sql') => {
+const runQuery = async (dataset, query, queryType = 'sql') => {
+  const accessToken = await getAccessToken(true)
   return axios.post(
     `${basePathQuery}/${queryType}/${dataset}`,
     queryString.stringify({query}),
     {
       headers: {
-        'authorization': `Bearer ${getApiKey(true)}`,
+        'authorization': `Bearer ${accessToken}`,
         'content-type': 'application/x-www-form-urlencoded'
       }
     })
 }
 
-const getToken = (code, code_verifier) => {
+const exchangeCodeForTokens = (code, code_verifier) => {
   return axios.post('https://data.world/oauth/access_token', {
     code,
     client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
@@ -58,18 +59,29 @@ const getToken = (code, code_verifier) => {
   })
 }
 
-const getUser = () => {
+const getUser = async () => {
+  const accessToken = await getAccessToken(true)
   return axios.get(
     `${basePath}/user`,
     {
       headers: {
-        'authorization': `Bearer ${getApiKey(true)}`
+        'authorization': `Bearer ${accessToken}`
       }
     })
 }
 
+const getRefreshedTokens = (refreshToken) => {
+  return axios.post('https://data.world/oauth/access_token', {
+    client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
+    client_secret: process.env.REACT_APP_OAUTH_CLIENT_SECRET,
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken
+  })
+}
+
 export {
   runQuery,
-  getToken,
-  getUser
+  exchangeCodeForTokens,
+  getUser,
+  getRefreshedTokens
 }
