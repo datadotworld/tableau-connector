@@ -219,6 +219,10 @@ Go to <https://github.com/[YOUR_GITHUB_NAME]/tableau-connector> and select your 
 Click the 'Pull Request' button and fill out the form. Pull requests are usually reviewed within
 a few days.
 
+### Deploy to heroku
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/datadotworld/tableau-connector/tree/master)
+
 ## Thank you!
 
 Thank you in advance, for contributing to this project!
