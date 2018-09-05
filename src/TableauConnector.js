@@ -89,24 +89,23 @@ class TableauConnector {
         window.location = `/${canonicalQueryString}`
 
         // For correctness only. Should never be reached.
-        return Promise.resolve({accessToken, refreshToken})
+        return refreshToken
       })
     } else {
-      const accessToken = await auth.getAccessToken(true)
       const refreshToken = auth.getRefreshToken(true)
       utils.log(`SUCCESS: Authenticate (cached: ${refreshToken ? 'hit' : 'miss'})`)
-      return Promise.resolve({accessToken, refreshToken})
+      return refreshToken
     }
   }
 
-  validateAccessIfNeeded (accessToken, refreshToken) {
+  validateAccessIfNeeded (refreshToken) {
     utils.log('START: Validate access')
     if (tableau.phase === tableau.phaseEnum.gatherDataPhase) {
       return api.getUser()
         .then((user) => {
           utils.log('SUCCESS: Validate access')
           analytics.identify(user.id)
-          return Promise.resolve({accessToken, refreshToken})
+          return refreshToken
         })
         .catch(() => {
           utils.log('FAILURE: Validate access')
@@ -114,7 +113,7 @@ class TableauConnector {
         })
     } else {
       utils.log('SUCCESS: Validate access (not needed)')
-      return Promise.resolve({accessToken, refreshToken})
+      return refreshToken
     }
   }
 
@@ -123,9 +122,9 @@ class TableauConnector {
     tableau.authType = tableau.authTypeEnum.custom
 
     this.authenticate()
-      .then(({accessToken, refreshToken}) => this.validateAccessIfNeeded(accessToken, refreshToken))
-      .then(({accessToken, refreshToken}) => {
-        const hasAuth = !!accessToken
+      .then(refreshToken => this.validateAccessIfNeeded(refreshToken))
+      .then(refreshToken => {
+        const hasAuth = !!refreshToken
         utils.log(`HAS AUTH: ${hasAuth}`)
 
         if (!hasAuth) {
