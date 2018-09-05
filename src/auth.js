@@ -19,7 +19,7 @@
 import * as api from './api'
 import crypto from 'crypto'
 import uuidv1 from 'uuid/v1'
-import { parseJSON } from './util.js'
+import { parseJSON, log } from './util.js'
 
 const refreshTokenKey = 'DW-REFRESH-TOKEN-KEY'
 const codeVerifierKey = 'DW-CODE-VERIFIER'
@@ -56,26 +56,6 @@ const storeRefreshToken = (refreshToken) => {
   return null
 }
 
-const getAccessToken = async (useTableauPassword = false) => {
-  if (window.localStorage) {
-    let refreshToken = window.localStorage.getItem(refreshTokenKey)
-    if (window.tableau && useTableauPassword) {
-      refreshToken = window.tableau.password || refreshToken
-    }
-    if (refreshToken) { // exchange refresh token for access token
-      try {
-        const response = await api.getRefreshedTokens(refreshToken)
-        // store new refresh token
-        storeRefreshToken(response.data.refresh_token)
-        return response.data.access_token
-      } catch (error) {
-        return null
-      }
-    }
-  }
-  return null
-}
-
 const getRefreshToken = (useTableauPassword = false) => {
   if (window.localStorage) {
     let refreshToken = window.localStorage.getItem(refreshTokenKey)
@@ -83,6 +63,23 @@ const getRefreshToken = (useTableauPassword = false) => {
       refreshToken = window.tableau.password || refreshToken
     }
     return refreshToken
+  }
+  return null
+}
+
+const getAccessToken = async (useTableauPassword = false) => {
+  const refreshToken = getRefreshToken(useTableauPassword)
+  if (refreshToken) {
+    // exchange refresh token for access token
+    try {
+      const response = await api.getRefreshedTokens(refreshToken)
+      // store new refresh token
+      storeRefreshToken(response.data.refresh_token)
+      return response.data.access_token
+    } catch (error) {
+      log(`ERROR : Failed to refresh tokens - ${error.message}`)
+      return null
+    }
   }
   return null
 }
@@ -158,4 +155,4 @@ const exchangeCodeForTokens = (code) => {
   })
 }
 
-export { redirectToAuth, exchangeCodeForTokens, getAccessToken, storeRefreshToken, getRefreshToken }
+export { redirectToAuth, exchangeCodeForTokens, getAccessToken, storeRefreshToken, getRefreshToken, getStateObject }
