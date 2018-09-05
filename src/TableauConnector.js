@@ -74,12 +74,12 @@ class TableauConnector {
     tableau.registerConnector(this.connector)
   }
 
-  authenticate () {
+  async authenticate () {
     utils.log('START: Authenticate')
     if (this.code && tableau.phase !== tableau.phaseEnum.gatherDataPhase) {
       utils.log('SUCCESS: Authenticate (oauth)')
       const code = this.code
-      return auth.getToken(code).then(accessToken => {
+      return auth.exchangeCodeForTokens(code).then(({accessToken, refreshToken}) => {
         // Restore canonical WDC URL, which Tableau saves with data source
         const canonicalQueryString = Object.keys(this.params)
           .filter(key => !!this.params[key])
@@ -89,23 +89,23 @@ class TableauConnector {
         window.location = `/${canonicalQueryString}`
 
         // For correctness only. Should never be reached.
-        return accessToken
+        return refreshToken
       })
     } else {
-      const apiKey = auth.getApiKey(true)
-      utils.log(`SUCCESS: Authenticate (cached: ${apiKey ? 'hit' : 'miss'})`)
-      return Promise.resolve(apiKey)
+      const refreshToken = auth.getRefreshToken(true)
+      utils.log(`SUCCESS: Authenticate (cached: ${refreshToken ? 'hit' : 'miss'})`)
+      return refreshToken
     }
   }
 
-  validateAccessIfNeeded (accessToken) {
+  validateAccessIfNeeded (refreshToken) {
     utils.log('START: Validate access')
     if (tableau.phase === tableau.phaseEnum.gatherDataPhase) {
       return api.getUser()
         .then((user) => {
           utils.log('SUCCESS: Validate access')
           analytics.identify(user.id)
-          return accessToken
+          return refreshToken
         })
         .catch(() => {
           utils.log('FAILURE: Validate access')
@@ -113,7 +113,7 @@ class TableauConnector {
         })
     } else {
       utils.log('SUCCESS: Validate access (not needed)')
-      return Promise.resolve(accessToken)
+      return refreshToken
     }
   }
 
@@ -122,9 +122,9 @@ class TableauConnector {
     tableau.authType = tableau.authTypeEnum.custom
 
     this.authenticate()
-      .then(accessToken => this.validateAccessIfNeeded(accessToken))
-      .then(accessToken => {
-        const hasAuth = !!accessToken
+      .then(refreshToken => this.validateAccessIfNeeded(refreshToken))
+      .then(refreshToken => {
+        const hasAuth = !!refreshToken
         utils.log(`HAS AUTH: ${hasAuth}`)
 
         if (!hasAuth) {
@@ -139,7 +139,7 @@ class TableauConnector {
         if (tableau.phase === tableau.phaseEnum.interactivePhase ||
           tableau.phase === tableau.phaseEnum.authPhase) {
           if (hasAuth) {
-            auth.storeApiKey(accessToken)
+            auth.storeRefreshToken(refreshToken)
             if (tableau.phase === tableau.phaseEnum.authPhase) {
               // Auto-submit here if we are in the auth phase
               tableau.submit()
