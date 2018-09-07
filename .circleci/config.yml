@@ -16,8 +16,8 @@ jobs:
           paths:
             - ./node_modules
       - run:
-          name: Build react app
-          command: yarn build
-      - run:
           name: Run tests
           command: yarn test
+      - run:
+          name: Build react app
+          command: yarn build
