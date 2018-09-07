@@ -3,20 +3,7 @@
     "description": "data.world tableau web data connector",
     "repository": "https://github.com/datadotworld/tableau-connector",
     "scripts": {},
-    "env": {
-      "REACT_APP_OAUTH_REDIRECT_URI": {
-        "required": true
-      },      
-      "REACT_APP_OAUTH_ROOT_URL": {
-        "required": true
-      },      
-      "REACT_APP_OAUTH_CLIENT_ID": {
-        "required": true
-      },      
-      "REACT_APP_OAUTH_CLIENT_SECRET": {
-        "required": true
-      }
-    },
+    "env": {},
     "formation": {
       "web": {
         "quantity": 1
