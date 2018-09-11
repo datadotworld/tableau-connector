@@ -16,7 +16,7 @@
  * This product includes software developed at
  * data.world, Inc. (http://data.world/).
  */
-import './errorReporting'
+import './sentry'
 import React from 'react'
 import ReactDOM from 'react-dom'
 

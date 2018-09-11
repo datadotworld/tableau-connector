@@ -5,7 +5,7 @@
   "dependencies": {
     "axios": "0.15.3",
     "query-string": "4.3.4",
-    "raven": "^2.6.4",
+    "raven-js": "^3.27.0",
     "react": "^15.5.4",
     "react-bootstrap": "0.30.7",
     "react-dom": "^15.5.4"
