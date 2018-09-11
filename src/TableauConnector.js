@@ -17,6 +17,7 @@
  * data.world, Inc. (http://data.world/).
  */
 
+import Raven from 'raven-js'
 import * as auth from './auth'
 import * as api from './api'
 import analytics from './analytics'
@@ -107,7 +108,8 @@ class TableauConnector {
           analytics.identify(user.id)
           return refreshToken
         })
-        .catch(() => {
+        .catch((error) => {
+          Raven.captureException(error)
           utils.log('FAILURE: Validate access')
           tableau.abortForAuth('The data.world auth token expired or was revoked')
         })
@@ -284,6 +286,7 @@ class TableauConnector {
         }
         utils.log('SUCCESS: Schema')
       }).catch(error => {
+        Raven.captureException(error)
         utils.log(`FAILURE: Schema (${error})`)
         failureCallback(error)
       })
@@ -329,6 +332,7 @@ class TableauConnector {
       dataCallback()
       utils.log('SUCCESS: Data')
     }).catch(error => {
+      Raven.captureException(error)
       tableau.abortWithError(error)
       utils.log(`FAILURE: Data (${error})`)
     })

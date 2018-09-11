@@ -16,7 +16,7 @@
  * This product includes software developed at
  * data.world, Inc. (http://data.world/).
  */
-
+import Raven from 'raven-js'
 import * as api from './api'
 import crypto from 'crypto'
 import * as utils from './util.js'
@@ -77,6 +77,7 @@ const getAccessToken = async (useTableauPassword = false) => {
       storeRefreshToken(response.data.refresh_token)
       return response.data.access_token
     } catch (error) {
+      Raven.captureException(error)
       utils.log(`ERROR : Failed to refresh tokens - ${error.message}`)
       return null
     }

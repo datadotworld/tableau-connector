@@ -16,17 +16,18 @@
  * This product includes software developed at
  * data.world, Inc. (http://data.world/).
  */
-import './errorReporting'
-import React from 'react'
-import ReactDOM from 'react-dom'
 
-import './index.css'
-import App from './App'
-import './vendor-css'
+import Raven from 'raven-js'
+import { version } from '../package.json'
 
-import './analytics-head'
+const configSentry = () => {
+  return Raven.config(process.env.REACT_APP_SENTRY_DSN, {
+    release: version,
+    environment: process.env.NODE_ENV,
+    ignoreErrors: [
+      /Can't find variable: _tableau/
+    ]
+  }).install()
+}
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-)
+export default configSentry()
