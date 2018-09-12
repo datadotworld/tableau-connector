@@ -29,7 +29,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "heroku-prebuild": "REACT_APP_OAUTH_CLIENT_ID=id && REACT_APP_OAUTH_CLIENT_SECRET=secret && REACT_APP_OAUTH_REDIRECT_URI=uri yarn && yarn run build"
+    "heroku-prebuild": "yarn && yarn run build"
   },
   "repository": {
     "type": "git",
