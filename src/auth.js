@@ -19,8 +19,9 @@
 
 import * as api from './api'
 import crypto from 'crypto'
+import * as utils from './util.js'
 
-const apiTokenKey = 'DW-API-KEY'
+const refreshTokenKey = 'DW-REFRESH-TOKEN-KEY'
 const codeVerifierKey = 'DW-CODE-VERIFIER'
 
 const generateCodeVerifier = () => {
@@ -43,25 +44,42 @@ const generateCodeVerifier = () => {
   return codeVerifier
 }
 
-const getApiKey = (useTableauPassword = false) => {
+const storeRefreshToken = (refreshToken) => {
   if (window.localStorage) {
-    let apiKey = window.localStorage.getItem(apiTokenKey)
-    if (window.tableau && useTableauPassword) {
-      apiKey = window.tableau.password || apiKey
+    window.localStorage.setItem(refreshTokenKey, refreshToken)
+
+    if (window.tableau) {
+      window.tableau.password = refreshToken
     }
-    return apiKey
+    return refreshToken
   }
   return null
 }
 
-const storeApiKey = (key) => {
+const getRefreshToken = (useTableauPassword = false) => {
   if (window.localStorage) {
-    window.localStorage.setItem(apiTokenKey, key)
-
-    if (window.tableau) {
-      window.tableau.password = key
+    let refreshToken = window.localStorage.getItem(refreshTokenKey)
+    if (window.tableau && useTableauPassword) {
+      refreshToken = window.tableau.password || refreshToken
     }
-    return key
+    return refreshToken
+  }
+  return null
+}
+
+const getAccessToken = async (useTableauPassword = false) => {
+  const refreshToken = getRefreshToken(useTableauPassword)
+  if (refreshToken) {
+    // exchange refresh token for access token
+    try {
+      const response = await api.getRefreshedTokens(refreshToken)
+      // store new refresh token
+      storeRefreshToken(response.data.refresh_token)
+      return response.data.access_token
+    } catch (error) {
+      utils.log(`ERROR : Failed to refresh tokens - ${error.message}`)
+      return null
+    }
   }
   return null
 }
@@ -103,14 +121,17 @@ const redirectToAuth = (state) => {
   window.location = getAuthUrl(codeVerifier, state)
 }
 
-const getToken = (code) => {
-  return api.getToken(code, useCodeVerifier()).then(response => {
-    let token = ''
-    if (response.data.access_token) {
-      token = response.data.access_token
+const exchangeCodeForTokens = (code) => {
+  return api.exchangeCodeForTokens(code, useCodeVerifier()).then(response => {
+    let refreshToken = ''
+    let accessToken = ''
+    if (response.data) {
+      refreshToken = response.data.refresh_token
+      accessToken = response.data.access_token
     }
-    return storeApiKey(token)
+    storeRefreshToken(refreshToken)
+    return Promise.resolve({accessToken, refreshToken})
   })
 }
 
-export { redirectToAuth, getToken, getApiKey, storeApiKey }
+export { redirectToAuth, exchangeCodeForTokens, getAccessToken, storeRefreshToken, getRefreshToken }
