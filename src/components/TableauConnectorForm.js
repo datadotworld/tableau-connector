@@ -17,6 +17,7 @@
  * data.world, Inc. (http://data.world/).
  */
 
+import Raven from 'raven-js'
 import React, { Component } from 'react'
 import DatasetSelector from './DatasetSelector'
 import PropTypes from 'prop-types'
@@ -115,6 +116,7 @@ class TableauConnectorForm extends Component {
       })
       utils.log('SUCCESS: Submit')
     }).catch((error) => {
+      Raven.captureException(error)
       this.setState({
         isSubmitting: false,
         isError: true,
