@@ -19,6 +19,7 @@
 
 import * as api from './api'
 import crypto from 'crypto'
+import uuidv1 from 'uuid/v1'
 
 const apiTokenKey = 'DW-API-KEY'
 const codeVerifierKey = 'DW-CODE-VERIFIER'
@@ -66,6 +67,25 @@ const storeApiKey = (key) => {
   return null
 }
 
+const getStateObject = (key) => {
+  let state = {}
+  if (window.localStorage) {
+    const stringifiedState = window.localStorage.getItem(key)
+    state = stringifiedState ? JSON.parse(stringifiedState) : state
+  }
+  return state
+}
+
+const storeStateObject = (state) => {
+  if (window.localStorage) {
+    const key = uuidv1()
+    const stringifiedState = JSON.stringify(state)
+    window.localStorage.setItem(key, stringifiedState)
+    return key
+  }
+  return null
+}
+
 const storeCodeVerifier = (codeVerifier) => {
   if (window.localStorage) {
     window.localStorage.setItem(codeVerifierKey, codeVerifier)
@@ -92,10 +112,11 @@ const generateCodeChallenge = (codeVerifier) => {
 
 const getAuthUrl = (codeVerifier, state) => {
   const codeChallenge = generateCodeChallenge(codeVerifier)
+  const nonce = storeStateObject(state)
   return `https://data.world/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}` +
     `&redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}` +
     `&response_type=code&code_challenge_method=S256&code_challenge=${codeChallenge}` +
-    `&state=${encodeURIComponent(JSON.stringify(state))}`
+    `&state=${encodeURIComponent(nonce)}`
 }
 
 const redirectToAuth = (state) => {
@@ -113,4 +134,4 @@ const getToken = (code) => {
   })
 }
 
-export { redirectToAuth, getToken, getApiKey, storeApiKey }
+export { redirectToAuth, getToken, getApiKey, storeApiKey, getStateObject }
