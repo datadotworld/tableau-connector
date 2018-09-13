@@ -1,0 +1,17 @@
+{
+    "name": "tableau-connector",
+    "description": "data.world tableau web data connector",
+    "repository": "https://github.com/datadotworld/tableau-connector",
+    "scripts": {},
+    "env": {},
+    "formation": {
+      "web": {
+        "quantity": 1
+      }
+    },
+    "buildpacks": [
+      {
+        "url": "heroku/nodejs"
+      }
+    ]
+  }
