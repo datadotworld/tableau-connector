@@ -19,7 +19,7 @@
 
 import axios from 'axios'
 import * as queryString from 'query-string'
-import { getAccessToken, storeRefreshToken } from './auth'
+import { getApiKey, storeApiKey } from './auth'
 
 const basePath = 'https://api.data.world/v0'
 const basePathQuery = 'https://query.data.world'
@@ -31,25 +31,24 @@ axios.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      storeRefreshToken('')
+      storeApiKey('')
     }
     return Promise.reject(error)
   })
 
-const runQuery = async (dataset, query, queryType = 'sql') => {
-  const accessToken = await getAccessToken(true)
+const runQuery = (dataset, query, queryType = 'sql') => {
   return axios.post(
     `${basePathQuery}/${queryType}/${dataset}`,
     queryString.stringify({query}),
     {
       headers: {
-        'authorization': `Bearer ${accessToken}`,
+        'authorization': `Bearer ${getApiKey(true)}`,
         'content-type': 'application/x-www-form-urlencoded'
       }
     })
 }
 
-const exchangeCodeForTokens = (code, code_verifier) => {
+const getToken = (code, code_verifier) => {
   return axios.post('https://data.world/oauth/access_token', {
     code,
     client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
@@ -59,29 +58,18 @@ const exchangeCodeForTokens = (code, code_verifier) => {
   })
 }
 
-const getUser = async () => {
-  const accessToken = await getAccessToken(true)
+const getUser = () => {
   return axios.get(
     `${basePath}/user`,
     {
       headers: {
-        'authorization': `Bearer ${accessToken}`
+        'authorization': `Bearer ${getApiKey(true)}`
       }
     })
 }
 
-const getRefreshedTokens = (refreshToken) => {
-  return axios.post('https://data.world/oauth/access_token', {
-    client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
-    client_secret: process.env.REACT_APP_OAUTH_CLIENT_SECRET,
-    grant_type: 'refresh_token',
-    refresh_token: refreshToken
-  })
-}
-
 export {
   runQuery,
-  exchangeCodeForTokens,
-  getUser,
-  getRefreshedTokens
+  getToken,
+  getUser
 }

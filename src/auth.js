@@ -16,13 +16,11 @@
  * This product includes software developed at
  * data.world, Inc. (http://data.world/).
  */
-import Raven from 'raven-js'
 import * as api from './api'
 import crypto from 'crypto'
 import uuidv1 from 'uuid/v1'
-import * as utils from './util.js'
 
-const refreshTokenKey = 'DW-REFRESH-TOKEN-KEY'
+const apiTokenKey = 'DW-API-KEY'
 const codeVerifierKey = 'DW-CODE-VERIFIER'
 
 const generateCodeVerifier = () => {
@@ -45,41 +43,25 @@ const generateCodeVerifier = () => {
   return codeVerifier
 }
 
-const storeRefreshToken = (refreshToken) => {
+const getApiKey = (useTableauPassword = false) => {
   if (window.localStorage) {
-    window.localStorage.setItem(refreshTokenKey, refreshToken)
+    let apiKey = window.localStorage.getItem(apiTokenKey)
+    if (window.tableau && useTableauPassword) {
+      apiKey = window.tableau.password || apiKey
+    }
+    return apiKey
+  }
+  return null
+}
+
+const storeApiKey = (key) => {
+  if (window.localStorage) {
+    window.localStorage.setItem(apiTokenKey, key)
 
     if (window.tableau) {
-      window.tableau.password = refreshToken
+      window.tableau.password = key
     }
-    return refreshToken
-  }
-  return null
-}
-
-const getRefreshToken = (useTableauPassword = false) => {
-  if (window.localStorage) {
-    let refreshToken = window.localStorage.getItem(refreshTokenKey)
-    if (window.tableau && useTableauPassword) {
-      refreshToken = window.tableau.password || refreshToken
-    }
-    return refreshToken
-  }
-  return null
-}
-
-const getAccessToken = async (useTableauPassword = false) => {
-  const refreshToken = getRefreshToken(useTableauPassword)
-  if (refreshToken) {
-    // exchange refresh token for access token
-    try {
-      const response = await api.getRefreshedTokens(refreshToken)
-      return response.data.access_token
-    } catch (error) {
-      Raven.captureException(error)
-      utils.log(`ERROR : Failed to refresh tokens - ${error.message}`)
-      return null
-    }
+    return key
   }
   return null
 }
@@ -141,17 +123,14 @@ const redirectToAuth = (state) => {
   window.location = getAuthUrl(codeVerifier, state)
 }
 
-const exchangeCodeForTokens = (code) => {
-  return api.exchangeCodeForTokens(code, useCodeVerifier()).then(response => {
-    let refreshToken = ''
-    let accessToken = ''
-    if (response.data) {
-      refreshToken = response.data.refresh_token
-      accessToken = response.data.access_token
+const getToken = (code) => {
+  return api.getToken(code, useCodeVerifier()).then(response => {
+    let token = ''
+    if (response.data.access_token) {
+      token = response.data.access_token
     }
-    storeRefreshToken(refreshToken)
-    return Promise.resolve({accessToken, refreshToken})
+    return storeApiKey(token)
   })
 }
 
-export { redirectToAuth, exchangeCodeForTokens, getAccessToken, storeRefreshToken, getRefreshToken, getStateObject }
+export { redirectToAuth, getToken, getApiKey, storeApiKey, getStateObject }
