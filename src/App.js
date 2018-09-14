@@ -22,6 +22,7 @@ import TableauConnectorForm from './components/TableauConnectorForm'
 import NotTableauView from './components/NotTableauView'
 import TableauConnector from './TableauConnector'
 import queryString from 'query-string'
+import { getStateObject } from './auth'
 
 class App extends Component {
   constructor () {
@@ -35,7 +36,7 @@ class App extends Component {
     }
 
     if (parsedQueryString.state) {
-      ({dataset_name, query, queryType, forceTableau} = JSON.parse(parsedQueryString.state))
+      ({dataset_name, query, queryType, forceTableau} = getStateObject(parsedQueryString.state))
     }
 
     this.connector = new TableauConnector(
