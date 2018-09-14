@@ -74,8 +74,6 @@ const getAccessToken = async (useTableauPassword = false) => {
     // exchange refresh token for access token
     try {
       const response = await api.getRefreshedTokens(refreshToken)
-      // store new refresh token
-      storeRefreshToken(response.data.refresh_token)
       return response.data.access_token
     } catch (error) {
       Raven.captureException(error)
