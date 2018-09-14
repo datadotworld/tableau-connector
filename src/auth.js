@@ -87,12 +87,12 @@ const getAccessToken = async (useTableauPassword = false) => {
 }
 
 const getStateObject = (key) => {
-  let state = {}
+  let state = key // The key here is the state value from auth url.
   if (window.localStorage) {
     const stringifiedState = window.localStorage.getItem(key)
-    state = stringifiedState ? JSON.parse(stringifiedState) : state
+    state = stringifiedState || state
   }
-  return state
+  return JSON.parse(state)
 }
 
 const storeStateObject = (state) => {
@@ -102,7 +102,7 @@ const storeStateObject = (state) => {
     window.localStorage.setItem(key, stringifiedState)
     return key
   }
-  return null
+  return state
 }
 
 const storeCodeVerifier = (codeVerifier) => {
