@@ -102,7 +102,7 @@ const storeStateObject = (state) => {
     window.localStorage.setItem(key, stringifiedState)
     return key
   }
-  return state
+  return JSON.stringify(state)
 }
 
 const storeCodeVerifier = (codeVerifier) => {
