@@ -19,6 +19,7 @@
 import Raven from 'raven-js'
 import * as api from './api'
 import crypto from 'crypto'
+import uuidv1 from 'uuid/v1'
 import * as utils from './util.js'
 
 const refreshTokenKey = 'DW-REFRESH-TOKEN-KEY'
@@ -85,6 +86,25 @@ const getAccessToken = async (useTableauPassword = false) => {
   return null
 }
 
+const getStateObject = (key) => {
+  let state = key // The key here is the state value from auth url.
+  if (window.localStorage) {
+    const stringifiedState = window.localStorage.getItem(key)
+    state = stringifiedState || state
+  }
+  return JSON.parse(state)
+}
+
+const storeStateObject = (state) => {
+  if (window.localStorage) {
+    const key = uuidv1()
+    const stringifiedState = JSON.stringify(state)
+    window.localStorage.setItem(key, stringifiedState)
+    return key
+  }
+  return JSON.stringify(state)
+}
+
 const storeCodeVerifier = (codeVerifier) => {
   if (window.localStorage) {
     window.localStorage.setItem(codeVerifierKey, codeVerifier)
@@ -111,10 +131,11 @@ const generateCodeChallenge = (codeVerifier) => {
 
 const getAuthUrl = (codeVerifier, state) => {
   const codeChallenge = generateCodeChallenge(codeVerifier)
+  const nonce = storeStateObject(state)
   return `https://data.world/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}` +
     `&redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}` +
     `&response_type=code&code_challenge_method=S256&code_challenge=${codeChallenge}` +
-    `&state=${encodeURIComponent(JSON.stringify(state))}`
+    `&state=${encodeURIComponent(nonce)}`
 }
 
 const redirectToAuth = (state) => {
@@ -135,4 +156,4 @@ const exchangeCodeForTokens = (code) => {
   })
 }
 
-export { redirectToAuth, exchangeCodeForTokens, getAccessToken, storeRefreshToken, getRefreshToken }
+export { redirectToAuth, exchangeCodeForTokens, getAccessToken, storeRefreshToken, getRefreshToken, getStateObject }
