@@ -18,6 +18,7 @@
  */
 import * as api from './api'
 import crypto from 'crypto'
+import uuidv1 from 'uuid/v1'
 
 const apiTokenKey = 'DW-API-KEY'
 const codeVerifierKey = 'DW-CODE-VERIFIER'
@@ -132,4 +133,4 @@ const getToken = (code) => {
   })
 }
 
-export { redirectToAuth, getToken, getApiKey, storeApiKey }
+export { redirectToAuth, getToken, getApiKey, storeApiKey, getStateObject }
