@@ -51,7 +51,7 @@ class TableauConnectorForm extends Component {
       query: this.props.query || '',
       queryType: this.props.queryType || 'sql',
       showDatasetSelector: false,
-      writingQuery: !!this.props.query || this.props.addQuery
+      writingQuery: !!this.props.query || !!this.props.addQuery
     }
   }
 
