@@ -59,7 +59,8 @@ class TableauConnector {
       dataset_name: connData.dataset,
       query: connData.query,
       queryType: connData.queryType,
-      forceTableau: connData.forceTableau
+      forceTableau: connData.forceTableau,
+      addQuery: connData.addQuery
     } : params
     this.code = code
 
@@ -340,6 +341,8 @@ class TableauConnector {
 
   setConnectionData (dataset, query, queryType) {
     utils.log('START: Setting connection data')
+    this.params.query = query
+    this.params.queryType = queryType
     tableau.connectionData = JSON.stringify({
       dataset,
       query,

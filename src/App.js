@@ -36,12 +36,12 @@ class App extends Component {
     }
 
     if (parsedQueryString.state) {
-      ({dataset_name, query, queryType, forceTableau} = getStateObject(parsedQueryString.state))
+      ({dataset_name, query, queryType, addQuery, forceTableau} = getStateObject(parsedQueryString.state))
     }
 
     this.connector = new TableauConnector(
       this.onConnectorReady.bind(this),
-      {dataset_name, query, queryType, forceTableau},
+      {dataset_name, query, queryType, addQuery, forceTableau},
       parsedQueryString.code)
 
     // window.tableauVersionBootstrap is always defined in Tableau environments (desktop/server)
