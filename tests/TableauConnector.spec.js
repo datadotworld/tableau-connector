@@ -49,6 +49,7 @@ it('Returns default tableauschema type', () => {
 it('Formats the schema correctly for a non-query, no version', (done) => {
   axios.__setMockResponse(schemaData)
   const connector = new TableauConnector()
+  connector.params = {}
   connector.setConnectionData('test/1234')
   const tempConnectionData = JSON.parse(tableau.connectionData)
   tempConnectionData.version = null
