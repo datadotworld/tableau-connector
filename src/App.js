@@ -30,18 +30,18 @@ class App extends Component {
 
     const parsedQueryString = queryString.parse(location.search)
 
-    let {dataset_name, query, queryType, forceTableau} = parsedQueryString
+    let {dataset_name, query, queryType, addQuery, forceTableau} = parsedQueryString
     if (query) {
       queryType = queryType ? queryType.toLowerCase() : 'sql'
     }
 
     if (parsedQueryString.state) {
-      ({dataset_name, query, queryType, forceTableau} = getStateObject(parsedQueryString.state))
+      ({dataset_name, query, queryType, addQuery, forceTableau} = getStateObject(parsedQueryString.state))
     }
 
     this.connector = new TableauConnector(
       this.onConnectorReady.bind(this),
-      {dataset_name, query, queryType, forceTableau},
+      {dataset_name, query, queryType, addQuery, forceTableau},
       parsedQueryString.code)
 
     // window.tableauVersionBootstrap is always defined in Tableau environments (desktop/server)
@@ -49,7 +49,8 @@ class App extends Component {
     this.isTableau = window.tableauVersionBootstrap || forceTableau
 
     this.state = {
-      interactivePhase: false
+      interactivePhase: false,
+      addQuery
     }
   }
 
@@ -60,7 +61,7 @@ class App extends Component {
   }
 
   render () {
-    const {interactivePhase} = this.state
+    const {interactivePhase, addQuery} = this.state
     const {dataset_name, query, queryType} = this.connector.params
     const dataset = dataset_name ? `https://data.world/${dataset_name}` : null
 
@@ -73,6 +74,7 @@ class App extends Component {
         connector={this.connector}
         dataset={dataset}
         query={query}
+        addQuery={addQuery}
         queryType={queryType} /> : <div />
     )
   }
