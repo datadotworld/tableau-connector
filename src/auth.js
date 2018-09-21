@@ -67,7 +67,7 @@ const storeApiKey = (key) => {
 }
 
 const getStateObject = (key) => {
-  let state = key // The key here is the state value from auth url.
+  let state = JSON.stringify(key) // The key here is the state value from auth url.
   if (window.localStorage) {
     const stringifiedState = window.localStorage.getItem(key)
     state = stringifiedState || state
