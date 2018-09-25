@@ -59,9 +59,7 @@ class TableauConnector {
     this.params = connData ? {
       dataset_name: connData.dataset,
       query: connData.query,
-      queryType: connData.queryType,
-      forceTableau: connData.forceTableau,
-      addQuery: connData.addQuery
+      queryType: connData.queryType
     } : params
     this.code = code
 

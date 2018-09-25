@@ -66,23 +66,22 @@ const storeApiKey = (key) => {
   return null
 }
 
-const getStateObject = (key) => {
-  let state = JSON.stringify(key) // The key here is the state value from auth url.
+const getStateObject = (state) => {
   if (window.localStorage) {
-    const stringifiedState = window.localStorage.getItem(key)
-    state = stringifiedState || state
+    const stringifiedState = window.localStorage.getItem(state)
+    state = stringifiedState ? JSON.parse(stringifiedState) : state
   }
-  return JSON.parse(state)
+  return state
 }
 
 const storeStateObject = (state) => {
+  const stringifiedState = JSON.stringify(state)
   if (window.localStorage) {
     const key = uuidv1()
-    const stringifiedState = JSON.stringify(state)
     window.localStorage.setItem(key, stringifiedState)
     return key
   }
-  return JSON.stringify(state)
+  return stringifiedState
 }
 
 const storeCodeVerifier = (codeVerifier) => {
