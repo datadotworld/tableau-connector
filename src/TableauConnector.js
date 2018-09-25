@@ -22,6 +22,7 @@ import * as auth from './auth'
 import * as api from './api'
 import analytics from './analytics'
 import * as utils from './util.js'
+import queryString from 'query-string'
 
 const tableau = window.tableau
 
@@ -58,9 +59,7 @@ class TableauConnector {
     this.params = connData ? {
       dataset_name: connData.dataset,
       query: connData.query,
-      queryType: connData.queryType,
-      forceTableau: connData.forceTableau,
-      addQuery: connData.addQuery
+      queryType: connData.queryType
     } : params
     this.code = code
 
@@ -83,12 +82,12 @@ class TableauConnector {
       const code = this.code
       return auth.getToken(code).then(accessToken => {
         // Restore canonical WDC URL, which Tableau saves with data source
-        const canonicalQueryString = Object.keys(this.params)
-          .filter(key => !!this.params[key])
-          .reduce((prev, key) => {
-            return `${prev ? prev + '&' : '?'}${encodeURIComponent(key)}=${encodeURIComponent(this.params[key])}`
-          }, '')
-        window.location = `/${canonicalQueryString}`
+        const parsedQueryString = queryString.parse(location.search)
+        let canonicalQueryString = `/?state=${parsedQueryString.state}`
+        if (this.params.addQuery) {
+          canonicalQueryString = `${canonicalQueryString}&addQuery=${this.params.addQuery}`
+        }
+        window.location = canonicalQueryString
 
         // For correctness only. Should never be reached.
         return accessToken
