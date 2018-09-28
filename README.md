@@ -55,6 +55,8 @@ For more info see [tabadmin Commands](https://onlinehelp.tableau.com/v10.5/serve
 
         2. tsm data-access web-data-connectors allow
 
+        3. tsm restart
+
 For more info see [Web Data Connectors in Tableau Server](https://onlinehelp.tableau.com/current/server/en-us/datasource_wdc.htm) and [tsm data-access](https://onlinehelp.tableau.com/current/server/en-us/cli_data-access.htm#web-data-connectors-add)
 
 
