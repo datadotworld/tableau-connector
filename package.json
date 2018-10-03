@@ -36,8 +36,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "release": "pwd && sentry-cli releases files $npm_package_version upload-sourcemaps /static/js",
-    "heroku-prebuild": "yarn && yarn run build && yarn run release"
+    "release":"sentry-cli releases new $npm_package_version",
+    "upload-sourcemap": "sentry-cli releases files $npm_package_version upload-sourcemaps $SOURCE_MAP_DIR",
+    "heroku-prebuild": "yarn && yarn run build && yarn run release && yarn upload-sourcemap"
   },
   "repository": {
     "type": "git",
