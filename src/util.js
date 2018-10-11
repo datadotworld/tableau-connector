@@ -19,4 +19,14 @@
 
 const log = window.tableau ? window.tableau.log : console.log
 
-export {log}
+const parseJSON = jsonString => {
+  try {
+    const obj = JSON.parse(jsonString)
+    if (obj && typeof obj === 'object') {
+      return obj
+    }
+  } catch (e) {}
+  // return value as is if not parsable
+  return jsonString
+}
+export { log, parseJSON }

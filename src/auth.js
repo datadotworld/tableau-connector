@@ -19,6 +19,7 @@
 import * as api from './api'
 import crypto from 'crypto'
 import uuidv1 from 'uuid/v1'
+import { parseJSON } from './util.js'
 
 const apiTokenKey = 'DW-API-KEY'
 const codeVerifierKey = 'DW-CODE-VERIFIER'
@@ -68,13 +69,15 @@ const storeApiKey = (key) => {
 
 const getStateObject = (state) => {
   if (window.localStorage) {
-    const stringifiedState = window.localStorage.getItem(state)
-    state = stringifiedState ? JSON.parse(stringifiedState) : state
+    state = window.localStorage.getItem(state) || state
   }
-  return state
+  // Parse state with care, state might be a UUID string in a situation where window.localStorage is truthy, but cache was cleared
+  // Or window.localStorage is falsy at read time (very unlikely)
+  return parseJSON(state)
 }
 
-const storeStateObject = (state) => {
+const storeStateObject = (state) => { // state at this point is a js object.
+  // Must be stringified cos it will either end up cached in local storage or encoded in the url if window.localStorage is falsy.
   const stringifiedState = JSON.stringify(state)
   if (window.localStorage) {
     const key = uuidv1()
