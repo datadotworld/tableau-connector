@@ -2,6 +2,14 @@
 # yarn lockfile v1
 
 
+"@sentry/browser@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-4.1.1.tgz#9db1e765bf2afcbe0fb44b028abdf5c74d6e77b0"
+  dependencies:
+    "@sentry/core" "4.1.1"
+    "@sentry/types" "4.1.0"
+    "@sentry/utils" "4.1.1"
+
 "@sentry/cli@^1.36.1":
   version "1.36.1"
   resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.36.1.tgz#0fe0754dcfcd456083a2b86557802bfb2b5b90e2"
@@ -10,6 +18,39 @@
     node-fetch "^2.1.2"
     progress "2.0.0"
     proxy-from-env "^1.0.0"
+
+"@sentry/core@4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-4.1.1.tgz#013ee6ee32033b9a404da5bd27f5a2417dcb1a89"
+  dependencies:
+    "@sentry/hub" "4.1.1"
+    "@sentry/minimal" "4.1.1"
+    "@sentry/types" "4.1.0"
+    "@sentry/utils" "4.1.1"
+
+"@sentry/hub@4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-4.1.1.tgz#ef093fe4f42587c7868b66299584b5a9f9d67fc6"
+  dependencies:
+    "@sentry/types" "4.1.0"
+    "@sentry/utils" "4.1.1"
+
+"@sentry/minimal@4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@sentry/minimal/-/minimal-4.1.1.tgz#46d8a35e0d82b0903ed83dba21d8344b601145a5"
+  dependencies:
+    "@sentry/hub" "4.1.1"
+    "@sentry/types" "4.1.0"
+
+"@sentry/types@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-4.1.0.tgz#ebffb9857abbecaad5d1c00152a50f72ac9757a5"
+
+"@sentry/utils@4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-4.1.1.tgz#5624517d582c870348f234df27c509db95d4fdc6"
+  dependencies:
+    "@sentry/types" "4.1.0"
 
 "@zeit/schemas@2.1.1":
   version "2.1.1"
@@ -4990,10 +5031,6 @@ randomatic@^3.0.0:
 range-parser@1.2.0, range-parser@^1.0.3, range-parser@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.0.tgz#f49be6b487894ddc40dcc94a322f611092e00d5e"
-
-raven-js@^3.27.0:
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/raven-js/-/raven-js-3.27.0.tgz#9f47c03e17933ce756e189f3669d49c441c1ba6e"
 
 raw-body@2.3.2:
   version "2.3.2"

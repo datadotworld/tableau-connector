@@ -7,10 +7,10 @@
     "yarn": "1.3.2"
   },
   "dependencies": {
+    "@sentry/browser": "^4.1.1",
     "@sentry/cli": "^1.36.1",
     "axios": "0.15.3",
     "query-string": "4.3.4",
-    "raven-js": "^3.27.0",
     "react": "^15.5.4",
     "react-bootstrap": "0.30.7",
     "react-dom": "^15.5.4",
@@ -36,7 +36,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "release":"sentry-cli releases new $npm_package_version",
+    "release": "sentry-cli releases new $npm_package_version",
     "upload-sourcemap": "sentry-cli releases files $npm_package_version upload-sourcemaps $SOURCE_MAP_DIR",
     "heroku-prebuild": "yarn && yarn run build && yarn run release && yarn upload-sourcemap"
   },
