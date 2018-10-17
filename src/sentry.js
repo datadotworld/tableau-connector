@@ -17,30 +17,18 @@
  * data.world, Inc. (http://data.world/).
  */
 
-import Raven from 'raven-js'
-import path from 'path'
+import * as Sentry from '@sentry/browser'
 import { version } from '../package.json'
 
 const configSentry = () => {
-  return Raven.config(process.env.REACT_APP_SENTRY_DSN, {
+  Sentry.init({
+    dsn: process.env.REACT_APP_SENTRY_DSN,
     release: version,
     environment: process.env.NODE_ENV,
     ignoreErrors: [
       /Can't find variable: _tableau/
-    ],
-    dataCallback: (data) => {
-      const exceptions = data.exception && data.exception
-      const stacktrace = exceptions[0] ? exceptions[0].stacktrace : exceptions.values[0].stacktrace
-      if (stacktrace && stacktrace.frames) {
-        stacktrace.frames.forEach((frame) => {
-          if (frame.filename.startsWith('/')) {
-            frame.filename = 'app:///' + path.basename(frame.filename)
-          }
-        })
-      }
-      return data
-    }
-  }).install()
+    ]
+  })
 }
 
 export default configSentry()
