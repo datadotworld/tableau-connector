@@ -75,7 +75,7 @@ class TableauConnector {
     tableau.registerConnector(this.connector)
   }
 
-  async authenticate () {
+  authenticate () {
     utils.log('START: Authenticate')
     if (this.code && tableau.phase !== tableau.phaseEnum.gatherDataPhase) {
       utils.log('SUCCESS: Authenticate (oauth)')
