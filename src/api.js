@@ -21,8 +21,9 @@ import axios from 'axios'
 import * as queryString from 'query-string'
 import { getApiKey, storeApiKey } from './auth'
 
-const basePath = 'https://api.data.world/v0'
-const basePathQuery = 'https://query.data.world'
+const basePath = process.env.REACT_APP_OAUTH_API_BASE || 'https://api.data.world/v0'
+const basePathQuery = process.env.REACT_APP_SPARQL_PROXY_BASE || 'https://query.data.world'
+const baseSite = process.env.REACT_APP_BASE_SITE || 'http://data.world'
 
 axios.defaults.headers['Accept'] = 'application/json'
 axios.interceptors.response.use(
@@ -37,6 +38,7 @@ axios.interceptors.response.use(
   })
 
 const runQuery = (dataset, query, queryType = 'sql') => {
+  console.log('Dataset is', dataset)
   return axios.post(
     `${basePathQuery}/${queryType}/${dataset}`,
     queryString.stringify({query}),
@@ -49,7 +51,7 @@ const runQuery = (dataset, query, queryType = 'sql') => {
 }
 
 const getToken = (code, code_verifier) => {
-  return axios.post('https://data.world/oauth/access_token', {
+  return axios.post(`${baseSite}/oauth/access_token`, {
     code,
     client_id: process.env.REACT_APP_OAUTH_CLIENT_ID,
     client_secret: process.env.REACT_APP_OAUTH_CLIENT_SECRET,

@@ -230,10 +230,13 @@ class TableauConnector {
 
     const columns = []
 
+    const del = '__DWD__'
     metadata.forEach((m, index) => {
+      console.log('Metadata', m)
       columns.push({
-        id: connData.version ? m.name : resp.data.head.vars[index],
+        id: connData.version ? ['column', m.agent, m.dataset, m.table, m.name].join(del) : resp.data.head.vars[index],
         alias: m.name,
+        description: m.description,
         dataType: TableauConnector.getDatatype(m.type)
       })
     })
