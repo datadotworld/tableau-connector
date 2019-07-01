@@ -21,7 +21,7 @@ import axios from 'axios'
 import * as queryString from 'query-string'
 import { getApiKey, storeApiKey } from './auth'
 
-const basePath = process.env.REACT_APP_OAUTH_API_BASE || 'https://api.data.world/v0'
+const basePath = process.env.REACT_APP_PUBLIC_API_BASE || 'https://api.data.world/v0'
 const basePathQuery = process.env.REACT_APP_SPARQL_PROXY_BASE || 'https://query.data.world'
 const baseSite = process.env.REACT_APP_BASE_SITE || 'http://data.world'
 
