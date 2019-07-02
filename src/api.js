@@ -38,7 +38,6 @@ axios.interceptors.response.use(
   })
 
 const runQuery = (dataset, query, queryType = 'sql') => {
-  console.log('Dataset is', dataset)
   return axios.post(
     `${basePathQuery}/${queryType}/${dataset}`,
     queryString.stringify({query}),
