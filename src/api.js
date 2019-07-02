@@ -23,7 +23,7 @@ import { getApiKey, storeApiKey } from './auth'
 
 const basePath = process.env.REACT_APP_PUBLIC_API_BASE || 'https://api.data.world/v0'
 const basePathQuery = process.env.REACT_APP_SPARQL_PROXY_BASE || 'https://query.data.world'
-const baseSite = process.env.REACT_APP_BASE_SITE || 'http://data.world'
+const baseSite = process.env.REACT_APP_BASE_SITE || 'https://data.world'
 
 axios.defaults.headers['Accept'] = 'application/json'
 axios.interceptors.response.use(
