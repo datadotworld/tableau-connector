@@ -232,7 +232,7 @@ class TableauConnector {
 
     metadata.forEach((m, index) => {
       columns.push({
-        id: connData.version ? connData.version ? m.name : resp.data.head.vars[index] : resp.data.head.vars[index],
+        id: connData.version ? m.name : resp.data.head.vars[index],
         alias: m.name,
         dataType: TableauConnector.getDatatype(m.type)
       })
