@@ -63,7 +63,7 @@ class App extends Component {
   render () {
     const {interactivePhase, addQuery} = this.state
     const {dataset_name, query, queryType} = this.connector.params
-    const dataset = dataset_name ? `https://data.world/${dataset_name}` : null
+    const dataset = dataset_name ? `${process.env.REACT_APP_BASE_SITE}/${dataset_name}` : null
 
     if (!this.isTableau) {
       return (<NotTableauView />)

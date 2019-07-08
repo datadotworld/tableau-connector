@@ -39,7 +39,7 @@ import analytics from '../analytics'
 import Icon from './Icon'
 import * as utils from '../util'
 
-const datasetRegex = /^https?:\/\/data\.world\/(.+\/.+)$/
+const datasetRegex = /^https?:\/\/(?:data\.world|localhost:\d{4})\/(.+\/.+)$/
 
 class TableauConnectorForm extends Component {
   constructor (props) {
@@ -81,7 +81,7 @@ class TableauConnectorForm extends Component {
 
   selectDataset (dataset) {
     this.setState({
-      dataset: `https://data.world/${dataset.owner}/${dataset.id}`,
+      dataset: `${process.env.REACT_APP_BASE_SITE}/${dataset.owner}/${dataset.id}`,
       showDatasetSelector: false
     })
   }
