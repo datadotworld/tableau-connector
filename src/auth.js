@@ -19,7 +19,7 @@
 import * as api from './api'
 import crypto from 'crypto'
 import uuidv1 from 'uuid/v1'
-import { parseJSON } from './util.js'
+import { parseJSON, log } from './util.js'
 
 const apiTokenKey = 'DW-API-KEY'
 const codeVerifierKey = 'DW-CODE-VERIFIER'

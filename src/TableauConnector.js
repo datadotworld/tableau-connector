@@ -71,6 +71,13 @@ class TableauConnector {
     this.connector.init = this.init.bind(this)
     this.connector.getSchema = this.getSchema.bind(this)
     this.connector.getData = this.getData.bind(this)
+    this.connector.setConnectionData = this.setConnectionData.bind(this)
+    this.connector.validateParams = this.validateParams.bind(this)
+    this.connector.getSchemaForDataset = this.getSchemaForDataset.bind(this)
+    this.connector.getSchemaForSqlQuery = this.getSchemaForSqlQuery.bind(this)
+    this.connector.getSchemaForSparqlQuery = this.getSchemaForSparqlQuery.bind(this)
+    this.connector.validateAccessIfNeeded = this.validateAccessIfNeeded.bind(this)
+    this.connector.validateParams = this.validateParams.bind(this)
 
     tableau.registerConnector(this.connector)
   }
@@ -121,6 +128,7 @@ class TableauConnector {
 
   init (initCallback) {
     utils.log(`START: Init (${tableau.phase})`)
+    this.connector.submit = window.tableau.submit.bind(this)
     tableau.authType = tableau.authTypeEnum.custom
 
     this.authenticate()
@@ -370,6 +378,7 @@ class TableauConnector {
         reject(new Error('Dataset contains zero tables. To work in Tableu, datasets must contain at least one table.'))
       }, error => {
         if (error.response && error.response.status === 401) {
+          utils.log('ERROR: redirect to auth', this.params)
           auth.redirectToAuth(this.params)
         } else {
           reject(error)

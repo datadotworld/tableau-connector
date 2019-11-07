@@ -17,7 +17,12 @@
  * data.world, Inc. (http://data.world/).
  */
 
-const log = window.tableau ? window.tableau.log : console.log
+const log = (...msg) => {
+  const logger = window.tableau && window.tableau.log ? window.tableau.log : console.log
+  if (typeof logger === 'function') {
+    logger(...msg)
+  }
+}
 
 const parseJSON = jsonString => {
   try {
