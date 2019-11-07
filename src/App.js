@@ -39,25 +39,28 @@ class App extends Component {
       ({dataset_name, query, queryType, addQuery, forceTableau} = getStateObject(parsedQueryString.state))
     }
 
+    var self = this
+    function onConnectorReady (interactivePhase) {
+      self.setState({
+        interactivePhase,
+        isTableau: true,
+        connector: this
+      })
+    }
     this.connector = new TableauConnector(
-      this.onConnectorReady.bind(this),
+      onConnectorReady,
       {dataset_name, query, queryType, addQuery, forceTableau},
       parsedQueryString.code)
 
     // window.tableauVersionBootstrap is always defined in Tableau environments (desktop/server)
     // parsedQueryString.forceTableau enables debugging on a browser
-    this.isTableau = window.tableauVersionBootstrap || forceTableau
+    const isTableau = !!window.tableau.APIVersion || forceTableau
 
     this.state = {
       interactivePhase: false,
-      addQuery
+      addQuery,
+      isTableau
     }
-  }
-
-  onConnectorReady (interactivePhase) {
-    this.setState({
-      interactivePhase
-    })
   }
 
   render () {
@@ -65,13 +68,12 @@ class App extends Component {
     const {dataset_name, query, queryType} = this.connector.params
     const dataset = dataset_name ? `${process.env.REACT_APP_BASE_SITE}/${dataset_name}` : null
 
-    if (!this.isTableau) {
+    if (!this.state.isTableau) {
       return (<NotTableauView />)
     }
-
     return (
       interactivePhase ? <TableauConnectorForm
-        connector={this.connector}
+        connector={this.state.connector.connector}
         dataset={dataset}
         query={query}
         addQuery={addQuery}
