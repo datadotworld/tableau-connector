@@ -202,9 +202,11 @@ class TableauConnector {
               columnId = datasetTablesResults[j][columnName].value
             }
 
+            // new TableColumns sometimes doesn't have columnTitle, just columnName
+            const alias = datasetTablesResults[j][columnTitle] ? datasetTablesResults[j][columnTitle] : datasetTablesResults[j][columnName]
             datasetCols.push({
               id: columnId,
-              alias: datasetTablesResults[j][columnTitle].value,
+              alias: alias.value,
               dataType: TableauConnector.getDatatype(datasetTablesResults[j][columnDatatype].value)
             })
           }
