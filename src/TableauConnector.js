@@ -72,6 +72,7 @@ class TableauConnector {
     this.connector.init = this.init.bind(this)
     this.connector.getSchema = this.getSchema.bind(this)
     this.connector.getData = this.getData.bind(this)
+    this.connector.getDataLegacy = this.getDataLegacy.bind(this)
     this.connector.setConnectionData = this.setConnectionData.bind(this)
     this.connector.validateParams = this.validateParams.bind(this)
     this.connector.getSchemaForDataset = this.getSchemaForDataset.bind(this)
@@ -341,7 +342,7 @@ class TableauConnector {
 
       table.appendRows(tableData)
       dataCallback()
-      utils.log('SUCCESS: Data')
+      utils.log('SUCCESS: Legacy Data')
     }).catch(error => {
       Sentry.captureException(error)
       tableau.abortWithError(error)
@@ -352,6 +353,11 @@ class TableauConnector {
   getData (table, tableCallback) {
     const connData = JSON.parse(tableau.connectionData || '{}')
     const { dataset, queryType } = connData
+
+    // TODO: Remove once we feel good about this approach for all datasets
+    if (dataset !== 'covid-19-data-resource-hub/covid-19-case-counts') {
+      return this.connector.getDataLegacy(table, tableCallback)
+    }
 
     let tableData = []
     const query = connData.query || TableauConnector.getSelectAllQuery(table.tableInfo.alias)
@@ -371,7 +377,7 @@ class TableauConnector {
         complete () {
           table.appendRows(tableData)
           tableCallback()
-          utils.log(`SUCCESS: Stream Data, Row Length: ${tableData.length}`)
+          utils.log(`SUCCESS: Streamed Data, Row Length: ${tableData.length}`)
         },
         error (e) {
           utils.log(`ERROR: CSV Stream ${e}`)
