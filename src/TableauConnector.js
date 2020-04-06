@@ -286,7 +286,6 @@ class TableauConnector {
 
     api.runQuery(dataset, query, queryType, { maxRowsReturned: 1 })
       .then((resp) => {
-        const connData = JSON.parse(tableau.connectionData || '{}')
         if (connData.query) {
           if (queryType === 'sparql') {
             schemaCallback(this.getSchemaForSparqlQuery(resp))

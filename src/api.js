@@ -82,14 +82,9 @@ const getUser = () => {
     })
 }
 
-const getQueryUrl = (dataset, query, queryType = 'sql', token = '') => {
-  return `${basePathQuery}/${queryType}/${dataset}?query=${encodeURIComponent(query)}&auth=${token}`
-}
-
 export {
   runQuery,
   getToken,
   fetchCSV,
-  getQueryUrl,
   getUser
 }
