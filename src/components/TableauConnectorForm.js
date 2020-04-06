@@ -120,7 +120,10 @@ class TableauConnectorForm extends Component {
       this.setState({
         isSubmitting: false,
         isError: true,
-        errorMessage: error.message || (error.response && error.response.data)
+        errorMessage: (
+          this.props.dataset === 'https://data.world/covid-19-data-resource-hub/covid-19-case-counts' &&
+          'Please limit your query to use a smaller time range.'
+        ) || error.message || (error.response && error.response.data)
       })
       utils.log('FAILURE: Submit')
     })
