@@ -23,6 +23,7 @@ import * as api from './api'
 import analytics from './analytics'
 import * as utils from './util.js'
 import queryString from 'query-string'
+import Papa from 'papaparse'
 
 const tableau = window.tableau
 
@@ -283,8 +284,9 @@ class TableauConnector {
     const {dataset, queryType} = connData
     const query = connData.query || TableauConnector.getSelectAllQuery(metadataTable)
 
-    api.runQuery(dataset, query, queryType)
+    api.runQuery(dataset, query, queryType, { maxRowsReturned: 1 })
       .then((resp) => {
+        const connData = JSON.parse(tableau.connectionData || '{}')
         if (connData.query) {
           if (queryType === 'sparql') {
             schemaCallback(this.getSchemaForSparqlQuery(resp))
@@ -302,7 +304,7 @@ class TableauConnector {
       })
   }
 
-  getData (table, dataCallback) {
+  getDataLegacy (table, dataCallback) {
     utils.log('START: Data')
     const connData = JSON.parse(tableau.connectionData || '{}')
     const {dataset, queryType} = connData
@@ -345,6 +347,37 @@ class TableauConnector {
       Sentry.captureException(error)
       tableau.abortWithError(error)
       utils.log(`FAILURE: Data (${error})`)
+    })
+  }
+
+  getData (table, tableCallback) {
+    const connData = JSON.parse(tableau.connectionData || '{}')
+    const { dataset, queryType } = connData
+
+    let tableData = []
+    const query = connData.query || TableauConnector.getSelectAllQuery(table.tableInfo.alias)
+
+    api.fetchCSV(dataset, query, queryType).then((csvResponse) => {
+      Papa.parse(csvResponse.data, {
+        header: true,
+        dynamicTyping: true,
+        step (row) {
+          tableData.push(row.data)
+          if (tableData.length > 10000) {
+            utils.log(`PROGRESS: Stream Data, Row Length: ${tableData.length}`)
+            table.appendRows(tableData)
+            tableData = []
+          }
+        },
+        complete () {
+          table.appendRows(tableData)
+          tableCallback()
+          utils.log(`SUCCESS: Stream Data, Row Length: ${tableData.length}`)
+        },
+        error (e) {
+          utils.log(`ERROR: CSV Stream ${e}`)
+        }
+      })
     })
   }
 

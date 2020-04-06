@@ -37,13 +37,26 @@ axios.interceptors.response.use(
     return Promise.reject(error)
   })
 
-const runQuery = (dataset, query, queryType = 'sql') => {
+const runQuery = (dataset, query, queryType = 'sql', extras) => {
   return axios.post(
     `${basePathQuery}/${queryType}/${dataset}`,
-    queryString.stringify({query}),
+    queryString.stringify({query, ...extras}),
     {
       headers: {
         'authorization': `Bearer ${getApiKey(true)}`,
+        'content-type': 'application/x-www-form-urlencoded'
+      }
+    })
+}
+
+const fetchCSV = (dataset, query, queryType = 'sql', extras) => {
+  return axios.post(
+    `${basePathQuery}/${queryType}/${dataset}`,
+    queryString.stringify({ query, ...extras }),
+    {
+      headers: {
+        'authorization': `Bearer ${getApiKey(true)}`,
+        'Accept': 'text/csv',
         'content-type': 'application/x-www-form-urlencoded'
       }
     })
@@ -69,8 +82,14 @@ const getUser = () => {
     })
 }
 
+const getQueryUrl = (dataset, query, queryType = 'sql', token = '') => {
+  return `${basePathQuery}/${queryType}/${dataset}?query=${encodeURIComponent(query)}&auth=${token}`
+}
+
 export {
   runQuery,
   getToken,
+  fetchCSV,
+  getQueryUrl,
   getUser
 }
