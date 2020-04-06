@@ -35,15 +35,15 @@ class App extends Component {
       queryType = queryType ? queryType.toLowerCase() : 'sql'
     }
 
+    if (parsedQueryString.state) {
+      ({dataset_name, query, queryType, addQuery, forceTableau} = getStateObject(parsedQueryString.state))
+    }
+
     // hack to get the large dataset `covid_19_cases` to load
     if (query === 'SELECT *\nFROM covid_19_cases') {
       const fiveDaysAgo = new Date()
-      fiveDaysAgo.setDate(new Date().getDate() - 5)
+      fiveDaysAgo.setDate(new Date().getDate() - 28)
       query = `SELECT *\nFROM covid_19_cases\nWHERE date > ${fiveDaysAgo.toISOString().slice(0, 10)}`
-    }
-
-    if (parsedQueryString.state) {
-      ({dataset_name, query, queryType, addQuery, forceTableau} = getStateObject(parsedQueryString.state))
     }
 
     var self = this
