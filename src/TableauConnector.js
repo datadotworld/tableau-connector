@@ -23,6 +23,7 @@ import * as api from './api'
 import analytics from './analytics'
 import * as utils from './util.js'
 import queryString from 'query-string'
+import Papa from 'papaparse'
 
 const tableau = window.tableau
 
@@ -71,6 +72,7 @@ class TableauConnector {
     this.connector.init = this.init.bind(this)
     this.connector.getSchema = this.getSchema.bind(this)
     this.connector.getData = this.getData.bind(this)
+    this.connector.getDataLegacy = this.getDataLegacy.bind(this)
     this.connector.setConnectionData = this.setConnectionData.bind(this)
     this.connector.validateParams = this.validateParams.bind(this)
     this.connector.getSchemaForDataset = this.getSchemaForDataset.bind(this)
@@ -283,7 +285,7 @@ class TableauConnector {
     const {dataset, queryType} = connData
     const query = connData.query || TableauConnector.getSelectAllQuery(metadataTable)
 
-    api.runQuery(dataset, query, queryType)
+    api.runQuery(dataset, query, queryType, { maxRowsReturned: 1 })
       .then((resp) => {
         if (connData.query) {
           if (queryType === 'sparql') {
@@ -302,8 +304,8 @@ class TableauConnector {
       })
   }
 
-  getData (table, dataCallback) {
-    utils.log('START: Data')
+  getDataLegacy (table, dataCallback) {
+    utils.log('START: Legacy Data')
     const connData = JSON.parse(tableau.connectionData || '{}')
     const {dataset, queryType} = connData
 
@@ -340,11 +342,50 @@ class TableauConnector {
 
       table.appendRows(tableData)
       dataCallback()
-      utils.log('SUCCESS: Data')
+      utils.log('SUCCESS: Legacy Data')
     }).catch(error => {
       Sentry.captureException(error)
       tableau.abortWithError(error)
       utils.log(`FAILURE: Data (${error})`)
+    })
+  }
+
+  getData (table, tableCallback) {
+    const connData = JSON.parse(tableau.connectionData || '{}')
+    const { dataset, queryType } = connData
+
+    // TODO: Remove once we feel good about this approach for all datasets
+    if (dataset !== 'covid-19-data-resource-hub/covid-19-case-counts') {
+      return this.connector.getDataLegacy(table, tableCallback)
+    }
+    utils.log('START: CSV Get Data')
+
+    let tableData = []
+    const query = connData.query || TableauConnector.getSelectAllQuery(table.tableInfo.alias)
+
+    api.fetchCSV(dataset, query, queryType).then((csvResponse) => {
+      Papa.parse(csvResponse.data, {
+        header: true,
+        dynamicTyping: true,
+        step (row) {
+          tableData.push(row.data)
+          if (tableData.length > 10000) {
+            utils.log(`PROGRESS: Stream Data, Row Length: ${tableData.length}`)
+            table.appendRows(tableData)
+            tableData = []
+          }
+        },
+        complete () {
+          table.appendRows(tableData)
+          tableCallback()
+          utils.log(`SUCCESS: Streamed Data, Row Length: ${tableData.length}`)
+        },
+        error (error) {
+          utils.log(`ERROR: CSV Stream ${error}`)
+          Sentry.captureException(error)
+          tableau.abortWithError(error)
+        }
+      })
     })
   }
 
