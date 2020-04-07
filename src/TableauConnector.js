@@ -285,7 +285,7 @@ class TableauConnector {
     const {dataset, queryType} = connData
     const query = connData.query || TableauConnector.getSelectAllQuery(metadataTable)
 
-    api.runQuery(dataset, query, queryType, { maxRowsReturned: 1 })
+    api.runQuery(dataset, query, queryType, { maxRowsReturned: 4000 })
       .then((resp) => {
         if (connData.query) {
           if (queryType === 'sparql') {
