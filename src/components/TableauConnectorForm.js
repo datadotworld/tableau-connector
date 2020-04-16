@@ -39,7 +39,7 @@ import analytics from '../analytics'
 import Icon from './Icon'
 import * as utils from '../util'
 
-const datasetRegex = /^https?:\/\/(?:data\.world|localhost:\d{4})\/(.+\/.+)$/
+const datasetRegex = /^https?:\/\/(?:[a-z0-9]+[.])?(?:data\.world|localhost:\d{4})\/(.+\/.+)$/
 
 class TableauConnectorForm extends Component {
   constructor (props) {
