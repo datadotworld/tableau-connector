@@ -15,7 +15,7 @@
     "react": "15.6.2",
     "react-bootstrap": "0.30.7",
     "react-dom": "15.6.2",
-    "serve": "10.0.0",
+    "serve": "10.1.2",
     "uuid": "3.3.2"
   },
   "devDependencies": {
