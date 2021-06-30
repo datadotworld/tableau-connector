@@ -164,8 +164,8 @@ http://localhost:8888/Simulator/?src=http://localhost:3000/?forceTableau=true
 Make sure your fork is up-to-date and create a feature branch for your feature or bug fix.
 
 ```bash
-git checkout master
-git pull upstream master
+git checkout main
+git pull upstream main
 git checkout -b my-feature-branch
 ```
 
@@ -221,7 +221,7 @@ a few days.
 
 ### Deploy to heroku
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/datadotworld/tableau-connector/tree/master)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/datadotworld/tableau-connector/tree/main)
 
 ## Thank you!
 
