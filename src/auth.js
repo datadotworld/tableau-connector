@@ -114,9 +114,15 @@ const generateCodeChallenge = (codeVerifier) => {
 const getAuthUrl = (codeVerifier, state) => {
   const codeChallenge = generateCodeChallenge(codeVerifier)
   const nonce = storeStateObject(state)
+
+  const { dataset_name = '' } = state
+  const agentid =  dataset_name.split('/')[0]
+  const agentidParam = agentid ? `&agentid=${agentid}` : ''
+
   return `${process.env.REACT_APP_BASE_SITE}/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}` +
     `&redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}` +
     `&response_type=code&code_challenge_method=S256&code_challenge=${codeChallenge}` +
+    `${agentidParam}` +
     `&state=${encodeURIComponent(nonce)}`
 }
 
