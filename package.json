@@ -15,6 +15,7 @@
     "react": "15.6.2",
     "react-bootstrap": "0.30.7",
     "react-dom": "15.6.2",
+    "react-scripts": "^0.9.5",
     "serve": "10.0.0",
     "uuid": "3.3.2"
   },
@@ -29,7 +30,7 @@
     "eslint-plugin-promise": "3.7.0",
     "eslint-plugin-react": "7.8.2",
     "eslint-plugin-standard": "3.1.0",
-    "react-scripts": "0.9.5",
+    "react-scripts": "^0.9.5",
     "react-test-renderer": "15.4.2"
   },
   "scripts": {
@@ -37,7 +38,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "clean": "rm -rf node_modules" ,
     "release": "sentry-cli releases new $npm_package_version",
     "upload-sourcemap": "sentry-cli releases files $npm_package_version upload-sourcemaps $SOURCE_MAP_DIR",
     "heroku-prebuild": "yarn clean && yarn && yarn run build && yarn run release && yarn upload-sourcemap"
