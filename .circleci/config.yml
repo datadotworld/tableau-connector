@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/tableau-connector
     docker:
-    - image: circleci/node:14.18
+    - image: circleci/node:14.18.2
     steps:
     - checkout
     - restore_cache:
