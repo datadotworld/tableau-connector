@@ -23,6 +23,7 @@ import { parseJSON } from './util.js'
 
 const apiTokenKey = 'DW-API-KEY'
 const codeVerifierKey = 'DW-CODE-VERIFIER'
+const oAuthBaseSite = process.env.REACT_APP_AUTH_SITE || 'https://auth.data.world'
 
 const generateCodeVerifier = () => {
   const lowerCase = 'abcdefghijklmnopqrstuvwxyz'
@@ -119,7 +120,7 @@ const getAuthUrl = (codeVerifier, state) => {
   const agentid =  dataset_name.split('/')[0]
   const agentidParam = agentid ? `&agentid=${agentid}` : ''
 
-  return `${process.env.REACT_APP_BASE_SITE}/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}` +
+  return `${oAuthBaseSite}/oauth/authorize?client_id=${process.env.REACT_APP_OAUTH_CLIENT_ID}` +
     `&redirect_uri=${process.env.REACT_APP_OAUTH_REDIRECT_URI}` +
     `&response_type=code&code_challenge_method=S256&code_challenge=${codeChallenge}` +
     `${agentidParam}` +

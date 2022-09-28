@@ -25,14 +25,14 @@ issues and propose changes to the current or next version of the data.world Web 
 
 The connector uses `data.world`'s [OAuth 2.0 flow for native applications](https://apidocs.data.world/v0/data-world-for-developers/oauth#native-applications-desktop-mobile-static-sites-other)
 
-After determining it is running in a Tableau environment the app redirects to `https://data.world/oauth/authorize` supplying the following as query params:
+After determining it is running in a Tableau environment the app redirects to `https://auth.data.world/oauth/authorize` supplying the following as query params:
  * client_id
  * redirect_uri
  * response_type
  * code_challenge_method
  * code_challenge
 
-The user is asked to log in to `data.word` and authorize the application. If successful the app redirects to the provided `redirect_uri` with a `code` query param.
+The user is asked to select and log in to `data.word` instance and authorize the application. If successful the app redirects to the provided `redirect_uri` with a `code` query param.
 
 The app then makes a `POST` request to `https://data.world/oauth/access_token` providing the following in the body of the request:
  *  The `code` returned
