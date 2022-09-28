@@ -39,7 +39,7 @@
     "eject": "react-scripts eject",
     "release": "sentry-cli releases new $npm_package_version",
     "upload-sourcemap": "sentry-cli releases files $npm_package_version upload-sourcemaps $SOURCE_MAP_DIR",
-    "heroku-prebuild": "yarn && yarn run build && yarn run release && yarn upload-sourcemap"
+    "heroku-prebuild": "yarn install && yarn && yarn run build && yarn run release && yarn upload-sourcemap"
   },
   "repository": {
     "type": "git",
