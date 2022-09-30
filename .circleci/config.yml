@@ -3,14 +3,14 @@ jobs:
   build:
     working_directory: ~/tableau-connector
     docker:
-    - image: circleci/node:8.9.4
+    - image: circleci/node:14.18.2
     steps:
     - checkout
     - restore_cache:
         key: dependency-cache-{{ checksum "package.json" }}
     - run:
         name: Install dependencies
-        command: yarn install --frozen-lockfile
+        command: yarn install
     - save_cache:
         key: dependency-cache-{{ checksum "package.json" }}
         paths:

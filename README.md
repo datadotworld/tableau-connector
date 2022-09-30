@@ -43,7 +43,7 @@ To enable scheduled refreshes for extracts created from data.world WDC, we'll ne
 
         2. tabadmin whitelist_webdataconnector -a https://tableau.data.world:443
 
-        3. tabadmin whitelist_webdataconnector -s https://tableau.data.world:443 https://api.data.world/(.*),https://query.data.world/(.*),https://data.world/oauth/(.*)
+        3. tabadmin whitelist_webdataconnector -s https://tableau.data.world:443 https://api.data.world/(.*),https://query.data.world/(.*),https://data.world/oauth/(.*),https://auth.data.world/oauth/(.*)
 
         4. tabadmin restart
 
@@ -51,7 +51,7 @@ For more info see [tabadmin Commands](https://onlinehelp.tableau.com/v10.5/serve
     
     B.  To configure safe list for Tableau Server version 2018.1 and above run the following commands on the machine 
 
-        1. tsm data-access web-data-connectors add --name 'DW WDC' --url https://tableau.data.world:443 --secondary https://api.data.world/*, https://query.data.world/*, https://data.world/oauth/*
+        1. tsm data-access web-data-connectors add --name 'DW WDC' --url https://tableau.data.world:443 --secondary https://api.data.world/*, https://query.data.world/*, https://data.world/oauth/*, https://auth.data.world/oauth/*
 
         2. tsm data-access web-data-connectors allow
 
