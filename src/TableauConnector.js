@@ -418,7 +418,7 @@ class TableauConnector {
           })
           resolve()
         }
-        reject(new Error('Dataset contains zero tables. To work in Tableu, datasets must contain at least one table.'))
+        reject(new Error('Dataset contains zero tables. To work in Tableau, datasets must contain at least one table.'))
       }, error => {
         if (error.response && error.response.status === 401) {
           utils.log('ERROR: redirect to auth', this.params)
